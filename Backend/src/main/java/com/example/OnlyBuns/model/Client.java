@@ -8,7 +8,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 
-/*@Entity
+@Entity
 @Table(name="client")
 public class Client extends User {
     @Column(name="numberOfPosts", unique=false, nullable=true)
@@ -57,5 +57,3 @@ public class Client extends User {
     }
 }
 
-
- */

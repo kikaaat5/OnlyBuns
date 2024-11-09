@@ -1,6 +1,6 @@
 package com.example.OnlyBuns.model;
 
-/*import com.example.OnlyBuns.enums.UserRole;
+import com.example.OnlyBuns.enums.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -16,4 +16,3 @@ public class Administrator extends User {
 
     }
 }
- */

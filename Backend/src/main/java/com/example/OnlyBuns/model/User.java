@@ -3,7 +3,6 @@ package com.example.OnlyBuns.model;
 import com.example.OnlyBuns.enums.UserRole;
 import jakarta.persistence.*;
 
-/*
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
@@ -96,6 +95,3 @@ public class User {
         this.role = role;
     }
 }
-
-
- */
