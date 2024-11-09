@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 public class Administrator extends User {
 
     public Administrator(Integer id, String email, String username, String password, String name, String surname, UserRole userType) {
-        super(id, email, username, password, name, surname, userType);
+        super();
     }
 
     public Administrator() {

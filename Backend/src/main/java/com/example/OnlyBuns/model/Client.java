@@ -17,12 +17,12 @@ public class Client extends User {
     private int following;
     @Column(name="active", unique=false, nullable=true)
     private boolean active;
-    //public ArrayList<User> followers;
-    //public ArrayList<Post> posts;
+    //public List<User> followers;
+    //public List<Post> posts;
 
 
     public Client(Integer id, String email, String username, String password, String name, String surname, UserRole role, int numberOfPosts, int following, boolean active) {
-        super(id, email, username, password, name, surname, role);
+        super();
         this.numberOfPosts = numberOfPosts;
         this.following = following;
         this.active = active;
