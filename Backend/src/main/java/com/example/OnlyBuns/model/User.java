@@ -1,58 +1,72 @@
 package com.example.OnlyBuns.model;
 
-import com.example.OnlyBuns.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
+@Table(name="users")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class User {
+@Getter
+@Setter
+@AllArgsConstructor
+public class User implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "mySeqGenV1", sequenceName = "mySeqV1", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
-    private Integer id;
+    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeqGen")
+    private Long id;
 
-    @Column(name="email", unique=false, nullable=false)
+    @Column(name = "email", unique = false, nullable = false)
     private String email;
-    @Column(name="username", unique=false, nullable=false)
+
+    @Column(name = "username", unique = false, nullable = false)
     private String username;
-    @Column(name="password", unique=false, nullable=false)
+
+    @JsonIgnore
+    @Column(name = "password", unique = false, nullable = false)
     private String password;
-    @Column(name="name", unique=false, nullable=false)
-    private String name;
-    @Column(name="surname", unique=false, nullable=false)
-    private String surname;
-    @Column(name="role", unique=false, nullable=false)
-    private UserRole role;
+
+    @Column(name = "name", unique = false, nullable = false)
+    private String firstname;
+
+    @Column(name = "lastname", unique = false, nullable = false)
+    private String lastname;
+
+    @Column(name = "enabled", unique = false, nullable = false)
+    private boolean enabled;
+
+    @Column(name = "last_password_reset_date")
+    private Timestamp lastPasswordResetDate;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+
+    private List<Role> roles;
 
     public User() {
-        super();
+
     }
 
-    public User(int id, String email, String username, String password, String name, String surname, UserRole role) {
-        this.id = id;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.role = role;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {
@@ -68,30 +82,81 @@ public class User {
     }
 
     public void setPassword(String password) {
+        Timestamp now = new Timestamp(new Date().getTime());
+        this.setLastPasswordResetDate(now);
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstname = firstName;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastName() {
+        return lastname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setLastName(String lastName) {
+        this.lastname = lastName;
     }
 
-    public UserRole getRole() {
-        return role;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Timestamp getLastPasswordResetDate() {
+        return lastPasswordResetDate;
+    }
+
+    public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
+        this.lastPasswordResetDate = lastPasswordResetDate;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }

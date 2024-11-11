@@ -1,12 +1,8 @@
 package com.example.OnlyBuns.model;
 
-import com.example.OnlyBuns.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.*;
-
-import java.util.ArrayList;
 
 @Entity
 @Table(name="client")
@@ -21,7 +17,7 @@ public class Client extends User {
     //public List<Post> posts;
 
 
-    public Client(Integer id, String email, String username, String password, String name, String surname, UserRole role, int numberOfPosts, int following, boolean active) {
+    public Client(Integer id, String email, String username, String password, String name, String surname, int numberOfPosts, int following, boolean active) {
         super();
         this.numberOfPosts = numberOfPosts;
         this.following = following;
@@ -29,7 +25,6 @@ public class Client extends User {
     }
 
     public Client() {
-
     }
 
     public int getNumberOfPosts() {

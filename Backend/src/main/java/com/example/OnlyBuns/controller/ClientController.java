@@ -1,5 +1,6 @@
 package com.example.OnlyBuns.controller;
 
+import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.Client;
 import com.example.OnlyBuns.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public Client createClient(@RequestBody Client client) {
+    public Client createClient(@RequestBody UserRequest client) {
         return clientService.save(client);
     }
 

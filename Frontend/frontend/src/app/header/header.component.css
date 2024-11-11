@@ -1,0 +1,47 @@
+:host {
+  position: relative;
+  z-index: 10;
+  color: black; /* Light blue color for the text */
+}
+
+.app-navbar {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #1f6153; 
+  padding: 10px;
+}
+
+button[color="accent"] {
+  background-color: #F5D0A9; /* Light green for 'Go Back' button */
+  color: black;
+}
+
+
+.app-navbar span {
+  text-transform: uppercase !important;
+  font-weight: bold;
+}
+
+.right {
+  margin-left: auto;
+  float: right;
+}
+
+.app-angular-logo {
+  margin: 0 4px 3px 0;
+  height: 26px;
+}
+
+.greeting-hamburger {
+  display: none;
+}
+
+mat-button {
+  margin-left: 30px;
+  background-color: #e6c4a1;
+}
+
+mat-button:hover {
+  opacity: 0.7;
+}
