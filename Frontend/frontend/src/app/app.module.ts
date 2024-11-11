@@ -19,13 +19,23 @@ import {ConfigService} from './service/config.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
+import { FollowingComponent } from './following/following.component';
+import { TrendsComponent } from './trends/trends.component';
+import { NearbyComponent } from './nearby/nearby.component';
+import { ChatComponent } from './chat/chat.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SignUpComponent,
     LoginComponent,
-    HeaderComponent
+    HeaderComponent,
+    FollowingComponent,
+    TrendsComponent,
+    NearbyComponent,
+    ChatComponent,
+    ProfileComponent
   ],
 
   imports: [
