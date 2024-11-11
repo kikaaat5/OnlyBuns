@@ -33,4 +33,34 @@ public class ClientController {
     public void deleteClient(@PathVariable int id) {
         clientService.deleteById(id);
     }
+
+    @GetMapping("/search")
+    public List<Client> searchClients(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String surname,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Integer minPosts,
+            @RequestParam(required = false) Integer maxPosts
+    ) {
+        if (name != null) {
+            return clientService.searchByName(name);
+        } else if (surname != null) {
+            return clientService.searchBySurname(surname);
+        } else if (email != null) {
+            return clientService.searchByEmail(email);
+        } else if (minPosts != null && maxPosts != null) {
+            return clientService.searchByNumberOfPostsInRange(minPosts, maxPosts);
+        }
+        return clientService.findAll();
+    }
+
+    @GetMapping("/sort/followingCount")
+    public List<Client> sortClientsByFollowingCount() {
+        return clientService.sortByFollowingCount();
+    }
+
+    @GetMapping("/sort/email")
+    public List<Client> sortClientsByEmail() {
+        return clientService.sortByEmail();
+    }
 }

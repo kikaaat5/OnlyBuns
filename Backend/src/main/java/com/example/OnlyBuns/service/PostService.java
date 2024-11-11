@@ -26,4 +26,33 @@ public class PostService {
     public void deleteById(int id) {
         postRepository.deleteById(id);
     }
+
+    public void deletePost(int postId, int userId) {
+        Post existingPost = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (existingPost.getUserId() != userId) {
+            throw new RuntimeException("You can only delete your own posts");
+        }
+
+        postRepository.delete(existingPost);
+    }
+
+    public Post updatePost(int postId, Post updatedPost, int userId) {
+
+        Post existingPost = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (existingPost.getUserId() != userId) {
+            throw new RuntimeException("You can only edit your own posts");
+        }
+        existingPost.setDescription(updatedPost.getDescription());
+        existingPost.setImagePath(updatedPost.getImagePath());
+        existingPost.setLongitude(updatedPost.getLongitude());
+        existingPost.setLatitude(updatedPost.getLatitude());
+
+        return postRepository.save(existingPost);
+    }
+
+
 }
