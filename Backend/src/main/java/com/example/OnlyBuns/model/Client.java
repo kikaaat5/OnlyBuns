@@ -25,7 +25,6 @@ public class Client extends User {
     }
 
     public Client() {
-
     }
 
     public int getNumberOfPosts() {

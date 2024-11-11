@@ -15,6 +15,8 @@ public class UserRequest {
 	
 	private String email;
 
+	private String role;
+
 	public String getUsername() {
 		return username;
 	}
@@ -63,4 +65,7 @@ public class UserRequest {
 		this.email = email;
 	}
 
+	public String getRole() { return role; }
+
+	public void setRole(String role) { this.role = role; }
 }

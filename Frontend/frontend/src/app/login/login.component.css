@@ -1,0 +1,78 @@
+/* General styling for the login card */
+.content {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 50%;
+  padding: 20px;
+  background-color: #f0f8f4; /* Light greenish background */
+  border-radius: 8px;
+}
+
+mat-card {
+  max-width: 350px;
+  text-align: center;
+  animation: fadein 1s;
+  background-color: #ffffff; /* White background for the card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Styling for form fields */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+mat-spinner {
+  width: 25px;
+  height: 25px;
+  margin: 20px auto 0 auto;
+}
+
+/* Styling for the buttons */
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+button[mat-raised-button] {
+  background-color: #ff7043; /* Orange color for Login button */
+  color: white;
+  font-weight: bold;
+}
+
+button[mat-raised-button]:disabled {
+  background-color: #cccccc; /* Light gray when disabled */
+}
+
+button[color="accent"] {
+  background-color: #1f6153; /* Light green for 'Go Back' button */
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+hr {
+  border-top: 1px solid #1f6153;
+  margin: 20px 0;
+}
+
+/* Success and error messages */
+.error {
+  color: #D50000;
+}
+
+.success {
+  color: #1f6153;
+}
+
+a {
+  text-decoration: none;
+  cursor: auto;
+  color: #ffffff;
+}
