@@ -94,6 +94,15 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
+
+    public List<Client> searchByName(String name) {
+        return clientRepository.findByFirstnameContainingIgnoreCase(name);
+    }
+
+    public List<Client> searchBySurname(String surname) {
+        return clientRepository.findByLastnameContainingIgnoreCase(surname);
+    }
+
     public ResponseEntity<String> activate(String username) {
         System.out.println("usao u aktivacionu funkciju");
         Client client = findByEmail(username);
@@ -117,6 +126,7 @@ public class ClientService {
     public List<Client> searchBySurname(String surname) {
         return clientRepository.findBySurnameContainingIgnoreCase(surname);
     }*/
+
 
     public List<Client> searchByEmail(String email) {
         return clientRepository.findByEmailContainingIgnoreCase(email);

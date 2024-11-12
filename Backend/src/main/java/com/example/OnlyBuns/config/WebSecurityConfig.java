@@ -7,6 +7,7 @@ import com.example.OnlyBuns.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -45,8 +46,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
- 	@Bean
+	@Bean
  	public DaoAuthenticationProvider authenticationProvider() {
  	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
  	    authProvider.setUserDetailsService(userService());
@@ -87,13 +87,19 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(authorize -> authorize
+								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
+								.requestMatchers(HttpMethod.PUT, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
+						.requestMatchers("/api/clients").permitAll()
+								.requestMatchers("/api/posts").permitAll()
 						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
 				.formLogin(Customizer.withDefaults())  // Omogućava formu za prijavu
+
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userService()), BasicAuthenticationFilter.class)
+
 				.logout(logout -> logout
 						.logoutUrl("/signout")
 						.logoutSuccessUrl("/signin")
@@ -107,9 +113,11 @@ public class WebSecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
+
 				.requestMatchers(HttpMethod.POST, "/auth/login")
 				.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
 						"/*/*.html", "/*/*.css", "/*/*.js");
+
 	}
 
 }

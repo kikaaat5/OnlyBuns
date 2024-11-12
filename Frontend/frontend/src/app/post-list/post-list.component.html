@@ -1,0 +1,63 @@
+<div class="post-list">
+    <h2>Posts</h2>
+  
+    <!-- Modal za formu za izmenu -->
+  <div *ngIf="isEditing" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="cancelEdit()">×</span>
+      <h3>Update Post</h3>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <input id="description" type="text" [(ngModel)]="editedPost.description">
+      </div>
+      <div class="form-group">
+        <label for="image">Image URL:</label>
+        <input id="image" type="text" [(ngModel)]="editedPost.imagePath">
+      </div>
+      <div class="form-group">
+        <label for="latitude">Latitude:</label>
+        <input id="latitude" type="number" [(ngModel)]="editedPost.latitude">
+      </div>
+      <div class="form-group">
+        <label for="longitude">Longitude:</label>
+        <input id="longitude" type="number" [(ngModel)]="editedPost.longitude">
+      </div>
+      <div class="modal-buttons">
+        <button (click)="updatePost()" class="save-button">Save</button>
+        <button (click)="cancelEdit()" class="cancel-button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+    <div *ngFor="let post of posts" class="post-card">
+      <div class="post-header">
+        <h3>{{ post.description }}</h3>
+        <div class="post-actions">
+            <button (click)="deletePost(post.id)" class="delete-button">×</button>
+            <button (click)="editPost(post)" class="edit-button">✎</button>
+        </div>
+
+        <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
+      </div>
+      
+      <div class="post-image">
+        <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" />
+        <ng-template #noImage>
+          <p>No image available</p>
+        </ng-template>
+      </div>
+  
+      <div class="post-footer">
+        <p>Likes: {{ post.likesCount }}</p>
+      </div>
+      
+      <div class="post-comments">
+        <h4>Comments</h4>
+        <div *ngFor="let comment of post.comments" class="comment">
+          <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
+          <small>{{ comment.createdAt | date: 'short' }}</small>
+        </div>
+
+    </div>
+  </div>
+  

@@ -14,12 +14,14 @@ import {FooService} from './service/foo.service';
 import {AuthService} from './service/auth.service';
 import {UserService} from './service/user.service';
 import {ConfigService} from './service/config.service';
+import { ClientService } from './service/client.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
+import { ClientListComponent } from './client-list/client-list.component';
+import { PostListComponent } from './post-list/post-list.component';
 import { ActivateAccountComponent } from './activate-account/activate-account.component';
-
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
@@ -35,6 +37,8 @@ import { HomeComponent } from './home/home.component';
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
+    ClientListComponent,
+    PostListComponent,
     ActivateAccountComponent,
     FollowingComponent,
     TrendsComponent,
@@ -63,6 +67,7 @@ import { HomeComponent } from './home/home.component';
   ApiService,
   UserService,
   ConfigService,
+  ClientService,
 ],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]

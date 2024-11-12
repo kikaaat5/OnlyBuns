@@ -11,6 +11,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private int id;
 
     @Getter
@@ -29,6 +30,8 @@ public class Post {
 
     @Getter @Setter
     private double latitude;
+
+    @Getter @Setter
     private int likesCount;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

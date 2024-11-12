@@ -26,32 +26,32 @@ public class User implements UserDetails {
     @Id
     @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeqGen")
-    private Long id;
+    protected Long id;
 
     @Column(name = "email", unique = false, nullable = false)
-    private String email;
+    protected String email;
 
     @Column(name = "username", unique = false, nullable = false)
-    private String username;
+    protected String username;
 
     @JsonIgnore
     @Column(name = "password", unique = false, nullable = false)
-    private String password;
+    protected String password;
 
     @Column(name = "name", unique = false, nullable = false)
-    private String firstname;
+    protected String firstname;
 
     @Column(name = "lastname", unique = false, nullable = false)
-    private String lastname;
+    protected String lastname;
 
     //@Column(name = "address", unique = false, nullable = false)
     //private String address;
 
     @Column(name = "enabled", unique = false, nullable = false)
-    private boolean enabled;
+    protected boolean enabled;
 
     @Column(name = "last_password_reset_date")
-    private Timestamp lastPasswordResetDate;
+    protected Timestamp lastPasswordResetDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
