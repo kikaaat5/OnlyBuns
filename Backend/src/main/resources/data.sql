@@ -22,13 +22,15 @@ INSERT INTO public.user_role(
     role_id, user_id)
 VALUES (1, 2);
 
+ALTER TABLE post
+ALTER COLUMN image_path TYPE TEXT;
 
 INSERT INTO public.post(
     id, latitude, likes_count, longitude, user_id, created_at, description, image_path
 )
 VALUES
-    (1, 45.2671, 25, 19.8335, 1, '2024-11-11T08:30:00', 'Post 1 description', '/assets/images/bunny1.jpeg'),
-    (2, 44.8176, 15, 20.4633, 1, '2024-11-11T09:00:00', 'Post 2 description', '/assets/images/bunny2.jpeg'),
-    (3, 43.8486, 50, 21.7555, 1, '2024-11-10T16:45:00', 'Post 3 description', '/assets/images/bunny3.jpeg'),
-    (4, 40.6406, 10, 22.2287, 4, '2024-11-09T12:30:00', 'Post 4 description', '/assets/images/bunny4.jpeg'),
-    (5, 46.0511, 100, 19.8484, 5, '2024-11-08T14:00:00', 'Post 5 description', '/assets/images/bunny3.jpeg');
+    (100, 45.2671, 25, 19.8335, 1, '2024-11-11T08:30:00', 'Post 1 description', '/assets/images/bunny1.jpeg'),
+    (101, 44.8176, 15, 20.4633, 1, '2024-11-11T09:00:00', 'Post 2 description', '/assets/images/bunny2.jpeg'),
+    (102, 43.8486, 50, 21.7555, 1, '2024-11-10T16:45:00', 'Post 3 description', '/assets/images/bunny3.jpeg'),
+    (103, 40.6406, 10, 22.2287, 4, '2024-11-09T12:30:00', 'Post 4 description', '/assets/images/bunny4.jpeg'),
+    (104, 46.0511, 100, 19.8484, 5, '2024-11-08T14:00:00', 'Post 5 description', '/assets/images/bunny3.jpeg');

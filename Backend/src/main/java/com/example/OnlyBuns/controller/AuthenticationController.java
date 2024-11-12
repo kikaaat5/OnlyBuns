@@ -105,11 +105,11 @@ public class AuthenticationController {
 		String pass = passwordEncoder.encode(userRequest.getPassword());
 
 		if (existUser != null) {
-			throw new ResourceConflictException(userRequest.getId(), "User with this email and password already exists");
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		if (usUser != null) {
-			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 
 		try{
