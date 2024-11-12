@@ -2,8 +2,10 @@ package com.example.OnlyBuns.service;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import com.example.OnlyBuns.dto.UserRequest;
+import com.example.OnlyBuns.model.Address;
 import com.example.OnlyBuns.model.Role;
 import com.example.OnlyBuns.model.User;
+import com.example.OnlyBuns.repository.AddressRepository;
 import com.example.OnlyBuns.repository.ClientRepository;
 import com.example.OnlyBuns.model.Client;
 import jakarta.transaction.Transactional;
@@ -34,6 +36,9 @@ public class ClientService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private AddressService addressService;
+
     public List<Client> findAll() {
         return clientRepository.findAll();
     }
@@ -42,12 +47,26 @@ public class ClientService {
 
     public Client save(UserRequest userRequest) {
         Client c = new Client();
+        Address address = addressService.findByStreetAndCityAndPostalCodeAndCountry(
+                userRequest.getStreet(),
+                userRequest.getCity(),
+                userRequest.getPostalCode(),
+                userRequest.getCountry());
+
+        if (address == null) {
+            address = new Address(userRequest.getStreet(),
+                    userRequest.getCity(),
+                    userRequest.getPostalCode(),
+                    userRequest.getCountry());
+            addressService.save(address);
+        }
         c.setUsername(userRequest.getUsername());
 
         // pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
         // treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
         c.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         c.setFirstName(userRequest.getFirstname());
+        c.setAddress(address);
         c.setLastName(userRequest.getLastname());
         c.setEmail(userRequest.getEmail());
         c.setFollowing(0);

@@ -44,11 +44,18 @@ public class User implements UserDetails {
     @Column(name = "lastname", unique = false, nullable = false)
     private String lastname;
 
+    //@Column(name = "address", unique = false, nullable = false)
+    //private String address;
+
     @Column(name = "enabled", unique = false, nullable = false)
     private boolean enabled;
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    protected Address address;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",

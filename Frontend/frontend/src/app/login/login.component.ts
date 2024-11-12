@@ -45,8 +45,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("da vidimo koji je tokenenenenenen")
-    console.log(localStorage.getItem("jwt")); 
     this.route.params
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
