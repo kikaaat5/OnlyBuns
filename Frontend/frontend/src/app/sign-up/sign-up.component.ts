@@ -88,19 +88,32 @@ export class SignUpComponent implements OnInit {
   onSubmit() {
     this.notification;
     this.submitted = true;
-    this.authService.signup(this.form.value)
-      .subscribe(() => {
+    this.authService.signup(this.form.value).subscribe(
+      () => {
         this.notification = {
           msgType: 'success',
           msgBody: 'Registration successful! Please check your email to activate your account.'
         };
-        this.submitted = false;
       },
-        error => {
-          this.submitted = false;
-          console.log('Sign up error');
-          this.notification = { msgType: 'error', msgBody: error['error'].message };
-        });
+      error => {
+        if (error.status === 400) {
+          this.notification = {
+            msgType: 'error',
+            msgBody: 'A user with this email already exists. Please use a different email.'
+          };
+        } else if(error.status == 409) {
+          this.notification = {
+            msgType: 'error',
+            msgBody: 'A user with this username already exists. Please use a different username.'
+          };
+        } else {
+          this.notification = {
+            msgType: 'error',
+            msgBody: 'Error occured!'
+          };
+        }
+      }
+    );
   }
 
 
