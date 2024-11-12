@@ -19,9 +19,12 @@
                 <span>All Posts</span>  
               </button>
 
-            <!--<button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button">
-                <span>Hello, {{userName()}}</span>
-            </button> -->
+
+            <!-- <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button" 
+            mat-button>
+                <span>Hello, {{userName()}}</span> -->
+
+
 
             <!-- Logout button visible only when user is signed in -->
             <button color="accent" *ngIf="hasSignedIn()" mat-raised-button (click)="logout()">
