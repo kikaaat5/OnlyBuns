@@ -29,6 +29,8 @@ public class Post {
 
     @Getter @Setter
     private double latitude;
+
+    @Getter @Setter
     private int likesCount;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

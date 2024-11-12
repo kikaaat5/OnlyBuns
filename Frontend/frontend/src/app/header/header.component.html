@@ -11,6 +11,9 @@
              <button color="warn" mat-raised-button routerLink="/client-list">
                 <span>Clients</span>
             </button>
+            <button color="warn" mat-raised-button routerLink="/posts">
+                <span>All Posts</span>  
+              </button>
 
             <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button" 
             mat-button>

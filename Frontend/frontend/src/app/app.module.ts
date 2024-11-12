@@ -21,6 +21,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { ClientListComponent } from './client-list/client-list.component';
+import { PostListComponent } from './post-list/post-list.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ClientListComponent } from './client-list/client-list.component';
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
-    ClientListComponent
+    ClientListComponent,
+    PostListComponent
   ],
 
   imports: [
