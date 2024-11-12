@@ -42,11 +42,20 @@ export class PostListComponent implements OnInit {
       }
     );
   } 
+ 
   deletePost(postId: number): void {
-    const userId = 1;  
-    
-    this.postService.deletePost(postId, userId).subscribe(() => {
-      this.loadPosts(); 
-    });
-  }
+    const userId = 1; 
+    this.postService.deletePost(postId, userId).subscribe(
+        (response) => {
+          console.log('Response:', response);
+            console.log(`Post ${postId} deleted successfully`);
+            this.loadPosts();  
+        },
+        (error) => {
+          
+            console.error(`Error deleting post ${postId}`, error);
+        }
+    );
+}
+
 }

@@ -4,6 +4,8 @@
     <div *ngFor="let post of posts" class="post-card">
       <div class="post-header">
         <h3>{{ post.description }}</h3>
+        <button (click)="deletePost(post.id)" class="delete-button">×</button>
+
         <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
       </div>
       

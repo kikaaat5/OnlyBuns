@@ -38,6 +38,27 @@
     color: #333;
     margin-bottom: 5px;
   }
+
+  .post-header {
+    position: relative;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: transparent;
+    color: #e74c3c;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.delete-button:hover {
+    color: #c0392b;
+}
   
   .post-location {
     font-size: 14px;
