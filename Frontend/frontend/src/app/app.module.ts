@@ -25,6 +25,11 @@ import { NearbyComponent } from './home/nearby/nearby.component';
 import { ChatComponent } from './home/chat/chat.component';
 import { ProfileComponent } from './home/profile/profile.component';
 import { HomeComponent } from './home/home.component';
+import { PostComponent } from './home/post/post.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -38,7 +43,8 @@ import { HomeComponent } from './home/home.component';
     TrendsComponent,
     NearbyComponent,
     ChatComponent,
-    ProfileComponent
+    ProfileComponent,
+    PostComponent
   ],
 
   imports: [
@@ -49,6 +55,10 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     FormsModule,
     AngularMaterialModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
 
   ],
   providers: [{

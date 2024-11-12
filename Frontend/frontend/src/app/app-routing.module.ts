@@ -8,6 +8,7 @@ import { TrendsComponent } from './home/trends/trends.component';
 import { ChatComponent } from './home/chat/chat.component';
 import { ProfileComponent } from './home/profile/profile.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
+import { PostComponent } from './home/post/post.component';
 
 const routes: Routes = [
   {
@@ -19,8 +20,8 @@ const routes: Routes = [
     { path: 'trends', component: TrendsComponent },
     { path: 'nearby', component: NearbyComponent },
     { path: 'chat', component: ChatComponent }, 
-    { path: 'profile',component: ProfileComponent 
-    },
+    { path: 'profile',component: ProfileComponent },
+    { path: 'post', component: PostComponent}
   ]},
   {
     path: 'login',

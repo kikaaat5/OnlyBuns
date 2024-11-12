@@ -1,0 +1,37 @@
+<div class="post-list">
+    <button mat-raised-button color="primary" (click)="openCreatePostForm()">+ Dodaj novu objavu</button>
+  
+    <!-- Forma za novu objavu -->
+    <div *ngIf="showCreatePostForm" class="create-post-form">
+      <h3>Create new post</h3>
+      <form (ngSubmit)="submitNewPost()">
+        <!-- Opis objave -->
+        <mat-form-field>
+          <textarea matInput placeholder="Opis" [(ngModel)]="newPost.description" name="description" required></textarea>
+        </mat-form-field>
+  
+        <!-- Slika objave -->
+        <div>
+          <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+        </div>
+        <img *ngIf="newPost.image" [src]="newPost.image" alt="Selected Image" class="preview-image" />
+  
+        <!-- Lokacija objave (adresa) -->
+        <mat-form-field>
+          <input matInput placeholder="Lokacija" [(ngModel)]="newPost.location" name="location" />
+        </mat-form-field>
+  
+        <!-- Datum i vreme kreiranja objave - automatski setovan -->
+        <p><strong>Vreme kreiranja:</strong> {{ newPost.creationTime | date:'short' }}</p>
+  
+        <button mat-raised-button color="primary" type="submit">Dodaj objavu</button>
+        <button mat-button (click)="closeCreatePostForm()">Otkaži</button>
+      </form>
+    </div>
+  
+    <!-- Prikaz postojećih objava -->
+    <div *ngFor="let post of posts">
+      <app-post [post]="post"></app-post>
+    </div>
+  </div>
+  

@@ -39,4 +39,9 @@ public class PostController {
     public Post updatePost(@PathVariable int id, @RequestBody Post updatedPost, @RequestParam int userId) {
         return postService.updatePost(id, updatedPost, userId);
     }
+
+    @GetMapping("/posts/{userId}")
+    public List<Post> findPostsByUserId(@PathVariable int userId) {
+        return postService.findPostsByUserId(userId);
+    }
 }
