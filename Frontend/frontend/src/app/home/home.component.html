@@ -2,31 +2,35 @@
   <div class="menu-container">
     <ul>
       <li>
-        <!--Dodaj za autentifikaciju kod -->
-        <a routerLink="/following">
+        <a routerLink="following" routerLinkActive="active">
           <i class="fas fa-user-friends"></i> Following
         </a>
       </li>
       <li>
-        <a routerLink="/trends">
+        <a routerLink="trends" routerLinkActive="active">
           <i class="fas fa-chart-line"></i> Trending
         </a>
       </li>
       <li>
-        <a routerLink="/nearby">
+        <a routerLink="nearby" routerLinkActive="active">
           <i class="fas fa-map-marker-alt"></i> Nearby
         </a>
       </li>
       <li>
-        <a routerLink="/chat">
+        <a routerLink="chat" routerLinkActive="active">
           <i class="fas fa-comments"></i> Chat
         </a>
       </li>
       <li>
-        <a routerLink="/profile">
+        <a routerLink="profile" routerLinkActive="active">
           <i class="fas fa-user"></i> Profile
         </a>
       </li>
     </ul>
   </div>
 </div>
+
+
+<router-outlet></router-outlet>
+
+

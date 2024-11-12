@@ -19,15 +19,18 @@ import {ConfigService} from './service/config.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
-import { FollowingComponent } from './following/following.component';
-import { TrendsComponent } from './trends/trends.component';
-import { NearbyComponent } from './nearby/nearby.component';
-import { ChatComponent } from './chat/chat.component';
-import { ProfileComponent } from './profile/profile.component';
+import { FollowingComponent } from './home/following/following.component';
+import { TrendsComponent } from './home/trends/trends.component';
+import { NearbyComponent } from './home/nearby/nearby.component';
+import { ChatComponent } from './home/chat/chat.component';
+import { ProfileComponent } from './home/profile/profile.component';
+import { HomeComponent } from './home/home.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
@@ -45,7 +48,8 @@ import { ProfileComponent } from './profile/profile.component';
     NoopAnimationsModule,
     HttpClientModule,
     FormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

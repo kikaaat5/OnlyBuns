@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   fooResponse = {};
   whoamIResponse = {};
   allUserResponse = {};
+  selectedComponent: string ='following';
 
   constructor(
     private config: ConfigService,
@@ -22,6 +23,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  setComponent(component: string) {
+    this.selectedComponent = component;
   }
 
   makeRequest(path:any) {
