@@ -53,6 +53,7 @@ public class User implements UserDetails {
     @Column(name = "last_password_reset_date")
     protected Timestamp lastPasswordResetDate;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     protected Address address;

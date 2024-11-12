@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PostService } from '../service/post.service'; 
 import { DatePipe } from '@angular/common'; 
+import {UserService} from '../service/user.service';
 
 @Component({
   selector: 'app-post-list',
@@ -14,12 +15,16 @@ export class PostListComponent implements OnInit {
   editedPost: any = null;
   selectedImageBase64: string | null = null;
 
-  constructor(private postService: PostService) {}
+  constructor(private userService: UserService, private postService: PostService) {}
 
 
   
   ngOnInit(): void {
     this.loadPosts();
+  }
+
+  hasSignedIn() {
+    return !!this.userService.currentUser;
   }
   
   getStaticComments() {
@@ -36,8 +41,15 @@ export class PostListComponent implements OnInit {
         // Dodavanje statičkih komentara
         this.posts = data.map(post => ({
           ...post,
-          comments: this.getStaticComments()  // Dodaj komentare svakom postu
-        }));
+          createdAt: new Date(
+            Number(post.createdAt[0]),    // Year
+            Number(post.createdAt[1]) - 1, // Month (subtract 1 because months are 0-indexed in JS Date)
+            Number(post.createdAt[2]),    // Day
+            Number(post.createdAt[3]),    // Hour
+            Number(post.createdAt[4])     // Minute
+          ),
+          comments: this.getStaticComments(),  // Dodaj komentare svakom postu
+        })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         console.log(this.posts);
       },
       (error) => {

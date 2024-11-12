@@ -20,6 +20,7 @@ public class Post {
     @Getter @Setter
     private String description;
 
+    @Getter @Setter
     private LocalDateTime createdAt;
 
     @Getter @Setter

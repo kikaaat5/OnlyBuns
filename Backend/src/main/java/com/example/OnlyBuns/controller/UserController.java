@@ -54,11 +54,11 @@ public class UserController {
 
 	@GetMapping("/whoami")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
-	public UserRequest user(Principal user) {
+	public User user(Principal user) {
 		System.out.println("ususussusuusuassa");
 		User u = this.userService.findByEmail(user.getName());
-		UserRequest ur = modelMapper.map(u, UserRequest.class);
-		return ur;
+		//UserRequest ur = modelMapper.map(u, UserRequest.class);
+		return u;
 	}
 	
 	@GetMapping("/foo")

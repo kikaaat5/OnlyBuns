@@ -4,6 +4,7 @@ import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.Client;
 import com.example.OnlyBuns.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ClientController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Client> getAllClients() {
         return clientService.findAll();
     }

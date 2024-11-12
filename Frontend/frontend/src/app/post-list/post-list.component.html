@@ -33,8 +33,8 @@
       <div class="post-header">
         <h3>{{ post.description }}</h3>
         <div class="post-actions">
-            <button (click)="deletePost(post.id)" class="delete-button">×</button>
-            <button (click)="editPost(post)" class="edit-button">✎</button>
+            <button (click)="deletePost(post.id)" *ngIf="hasSignedIn()" class="delete-button">×</button>
+            <button (click)="editPost(post)" *ngIf="hasSignedIn()" class="edit-button">✎</button>
         </div>
 
         <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
