@@ -72,11 +72,12 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
-						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
+						.requestMatchers("/api/clients").permitAll()
+						//.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
 				.formLogin(Customizer.withDefaults())  // Omogućava formu za prijavu
-				.addFilterBefore(new TokenAuthenticationFilter(new TokenUtils(), userService()), BasicAuthenticationFilter.class) // Dodaj tvoj filter za token autentifikaciju
+				//.addFilterBefore(new TokenAuthenticationFilter(new TokenUtils(), userService()), BasicAuthenticationFilter.class) // Dodaj tvoj filter za token autentifikaciju
 				.logout(logout -> logout
 						.logoutUrl("/signout")
 						.logoutSuccessUrl("/signin")
@@ -90,9 +91,9 @@ public class WebSecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
-				.requestMatchers(HttpMethod.POST, "/auth/login")
-				.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
-						"/**/*.html", "/**/*.css", "/**/*.js");
+				.requestMatchers(HttpMethod.POST, "/auth/login");
+				//.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
+						//"/**/*.html", "/**/*.css", "/**/*.js");
 	}
 
 }

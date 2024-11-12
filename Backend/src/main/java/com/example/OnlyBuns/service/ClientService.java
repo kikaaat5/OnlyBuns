@@ -56,11 +56,11 @@ public class ClientService {
     }
 
     public List<Client> searchByName(String name) {
-        return clientRepository.findByNameContainingIgnoreCase(name);
+        return clientRepository.findByFirstnameContainingIgnoreCase(name);
     }
 
     public List<Client> searchBySurname(String surname) {
-        return clientRepository.findBySurnameContainingIgnoreCase(surname);
+        return clientRepository.findByLastnameContainingIgnoreCase(surname);
     }
 
     public List<Client> searchByEmail(String email) {

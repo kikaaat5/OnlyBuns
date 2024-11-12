@@ -7,6 +7,11 @@
             <button color="accent" *ngIf="!hasSignedIn()" mat-raised-button routerLink="/login">
                 <span>Login</span>
             </button>
+             
+             <button color="warn" mat-raised-button routerLink="/client-list">
+                <span>Clients</span>
+            </button>
+
             <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button" 
             mat-button>
                 <span>Hello, {{userName()}}</span>

@@ -15,17 +15,20 @@ import {FooService} from './service/foo.service';
 import {AuthService} from './service/auth.service';
 import {UserService} from './service/user.service';
 import {ConfigService} from './service/config.service';
+import { ClientService } from './service/client.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
+import { ClientListComponent } from './client-list/client-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SignUpComponent,
     LoginComponent,
-    HeaderComponent
+    HeaderComponent,
+    ClientListComponent
   ],
 
   imports: [
@@ -47,6 +50,7 @@ import { AngularMaterialModule } from './angular-material/angular-material.modul
   ApiService,
   UserService,
   ConfigService,
+  ClientService,
 ],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]
