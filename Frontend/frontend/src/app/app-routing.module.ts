@@ -20,9 +20,7 @@ import { MapComponent } from './map/map.component';
 const routes: Routes = [
   {
     path: '',
-    component: SignUpComponent,
-    redirectTo: '/home',
-    pathMatch: 'full'
+    component: SignUpComponent
   },
   { path: 'home', component: HomeComponent, children: [
     { path: 'following', component: FollowingComponent },

@@ -1,5 +1,6 @@
 import { afterNextRender, Component, Input } from '@angular/core';
 import { Post } from 'src/app/model/post.model';
+import { UserService } from 'src/app/service';
 import { MapService } from 'src/app/service/map.service';
 import { PostService } from 'src/app/service/post.service';
 
@@ -10,16 +11,17 @@ import { PostService } from 'src/app/service/post.service';
 })
 export class PostComponent {
 
-  constructor(private postService: PostService, private mapService: MapService) {}
+  constructor(private postService: PostService, private mapService: MapService,private userService: UserService) {}
 
   posts = []; // Ovo će biti lista postojećih objava, popunjena iz servisa
   showCreatePostForm = false;
   showMap = false;
   location:string ='';
+  loggedUserId: number = -1;
 
   newPost: Post = {
     id: 0, 
-    userId: 1, // Example user ID; replace or set dynamically as needed
+    userId: -1, // Example user ID; replace or set dynamically as needed
     description: '',
     createdAt: new Date().toISOString(),
     imagePath: '',
@@ -30,6 +32,7 @@ export class PostComponent {
   };
 
   ngOnInit(): void {
+    this.loggedUserId = this.userService.getUserId() || -1;
   }
 
   openMap(){
@@ -44,7 +47,7 @@ export class PostComponent {
     this.showCreatePostForm = false;
     this.newPost = {
       id: 0,
-      userId: 1,
+      userId: 0,
       description: '',
       createdAt: new Date().toISOString(),
       imagePath: '',
@@ -82,6 +85,7 @@ export class PostComponent {
   }
 
   submitNewPost() {
+    this.newPost.userId = this.loggedUserId;
     this.postService.createPost(this.newPost).subscribe(
       response => {
         console.log('Post created successfully:', response);
