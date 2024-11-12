@@ -1,5 +1,7 @@
 package com.example.OnlyBuns.dto;
 
+import com.example.OnlyBuns.model.Address;
+
 // DTO koji preuzima podatke iz HTML forme za registraciju
 public class UserRequest {
 
@@ -16,6 +18,48 @@ public class UserRequest {
 	private String email;
 
 	private String role;
+
+	//private AddressRequest address;
+
+	private String city;
+
+	private String street;
+
+	private String country;
+
+	private Integer postalCode;
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public Integer getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(Integer postalCode) {
+		this.postalCode = postalCode;
+	}
 
 	public String getUsername() {
 		return username;
@@ -40,6 +84,8 @@ public class UserRequest {
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
+
+	//public void setAddress(AddressRequest address) { this.address = address; }
 
 	public String getLastname() {
 		return lastname;

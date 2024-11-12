@@ -45,7 +45,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(localStorage.getItem("jwt")); 
     this.route.params
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
@@ -74,6 +73,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.form.value)
       .subscribe(data => {
         console.log(data);
+        this.userService.getMyInfo().subscribe();
         this.router.navigate(['/home']);
         },
         error => {

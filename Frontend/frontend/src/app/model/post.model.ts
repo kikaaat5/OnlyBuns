@@ -2,7 +2,7 @@ export interface Post {
     id: number;
     userId: number;
     description: string;
-    createdAt: string;  
+    createdAt: String;  
     imagePath: string;
     longitude: number;
     latitude: number;

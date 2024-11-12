@@ -4,12 +4,17 @@ import com.example.OnlyBuns.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
+
     List<Client> findByFirstnameContainingIgnoreCase(String name);
     List<Client> findByLastnameContainingIgnoreCase(String surname);
+
+  
+    @Query("SELECT b from Client b where b.email=:string")
+    Client findByEmail(String string);
+
     List<Client> findByEmailContainingIgnoreCase(String email);
 
     @Query("SELECT c FROM Client c WHERE c.numberOfPosts BETWEEN :minPosts AND :maxPosts")

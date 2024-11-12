@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.User;
 import com.example.OnlyBuns.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.modelmapper.ModelMapper;
 
 // Primer kontrolera cijim metodama mogu pristupiti samo autorizovani korisnici
 @RestController
@@ -31,6 +32,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	// Za pristup ovoj metodi neophodno je da ulogovani korisnik ima ADMIN ulogu
 	// Ukoliko nema, server ce vratiti gresku 403 Forbidden
@@ -51,9 +55,13 @@ public class UserController {
 	@GetMapping("/whoami")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
 	public User user(Principal user) {
-		return this.userService.findByUsername(user.getName());
+		System.out.println("ususussusuusuassa");
+		User u = this.userService.findByEmail(user.getName());
+		//UserRequest ur = modelMapper.map(u, UserRequest.class);
+		return u;
 	}
-	
+
+
 	@GetMapping("/foo")
     public Map<String, String> getFoo() {
         Map<String, String> fooObj = new HashMap<>();

@@ -33,8 +33,12 @@ export class PostService {
       );
   }
 
-  updatePost(id: number, updatedPost: any, userId: number): Observable<any> {
+  /*updatePost(id: number, updatedPost: any, userId: number): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}?userId=${userId}`, updatedPost);
+  }*/
+
+  updatePost(postId: number, updatedPost: any, userId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${postId}?userId=${userId}`, updatedPost);
   }
 
   createPost(post: Post): Observable<Post> {

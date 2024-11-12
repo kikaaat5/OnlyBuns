@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { LoginComponent } from './login/login.component';
@@ -22,6 +21,8 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { ClientListComponent } from './client-list/client-list.component';
 import { PostListComponent } from './post-list/post-list.component';
+import { ActivateAccountComponent } from './activate-account/activate-account.component';
+
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
@@ -34,6 +35,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MapComponent } from './map/map.component';
+
 
 
 @NgModule({
@@ -52,6 +54,12 @@ import { MapComponent } from './map/map.component';
     ClientListComponent,
     PostListComponent,
     MapComponent
+    ActivateAccountComponent,
+    FollowingComponent,
+    TrendsComponent,
+    NearbyComponent,
+    ChatComponent,
+    ProfileComponent
   ],
 
   imports: [
@@ -66,6 +74,7 @@ import { MapComponent } from './map/map.component';
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
+
 
   ],
   providers: [{

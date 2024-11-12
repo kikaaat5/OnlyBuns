@@ -1,30 +1,36 @@
 <mat-toolbar class="app-navbar" color="primary">
     <div class="right">
         <div fxFlex="1 1 auto" fxLayout="row" fxLayoutAlign="flex-end center">
+            <!-- Sign up button visible only when user is not signed in -->
             <button color="accent" *ngIf="!hasSignedIn()" mat-raised-button routerLink="/signup">
                 <span>Sign up</span>
             </button>
+
+            <!-- Login button visible only when user is not signed in -->
             <button color="accent" *ngIf="!hasSignedIn()" mat-raised-button routerLink="/login">
                 <span>Login</span>
             </button>
+
              
-             <button color="warn" mat-raised-button routerLink="/client-list">
+             <button *ngIf="hasSignedIn() && isAdmin()" color="warn" mat-raised-button routerLink="/client-list">
                 <span>Clients</span>
             </button>
             <button color="warn" mat-raised-button routerLink="/posts">
                 <span>All Posts</span>  
               </button>
 
-            <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button" 
+
+            <!-- <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-button" 
             mat-button>
-                <span>Hello, {{userName()}}</span>
+                <span>Hello, {{userName()}}</span> -->
+
+
+
+            <!-- Logout button visible only when user is signed in -->
+            <button color="accent" *ngIf="hasSignedIn()" mat-raised-button (click)="logout()">
+                <span>Logout</span>
+
             </button>
-            <button *ngIf="hasSignedIn()" [matMenuTriggerFor]="userMenu" class="greeting-hamburger" 
-            mat-icon-button>
-            </button>
-            <mat-menu #userMenu ="matMenu">
-                <mat-button (click)="logout()">sign out</mat-button>
-            </mat-menu>
         </div>
     </div>
 </mat-toolbar>

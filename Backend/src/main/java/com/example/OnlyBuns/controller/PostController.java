@@ -4,6 +4,7 @@ import com.example.OnlyBuns.model.Post;
 import com.example.OnlyBuns.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +37,17 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     public ResponseEntity<Void> deletePost(@PathVariable int postId, @RequestParam int userId) {
         postService.deletePost(postId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     public Post updatePost(@PathVariable int id, @RequestBody Post updatedPost, @RequestParam int userId) {
         return postService.updatePost(id, updatedPost, userId);
+
     }
 
     @GetMapping("/posts/{userId}")

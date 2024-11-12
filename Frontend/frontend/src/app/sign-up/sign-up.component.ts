@@ -54,14 +54,30 @@ export class SignUpComponent implements OnInit {
       });
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // Kreiranje forme sa validacijom
     this.form = this.formBuilder.group({
-      username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(64)])],
-      password: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(32)])],
-      firstname: [''],
-      lastname: [''],
-      email: [''],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(64)]],
+      password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(32)]],
+      confirmpassword: ['', Validators.required],
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      street: ['', Validators.required],
+      city: ['', Validators.required],
+      postalCode: ['', Validators.required],
+      country: ['', Validators.required],
       role: ['ROLE_CLIENT']
-    });
+    }, { validator: this.passwordMatchValidator }); 
+  }
+
+  passwordMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get('password')?.value;
+    const confirmPassword = formGroup.get('confirmpassword')?.value;
+    if (password !== confirmPassword) {
+      formGroup.get('confirmpassword')?.setErrors({ mismatch: true });
+    } else {
+      formGroup.get('confirmpassword')?.setErrors(null);
+    }
   }
 
   ngOnDestroy() {
@@ -70,24 +86,21 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
     this.notification;
     this.submitted = true;
     this.authService.signup(this.form.value)
-      .subscribe(data => {
-        console.log(data);
-        this.authService.login(this.form.value).subscribe(() => {
-        });
-        this.router.navigate(['/home']);
+      .subscribe(() => {
+        this.notification = {
+          msgType: 'success',
+          msgBody: 'Registration successful! Please check your email to activate your account.'
+        };
+        this.submitted = false;
       },
         error => {
           this.submitted = false;
           console.log('Sign up error');
           this.notification = { msgType: 'error', msgBody: error['error'].message };
         });
-
   }
 
 
