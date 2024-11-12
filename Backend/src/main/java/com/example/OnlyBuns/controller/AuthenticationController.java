@@ -49,6 +49,9 @@ public class AuthenticationController {
 	private ClientService clientService;
 
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
 	private AdministratorService administratorService;
     @Autowired
     private EmailService emailService;
@@ -60,8 +63,11 @@ public class AuthenticationController {
 			@RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
 		// Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
 		// AuthenticationException
+		System.out.println("asdaadaa" + authenticationRequest.getEmail());
+		System.out.println("asdaadaa" + authenticationRequest.getPassword());
+
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+				authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
 		// Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
 		// kontekst
@@ -79,9 +85,30 @@ public class AuthenticationController {
 	// Endpoint za registraciju novog korisnika
 	@PostMapping("/signup")
 	public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findByUsername(userRequest.getUsername());
+
+		if (userRequest.getFirstname() == null || userRequest.getFirstname().trim().isEmpty() ||
+				userRequest.getLastname() == null || userRequest.getLastname().trim().isEmpty() ||
+				userRequest.getCity() == null || userRequest.getCity().trim().isEmpty() ||
+				userRequest.getCountry() == null || userRequest.getCountry().trim().isEmpty() ||
+				userRequest.getStreet() == null || userRequest.getStreet().trim().isEmpty() ||
+				userRequest.getPostalCode() == null  ||
+				userRequest.getEmail() == null || userRequest.getEmail().trim().isEmpty() ||
+				userRequest.getUsername() == null || userRequest.getUsername().trim().isEmpty() ||
+				userRequest.getPassword() == null || userRequest.getPassword().trim().isEmpty()) {
+
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		User existUser = this.userService.findByUsername(userRequest.getEmail());
+		User usUser = this.userService.findByEmail(userRequest.getUsername());
+
+		String pass = passwordEncoder.encode(userRequest.getPassword());
 
 		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getId(), "User with this email and password already exists");
+		}
+
+		if (usUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
 		}
 

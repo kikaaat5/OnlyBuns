@@ -17,6 +17,8 @@ export class UserService {
   }
 
   getMyInfo() {
+    console.log('usaoooaoaoaoaoaoao');
+    console.log(localStorage.getItem("jwt")); 
     return this.apiService.get(this.config.whoami_url)
       .pipe(map(user => {
         this.currentUser = user;

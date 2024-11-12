@@ -1,0 +1,60 @@
+app-card {
+    margin: 0 50px 0 0;
+    color: solid salmon;
+}
+
+/* Stilizacija glavnog kontejnera */
+.social-network-nav {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f0f2f5;
+  }
+  
+  /* Stilizacija menija */
+  .menu-container ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem; /* Razmak između stavki */
+  }
+  
+  /* Stilizacija linkova */
+  .menu-container ul li a {
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+  
+  .menu-container ul li a:hover {
+    background-color: #eceff1;
+    color: salmon;
+  }
+  
+  /* Stilizacija ikona */
+  .menu-container ul li a i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    color: salmon;
+  }
+  
+  /* Responsive dizajn */
+  @media (max-width: 768px) {
+    .menu-container ul {
+      flex-direction: column; /* Menjanje poravnanja na vertikalno na manjim ekranima */
+    }
+  
+    .menu-container ul li a {
+      font-size: 1rem;
+    }
+  
+    .menu-container ul li a i {
+      font-size: 1.2rem;
+    }
+  }
+  
