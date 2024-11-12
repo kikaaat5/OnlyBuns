@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { ClientListComponent } from './client-list/client-list.component';
+import { PostListComponent } from './post-list/post-list.component';
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { ChatComponent } from './home/chat/chat.component';
@@ -13,13 +15,13 @@ import { PostComponent } from './home/post/post.component';
 const routes: Routes = [
   {
     path: '',
-    component: SignUpComponent, 
+    component: SignUpComponent,
   },
   { path: 'home', component: HomeComponent, children: [
     { path: 'following', component: FollowingComponent },
     { path: 'trends', component: TrendsComponent },
     { path: 'nearby', component: NearbyComponent },
-    { path: 'chat', component: ChatComponent }, 
+    { path: 'chat', component: ChatComponent },
     { path: 'profile',component: ProfileComponent },
     { path: 'post', component: PostComponent}
   ]},
@@ -30,8 +32,14 @@ const routes: Routes = [
   {
     path: 'signup',
     component: SignUpComponent,
-  }
-  
+  },
+  {
+    path: 'client-list', component: ClientListComponent
+  },
+  {
+    path: 'posts',
+    component: PostListComponent
+  },
 ];
 
 @NgModule({

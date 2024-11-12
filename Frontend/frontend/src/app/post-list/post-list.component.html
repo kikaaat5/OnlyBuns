@@ -1,0 +1,32 @@
+<div class="post-list">
+    <h2>Posts</h2>
+  
+    <div *ngFor="let post of posts" class="post-card">
+      <div class="post-header">
+        <h3>{{ post.description }}</h3>
+        <button (click)="deletePost(post.id)" class="delete-button">×</button>
+
+        <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
+      </div>
+      
+      <div class="post-image">
+        <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" />
+        <ng-template #noImage>
+          <p>No image available</p>
+        </ng-template>
+      </div>
+  
+      <div class="post-footer">
+        <p>Likes: {{ post.likesCount }}</p>
+      </div>
+      
+      <div class="post-comments">
+        <h4>Comments</h4>
+        <div *ngFor="let comment of post.comments" class="comment">
+          <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
+          <small>{{ comment.createdAt | date: 'short' }}</small>
+        </div>
+
+    </div>
+  </div>
+  

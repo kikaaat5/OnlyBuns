@@ -7,6 +7,7 @@ import com.example.OnlyBuns.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,6 +23,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
@@ -42,8 +46,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
- 	@Bean
+	@Bean
  	public DaoAuthenticationProvider authenticationProvider() {
  	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
  	    authProvider.setUserDetailsService(userService());
@@ -70,13 +73,16 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(authorize -> authorize
+								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
-						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
+						.requestMatchers("/api/clients").permitAll()
+								.requestMatchers("/api/posts").permitAll()
+						//.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
-				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
+				//.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
 				.formLogin(Customizer.withDefaults())  // Omogućava formu za prijavu
-				.addFilterBefore(new TokenAuthenticationFilter(new TokenUtils(), userService()), BasicAuthenticationFilter.class) // Dodaj tvoj filter za token autentifikaciju
+				//.addFilterBefore(new TokenAuthenticationFilter(new TokenUtils(), userService()), BasicAuthenticationFilter.class) // Dodaj tvoj filter za token autentifikaciju
 				.logout(logout -> logout
 						.logoutUrl("/signout")
 						.logoutSuccessUrl("/signin")
@@ -90,9 +96,9 @@ public class WebSecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
-				.requestMatchers(HttpMethod.POST, "/auth/login")
-				.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
-						"/**/*.html", "/**/*.css", "/**/*.js");
+				.requestMatchers(HttpMethod.POST, "/auth/login");
+				//.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
+						//"/**/*.html", "/**/*.css", "/**/*.js");
 	}
 
 }

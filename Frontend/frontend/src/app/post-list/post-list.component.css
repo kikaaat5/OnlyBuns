@@ -1,0 +1,121 @@
+/* Centriranje kontejnera za postove */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    max-width: 600px; /* Ograničava širinu liste postova */
+  }
+  
+  /* Naslov liste */
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+  }
+  
+  /* Stilovi za svaku objavu */
+  .post-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%; /* Ograničava širinu posta */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Stil za zaglavlje posta */
+  .post-header h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .post-header {
+    position: relative;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: transparent;
+    color: #e74c3c;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.delete-button:hover {
+    color: #c0392b;
+}
+  
+  .post-location {
+    font-size: 14px;
+    color: #777;
+    margin-top: -8px; /* Malo smanji razmak ispod */
+  }
+  
+  /* Stil za sliku - koristi celu širinu posta i centriraj */
+  .post-image img {
+    width: 100%;
+    max-height: 400px; /* Maksimalna visina slike */
+    object-fit: cover; /* Zadrži proporcije i isecaj po potrebi */
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .no-image {
+    font-size: 14px;
+    color: #bbb;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  /* Footer za prikaz lajkova */
+  .post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Stil za komentare */
+  .post-comments {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd; /* Linija između posta i komentara */
+  }
+  
+  .comment {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .comment p {
+    margin: 0;
+  }
+  
+  .comment small {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  

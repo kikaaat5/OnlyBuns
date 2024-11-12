@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';  
+import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -15,10 +15,13 @@ import {FooService} from './service/foo.service';
 import {AuthService} from './service/auth.service';
 import {UserService} from './service/user.service';
 import {ConfigService} from './service/config.service';
+import { ClientService } from './service/client.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
+import { ClientListComponent } from './client-list/client-list.component';
+import { PostListComponent } from './post-list/post-list.component';
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
@@ -44,7 +47,9 @@ import { MatSelectModule } from '@angular/material/select';
     NearbyComponent,
     ChatComponent,
     ProfileComponent,
-    PostComponent
+    PostComponent,
+    ClientListComponent,
+    PostListComponent
   ],
 
   imports: [
@@ -71,6 +76,7 @@ import { MatSelectModule } from '@angular/material/select';
   ApiService,
   UserService,
   ConfigService,
+  ClientService
 ],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]

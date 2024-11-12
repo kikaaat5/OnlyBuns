@@ -55,13 +55,13 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
-    /*public List<Client> searchByName(String name) {
-        return clientRepository.findByNameContainingIgnoreCase(name);
+    public List<Client> searchByName(String name) {
+        return clientRepository.findByFirstnameContainingIgnoreCase(name);
     }
 
     public List<Client> searchBySurname(String surname) {
-        return clientRepository.findBySurnameContainingIgnoreCase(surname);
-    }*/
+        return clientRepository.findByLastnameContainingIgnoreCase(surname);
+    }
 
     public List<Client> searchByEmail(String email) {
         return clientRepository.findByEmailContainingIgnoreCase(email);

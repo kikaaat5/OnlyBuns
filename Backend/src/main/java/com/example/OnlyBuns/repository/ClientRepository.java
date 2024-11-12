@@ -8,8 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
-    //List<Client> findByNameContainingIgnoreCase(String name);
-  //  List<Client> findBySurnameContainingIgnoreCase(String surname);
+    List<Client> findByFirstnameContainingIgnoreCase(String name);
+    List<Client> findByLastnameContainingIgnoreCase(String surname);
     List<Client> findByEmailContainingIgnoreCase(String email);
 
     @Query("SELECT c FROM Client c WHERE c.numberOfPosts BETWEEN :minPosts AND :maxPosts")
