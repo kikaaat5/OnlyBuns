@@ -21,8 +21,7 @@ const routes: Routes = [
   {
     path: '',
     component: SignUpComponent,
-    redirectTo: '/home',
-    pathMatch: 'full'
+   
   },
   { path: 'home', component: HomeComponent, children: [
     { path: 'following', component: FollowingComponent },
