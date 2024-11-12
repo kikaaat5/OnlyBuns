@@ -70,24 +70,21 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
     this.notification;
     this.submitted = true;
     this.authService.signup(this.form.value)
-      .subscribe(data => {
-        console.log(data);
-        this.authService.login(this.form.value).subscribe(() => {
-        });
-        this.router.navigate(['/home']);
+      .subscribe(() => {
+        this.notification = {
+          msgType: 'success',
+          msgBody: 'Registration successful! Please check your email to activate your account.'
+        };
+        this.submitted = false;
       },
         error => {
           this.submitted = false;
           console.log('Sign up error');
           this.notification = { msgType: 'error', msgBody: error['error'].message };
         });
-
   }
 
 

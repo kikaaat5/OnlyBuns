@@ -31,7 +31,7 @@ export class AuthService {
       'username': user.username,
       'password': user.password
     };
-    
+
     return this.apiService.post(this.config.login_url, JSON.stringify(body), loginHeaders)
       .pipe(map((res) => {
         console.log('Full response:', res);
@@ -58,6 +58,16 @@ export class AuthService {
     localStorage.removeItem("jwt");
     this.access_token = null;
     this.router.navigate(['/login']);
+  }
+
+  activateAccount(token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+  
+    return this.apiService.get(this.config.activation_url + `/${token}`, { headers });
   }
 
   tokenIsPresent() {

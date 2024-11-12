@@ -37,6 +37,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.findById(id).orElseGet(null);
 	}
 
+	//public User findByEmail(String email) throws AccessDeniedException {
+		//return userRepository.findByEmail(email);
+	//}
+
 	public List<User> findAll() throws AccessDeniedException {
 		return userRepository.findAll();
 	}
