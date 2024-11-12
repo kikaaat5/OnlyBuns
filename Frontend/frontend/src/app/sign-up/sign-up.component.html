@@ -1,0 +1,62 @@
+<mat-card elevation="5" fxFlex class="content">
+  <mat-card-title>
+      <h2>{{title}}</h2>
+  </mat-card-title>
+
+  <mat-card-content>
+      <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
+      <form (ngSubmit)="onSubmit()" *ngIf="!submitted" [formGroup]="form">
+          <mat-form-field>
+              <label>Username: </label>
+              <input formControlName="username" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+              <label>Password: </label>
+              <input formControlName="password" matInput required type="password">
+          </mat-form-field>
+          <mat-form-field>
+            <label>Confirm password: </label>
+            <input formControlName="confirmpassword" matInput required type="password">
+            <mat-error *ngIf="form.get('confirmpassword')?.hasError('mismatch')">
+              Passwords do not match
+            </mat-error>
+        </mat-form-field>
+          <mat-form-field>
+              <label>First Name: </label>
+              <input formControlName="firstname" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+              <label>Last Name: </label>
+              <input formControlName="lastname" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+              <label>Email: </label>
+              <input formControlName="email" matInput required>
+          </mat-form-field>
+          <label>Address</label>
+          <mat-form-field>
+            <label>Street: </label>
+            <input formControlName="street" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+            <label>City: </label>
+            <input formControlName="city" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+            <label>Postal Code: </label>
+            <input formControlName="postalCode" matInput required>
+          </mat-form-field>
+          <mat-form-field>
+            <label>Country: </label>
+            <input formControlName="country" matInput required>
+          </mat-form-field>
+          <button [disabled]="!form.valid" color="primary" mat-raised-button type="submit">Sign up</button>
+          <br>
+          <button color="accent" mat-raised-button routerLink="/" >Go Back</button>
+      </form>
+      <br>
+      <mat-spinner *ngIf="submitted" mode="indeterminate"></mat-spinner>
+      <br>
+      <hr>
+  </mat-card-content>
+</mat-card>

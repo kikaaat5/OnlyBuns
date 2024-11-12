@@ -1,0 +1,143 @@
+/* Glavni stil za listu objava */
+.post-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  button {
+    margin: 10px 0;
+  }
+  
+  /* Stil za kartice objava */
+  .post-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .post-card h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .post-card p {
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  /* Stil za sliku objave */
+  .post-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  
+  /* Forma za kreiranje nove objave */
+  .create-post-form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .create-post-form h3 {
+    color: #333;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+  }
+  
+  /* Polja unosa */
+  mat-form-field {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  /* Stil za dugmad */
+  button[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  button[mat-button] {
+    color: #888;
+  }
+  
+  button[mat-button]:hover {
+    color: #555;
+  }
+  
+  /* Slika u pregledu (za novu objavu) */
+  .preview-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  
+  /* Stil za navigaciju društvene mreže */
+  .social-network-nav {
+    background-color: #3b5998;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .social-network-nav .menu-container ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .social-network-nav .menu-container ul li {
+    margin: 0;
+  }
+  
+  .social-network-nav .menu-container ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .social-network-nav .menu-container ul li a:hover {
+    color: #ddd;
+  }
+  
+  /* Ikonice u navigaciji */
+  .social-network-nav .menu-container ul li a i {
+    margin-right: 5px;
+  }
+  .map-frame {
+    border: 2px solid black;
+  }
+  
+  #map {
+    height: 600px;
+  }

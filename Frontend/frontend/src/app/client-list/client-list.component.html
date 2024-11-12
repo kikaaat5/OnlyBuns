@@ -1,0 +1,54 @@
+<div class="client-list">
+    <h2>Clients</h2>
+    <!-- Pretraga -->
+    <div class="search-filters">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.name" placeholder="Name">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Last Name</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.surname" placeholder="Last Name">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.email" placeholder="Email">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Min Posts</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.minPosts" type="number" placeholder="Min Posts">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Max Posts</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.maxPosts" type="number" placeholder="Max Posts">
+      </mat-form-field>
+  
+      <button mat-raised-button color="warn" (click)="filterClients()">Search</button>
+    </div>
+  
+    <!-- Sortiranje -->
+    <div class="sort-options">
+      <button mat-raised-button color="warn" (click)="sortClients('followingCount')">Sort by number of followers</button>
+      <button mat-raised-button color="warn" (click)="sortClients('email')">Sort by email</button>
+    </div>
+    
+    <!-- Prikaz klijenata -->
+    <div class="client-cards">
+      <mat-card *ngFor="let client of filteredClients" class="client-card">
+        <mat-card-header>
+          <mat-card-title>{{ client.firstName }} {{ client.lastName }}</mat-card-title>
+          <mat-card-subtitle>{{ client.username }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p><strong>Email:</strong> {{ client.email }}</p>
+          <p><strong>Posts</strong> {{ client.numberOfPosts }}</p>
+          <p><strong>Following:</strong> {{ client.following }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  
