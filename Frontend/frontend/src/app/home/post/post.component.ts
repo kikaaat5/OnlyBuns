@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Post } from 'src/app/model/post.model';
+import { PostService } from 'src/app/service/post.service';
 
 @Component({
   selector: 'app-post',
@@ -7,14 +9,24 @@ import { Component, Input } from '@angular/core';
 })
 export class PostComponent {
 
+  constructor(private postService: PostService) {}
+
   posts = []; // Ovo će biti lista postojećih objava, popunjena iz servisa
   showCreatePostForm = false;
-  newPost = {
+  newPost: Post = {
+    id: 0, 
+    userId: 1, // Example user ID; replace or set dynamically as needed
     description: '',
-    image: '', // putanja slike (ili URL)
-    location: '',
-    creationTime: new Date() // Automatski setuje trenutni datum/vreme
+    createdAt: new Date().toISOString(),
+    imagePath: '',
+    longitude: 0,
+    latitude: 0,
+    likesCount: 0,
+    comments: []
   };
+
+  ngOnInit(): void {
+  }
 
   openCreatePostForm() {
     this.showCreatePostForm = true;
@@ -22,13 +34,30 @@ export class PostComponent {
 
   closeCreatePostForm() {
     this.showCreatePostForm = false;
-    this.newPost = { description: '', image: '', location: '', creationTime: new Date() };
+    this.newPost = {
+      id: 0,
+      userId: 1,
+      description: '',
+      createdAt: new Date().toISOString(),
+      imagePath: '',
+      longitude: 0,
+      latitude: 0,
+      likesCount: 0,
+      comments: []
+    };
   }
 
   submitNewPost() {
-    // Dodavanje nove objave u listu
-    //this.posts.push({ ...this.newPost });
-    this.closeCreatePostForm();
+  
+    this.postService.createPost(this.newPost).subscribe(
+      response => {
+        console.log('Post created successfully:', response);
+        this.closeCreatePostForm();
+      },
+      error => {
+        console.error('Error creating post:', error);
+      }
+    );
   }
 
   onImageSelected(event: any) {
@@ -36,7 +65,9 @@ export class PostComponent {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.newPost.image = e.target.result;
+        const imagePath = e.target.result;  // Ovo je duža putanja slike (base64)
+       
+      this.newPost.imagePath = imagePath;
       };
       reader.readAsDataURL(file);
     }

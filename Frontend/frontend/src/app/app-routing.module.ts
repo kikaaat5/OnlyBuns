@@ -23,7 +23,8 @@ const routes: Routes = [
     { path: 'nearby', component: NearbyComponent },
     { path: 'chat', component: ChatComponent },
     { path: 'profile',component: ProfileComponent },
-    { path: 'post', component: PostComponent}
+    { path: 'post', component: PostComponent, children:[{path:'posts',component:PostListComponent}]},
+    {path: 'posts',component: PostListComponent},
   ]},
   {
     path: 'login',

@@ -36,4 +36,9 @@ export class PostService {
   updatePost(id: number, updatedPost: any, userId: number): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}?userId=${userId}`, updatedPost);
   }
+
+  createPost(post: Post): Observable<Post> {
+    console.log('create metoda servis',post)
+    return this.http.post<Post>(this.apiUrl, post);
+  }
 }

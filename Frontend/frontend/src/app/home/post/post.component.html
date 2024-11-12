@@ -14,24 +14,28 @@
         <div>
           <input type="file" (change)="onImageSelected($event)" accept="image/*" />
         </div>
-        <img *ngIf="newPost.image" [src]="newPost.image" alt="Selected Image" class="preview-image" />
+        <img *ngIf="newPost.imagePath" [src]="newPost.imagePath" alt="Selected Image" class="preview-image" />
   
         <!-- Lokacija objave (adresa) -->
         <mat-form-field>
-          <input matInput placeholder="Lokacija" [(ngModel)]="newPost.location" name="location" />
+          <input matInput placeholder="Lokacija" [(ngModel)]="newPost.longitude" name="longitude" />
         </mat-form-field>
   
+        <mat-form-field>
+            <input matInput placeholder="Lokacija" [(ngModel)]="newPost.latitude" name="latitude" />
+          </mat-form-field>
         <!-- Datum i vreme kreiranja objave - automatski setovan -->
-        <p><strong>Vreme kreiranja:</strong> {{ newPost.creationTime | date:'short' }}</p>
+        <p><strong>Vreme kreiranja:</strong> {{ newPost.createdAt | date:'short' }}</p>
   
         <button mat-raised-button color="primary" type="submit">Dodaj objavu</button>
         <button mat-button (click)="closeCreatePostForm()">Otkaži</button>
       </form>
     </div>
   
-    <!-- Prikaz postojećih objava -->
-    <div *ngFor="let post of posts">
-      <app-post [post]="post"></app-post>
+    <div>
+    <app-post-list></app-post-list>
     </div>
+
+
   </div>
   
