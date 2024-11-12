@@ -12,6 +12,17 @@ VALUES
 INSERT INTO public.user_role(
     role_id, user_id)
 VALUES (2, 1);
+
+INSERT INTO administrator (
+    enabled, id, last_password_reset_date, email, lastname, name, password, username, address_id)
+VALUES
+    (true,  nextval('user_seq'), '2024-11-11 21:53:50.02', 'maja@gmail.com', 'jankovic', 'maja', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'maja', 1);
+
+INSERT INTO public.user_role(
+    role_id, user_id)
+VALUES (1, 2);
+
+
 INSERT INTO public.post(
     id, latitude, likes_count, longitude, user_id, created_at, description, image_path
 )
