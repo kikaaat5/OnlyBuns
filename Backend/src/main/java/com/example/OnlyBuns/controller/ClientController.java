@@ -43,7 +43,7 @@ public class ClientController {
             @RequestParam(required = false) Integer minPosts,
             @RequestParam(required = false) Integer maxPosts
     ) {
-        if (name != null) {
+        /*if (name != null) {
             return clientService.searchByName(name);
         } else if (surname != null) {
             return clientService.searchBySurname(surname);
@@ -51,7 +51,7 @@ public class ClientController {
             return clientService.searchByEmail(email);
         } else if (minPosts != null && maxPosts != null) {
             return clientService.searchByNumberOfPostsInRange(minPosts, maxPosts);
-        }
+        }*/
         return clientService.findAll();
     }
 

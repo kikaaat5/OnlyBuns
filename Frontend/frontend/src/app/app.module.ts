@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';  
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { LoginComponent } from './login/login.component';
@@ -22,15 +21,30 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { ClientListComponent } from './client-list/client-list.component';
 import { PostListComponent } from './post-list/post-list.component';
+import { ActivateAccountComponent } from './activate-account/activate-account.component';
+import { FollowingComponent } from './home/following/following.component';
+import { TrendsComponent } from './home/trends/trends.component';
+import { NearbyComponent } from './home/nearby/nearby.component';
+import { ChatComponent } from './home/chat/chat.component';
+import { ProfileComponent } from './home/profile/profile.component';
+import { HomeComponent } from './home/home.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
     ClientListComponent,
-    PostListComponent
+    PostListComponent,
+    ActivateAccountComponent,
+    FollowingComponent,
+    TrendsComponent,
+    NearbyComponent,
+    ChatComponent,
+    ProfileComponent
   ],
 
   imports: [
@@ -40,7 +54,8 @@ import { PostListComponent } from './post-list/post-list.component';
     NoopAnimationsModule,
     HttpClientModule,
     FormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

@@ -5,16 +5,28 @@ import { LoginComponent } from './login/login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ClientListComponent } from './client-list/client-list.component';
 import { PostListComponent } from './post-list/post-list.component';
+import { ActivateAccountComponent } from './activate-account/activate-account.component';
+import { FollowingComponent } from './home/following/following.component';
+import { TrendsComponent } from './home/trends/trends.component';
+import { ChatComponent } from './home/chat/chat.component';
+import { ProfileComponent } from './home/profile/profile.component';
+import { NearbyComponent } from './home/nearby/nearby.component';
+
 
 const routes: Routes = [
   {
     path: '',
-    component: SignUpComponent, 
+    redirectTo: '/home',
+    pathMatch: 'full'
   },
-  {
-    path: 'home',
-    component: HomeComponent,
-  },
+  { path: 'home', component: HomeComponent, children: [
+    { path: 'following', component: FollowingComponent },
+    { path: 'trends', component: TrendsComponent },
+    { path: 'nearby', component: NearbyComponent },
+    { path: 'chat', component: ChatComponent }, 
+    { path: 'profile',component: ProfileComponent 
+    },
+  ]},
   {
     path: 'login',
     component: LoginComponent,
@@ -23,6 +35,7 @@ const routes: Routes = [
     path: 'signup',
     component: SignUpComponent,
   },
+
   { 
     path: 'client-list', component: ClientListComponent 
   },
@@ -30,10 +43,15 @@ const routes: Routes = [
     path: 'posts',  
     component: PostListComponent  
   },
+
+  { path: 'activate/:token', 
+    component: ActivateAccountComponent,
+   }
+
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
