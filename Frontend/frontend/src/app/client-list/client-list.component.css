@@ -1,32 +1,67 @@
-/* Stilizacija za celu listu */
+/* Glavna stilizacija za listu klijenata */
 .client-list {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     background-color: #F5D0A9;
     border-radius: 8px;
-  }
-  
-  /* Stilizacija za naslov */
-  .client-list h2 {
+}
+
+/* Pretraga i sortiranje */
+.search-filters, .sort-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap:  10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Forme i dugmići */
+mat-form-field {
+    width: 220px;
+}
+
+/* Dugme za pretragu */
+button {
+    margin-top: 0px;
+    min-width: 150px;
+}
+
+/* Stilizacija za dugmadi (pretraga, sortiranje) */
+button.mat-raised-button {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 0px 0px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+/* Hover efekat na dugmiće */
+button.mat-raised-button:hover {
+    background-color: #4caf50; /* Ova boja se može promeniti */
+}
+
+/* Stilizacija za naslov */
+.client-list h2 {
     text-align: center;
     font-size: 2rem;
     color: #3e4e67;
     margin-bottom: 20px;
     font-family: 'Roboto', sans-serif;
-  }
-  
-  /* Stilizacija za konteiner sa karticama klijenata */
-  .client-cards {
+}
+
+/* Konteiner sa karticama klijenata */
+.client-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     background-color: #F5D0A9;
-  }
-  
-  /* Stilizacija za pojedinačne kartice klijenata */
-  .client-card {
+}
+
+/* Stilizacija pojedinačnih kartica klijenata */
+.client-card {
     width: 280px;
     background-color: white;
     border-radius: 8px;
@@ -34,47 +69,46 @@
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-  }
-  
-  /* Efekat pri prelasku mišem */
-  .client-card:hover {
+}
+
+/* Hover efekat na karticama */
+.client-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Stilizacija za header kartice */
-  .mat-card-header {
+}
+
+/* Stilizacija za header kartice */
+.mat-card-header {
     background-color: #f1f1f1;
     padding: 15px;
     border-bottom: 1px solid #ddd;
-  }
-  
-  /* Stilizacija za naslov i podnaslov kartice */
-  .mat-card-title {
+}
+
+/* Stilizacija naslova i podnaslova kartice */
+.mat-card-title {
     font-size: 1.25rem;
     font-weight: bold;
     color: #333;
-  }
-  
-  .mat-card-subtitle {
+}
+
+.mat-card-subtitle {
     font-size: 1rem;
     color: #777;
-  }
-  
-  /* Stilizacija za sadržaj kartice */
-  .mat-card-content {
+}
+
+/* Stilizacija sadržaja kartice */
+.mat-card-content {
     padding: 20px;
     font-size: 1rem;
     color: #333;
-  }
-  
-  .mat-card-content p {
+}
+
+.mat-card-content p {
     margin: 10px 0;
-  }
-  
-  /* Stilizacija za podebljane oznake */
-  .mat-card-content strong {
+}
+
+/* Stilizacija za podebljane oznake */
+.mat-card-content strong {
     font-weight: bold;
     color: #3e4e67;
-  }
-  
+}
