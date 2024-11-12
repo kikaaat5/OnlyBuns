@@ -54,5 +54,9 @@ public class PostService {
         return postRepository.save(existingPost);
     }
 
+    public List<Post> findPostsByUserId(int userId) {
+        return postRepository.findAllByUserId(userId);
+    }
+
 
 }

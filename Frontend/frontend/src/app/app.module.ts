@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';  
+import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -22,12 +22,20 @@ import { AngularMaterialModule } from './angular-material/angular-material.modul
 import { ClientListComponent } from './client-list/client-list.component';
 import { PostListComponent } from './post-list/post-list.component';
 import { ActivateAccountComponent } from './activate-account/activate-account.component';
+
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
 import { ChatComponent } from './home/chat/chat.component';
 import { ProfileComponent } from './home/profile/profile.component';
 import { HomeComponent } from './home/home.component';
+import { PostComponent } from './home/post/post.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MapComponent } from './map/map.component';
+
 
 
 @NgModule({
@@ -37,8 +45,15 @@ import { HomeComponent } from './home/home.component';
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
+    FollowingComponent,
+    TrendsComponent,
+    NearbyComponent,
+    ChatComponent,
+    ProfileComponent,
+    PostComponent,
     ClientListComponent,
     PostListComponent,
+    MapComponent
     ActivateAccountComponent,
     FollowingComponent,
     TrendsComponent,
@@ -55,6 +70,11 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     FormsModule,
     AngularMaterialModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+
 
   ],
   providers: [{
@@ -67,7 +87,7 @@ import { HomeComponent } from './home/home.component';
   ApiService,
   UserService,
   ConfigService,
-  ClientService,
+  ClientService
 ],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]

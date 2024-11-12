@@ -1,0 +1,52 @@
+<div class="post-list">
+    <button mat-raised-button color="primary" (click)="openCreatePostForm()">+ Dodaj novu objavu</button>
+  
+    <!-- Forma za novu objavu -->
+    <div *ngIf="showCreatePostForm" class="create-post-form">
+      <h3>Create new post</h3>
+      <form (ngSubmit)="submitNewPost()">
+        <!-- Opis objave -->
+        <mat-form-field>
+          <textarea matInput placeholder="Opis" [(ngModel)]="newPost.description" name="description" required></textarea>
+        </mat-form-field>
+  
+
+        <!-- Slika objave -->
+        <div>
+          <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+        </div>
+        <img *ngIf="newPost.imagePath" [src]="newPost.imagePath" alt="Selected Image" class="preview-image"  required/>
+  
+        <!-- Lokacija objave (adresa) -->
+        <mat-form-field>
+          <input matInput placeholder="Lokacija" [(ngModel)]="newPost.longitude" name="longitude" />
+        </mat-form-field>
+  
+        <mat-form-field>
+            <input matInput placeholder="Lokacija" [(ngModel)]="newPost.latitude" name="latitude" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Lokacija" [(ngModel)]="location" (ngModelChange)="onLocationChange()" name="location"  required />
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary"  type="button" (click)="openMap()">Dodaj lokaciju pomocu mape</button>
+          <div *ngIf ="showMap">
+            <app-map [location]="location" (locationSelected)="onLocationSelected($event)"></app-map>
+          </div>
+       
+          <!-- Datum i vreme kreiranja objave - automatski setovan -->
+        <p><strong>Vreme kreiranja:</strong> {{ newPost.createdAt | date:'short' }}</p>
+  
+        <button mat-raised-button color="primary" type="submit">Dodaj objavu</button>
+        <button mat-button (click)="closeCreatePostForm()">Otkaži</button>
+      </form>
+    </div>
+  
+    <div>
+    <app-post-list></app-post-list>
+    </div>
+
+
+  </div>
+  

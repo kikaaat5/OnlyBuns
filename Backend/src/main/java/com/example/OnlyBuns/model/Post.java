@@ -23,7 +23,9 @@ public class Post {
     @Getter @Setter
     private LocalDateTime createdAt;
 
+
     @Getter @Setter
+    @Column(length = 1024)
     private String imagePath;
 
     @Getter @Setter
