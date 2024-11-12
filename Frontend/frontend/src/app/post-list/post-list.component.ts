@@ -14,12 +14,14 @@ export class PostListComponent implements OnInit {
   isEditing: boolean = false;    
   editedPost: any = null;
   selectedImageBase64: string | null = null;
+  loggedUserId: number | null = null;
 
   constructor(private userService: UserService, private postService: PostService) {}
 
 
   
   ngOnInit(): void {
+    this.loggedUserId = this.userService.getUserId();
     this.loadPosts();
   }
 
@@ -59,40 +61,39 @@ export class PostListComponent implements OnInit {
   } 
  
   deletePost(postId: number): void {
-    const userId = 1; 
-    this.postService.deletePost(postId, userId).subscribe(
+    if (this.loggedUserId) {
+      this.postService.deletePost(postId, this.loggedUserId).subscribe(
         (response) => {
-          console.log('Response:', response);
-            console.log(`Post ${postId} deleted successfully`);
-            this.loadPosts();  
+          console.log(`Post ${postId} deleted successfully`);
+          this.loadPosts();  
         },
         (error) => {
-          
-            console.error(`Error deleting post ${postId}`, error);
-            alert('This is not your post to delete!');
+          console.error(`Error deleting post ${postId}`, error);
+          alert('This is not your post to delete!');
         }
-    );
-}
+      );
+    }
+  }
 editPost(post: any): void {
   this.isEditing = true;
   this.editedPost = { ...post };  
 }
 
 updatePost(): void {
-  const userId = 1;  
-  console.log('Image Path:', this.editedPost.imagePath);
-  this.postService.updatePost(this.editedPost.id, this.editedPost, userId).subscribe(
-    (response) => {
-      console.log(`Post ${this.editedPost.id} updated successfully`);
-      this.isEditing = false;
-      this.editedPost = null;
-      this.loadPosts();  
-    },
-    (error) => {
-      console.error(`Error updating post ${this.editedPost.id}`, error);
-      alert('+This is not your post to update!');
-    }
-  );
+  if (this.loggedUserId) {
+    this.postService.updatePost(this.editedPost.id, this.editedPost, this.loggedUserId).subscribe(
+      (response) => {
+        console.log(`Post ${this.editedPost.id} updated successfully`);
+        this.isEditing = false;
+        this.editedPost = null;
+        this.loadPosts();  
+      },
+      (error) => {
+        console.error(`Error updating post ${this.editedPost.id}`, error);
+        alert('This is not your post to update!');
+      }
+    );
+  }
 }
 
 cancelEdit(): void {

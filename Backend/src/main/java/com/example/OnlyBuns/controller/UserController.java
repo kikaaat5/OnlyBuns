@@ -60,7 +60,8 @@ public class UserController {
 		//UserRequest ur = modelMapper.map(u, UserRequest.class);
 		return u;
 	}
-	
+
+
 	@GetMapping("/foo")
     public Map<String, String> getFoo() {
         Map<String, String> fooObj = new HashMap<>();
