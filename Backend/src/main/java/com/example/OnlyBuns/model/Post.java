@@ -1,6 +1,9 @@
 package com.example.OnlyBuns.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,12 +13,21 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Getter
     private int userId;
+
+    @Getter @Setter
     private String description;
 
     private LocalDateTime createdAt;
+
+    @Getter @Setter
     private String imagePath;
+
+    @Getter @Setter
     private double longitude;
+
+    @Getter @Setter
     private double latitude;
     private int likesCount;
 
@@ -25,4 +37,6 @@ public class Post {
     public Post() {
         this.createdAt = LocalDateTime.now();
     }
+
+
 }

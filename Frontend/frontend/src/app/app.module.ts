@@ -20,13 +20,27 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
 import { ActivateAccountComponent } from './activate-account/activate-account.component';
 
+import { FollowingComponent } from './home/following/following.component';
+import { TrendsComponent } from './home/trends/trends.component';
+import { NearbyComponent } from './home/nearby/nearby.component';
+import { ChatComponent } from './home/chat/chat.component';
+import { ProfileComponent } from './home/profile/profile.component';
+import { HomeComponent } from './home/home.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
-    ActivateAccountComponent
+    ActivateAccountComponent,
+    FollowingComponent,
+    TrendsComponent,
+    NearbyComponent,
+    ChatComponent,
+    ProfileComponent
   ],
 
   imports: [
@@ -36,7 +50,8 @@ import { ActivateAccountComponent } from './activate-account/activate-account.co
     NoopAnimationsModule,
     HttpClientModule,
     FormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

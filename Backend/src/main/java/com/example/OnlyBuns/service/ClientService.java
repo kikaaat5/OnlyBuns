@@ -108,6 +108,29 @@ public class ClientService {
         client.setActive(true);
         save(client);
         return new ResponseEntity<>("super", HttpStatus.OK);
+    }
+  
+    /*public List<Client> searchByName(String name) {
+        return clientRepository.findByNameContainingIgnoreCase(name);
+    }
 
+    public List<Client> searchBySurname(String surname) {
+        return clientRepository.findBySurnameContainingIgnoreCase(surname);
+    }*/
+
+    public List<Client> searchByEmail(String email) {
+        return clientRepository.findByEmailContainingIgnoreCase(email);
+    }
+
+    public List<Client> searchByNumberOfPostsInRange(int minPosts, int maxPosts) {
+        return clientRepository.findByNumberOfPostsInRange(minPosts, maxPosts);
+    }
+
+    public List<Client> sortByFollowingCount() {
+        return clientRepository.findAllByOrderByFollowingDesc();
+    }
+
+    public List<Client> sortByEmail() {
+        return clientRepository.findAllByOrderByEmailAsc();
     }
 }
