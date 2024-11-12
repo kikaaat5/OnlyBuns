@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(name = "userSeqGen", sequenceName = "userSeq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeqGen")
     private Long id;
 
@@ -44,17 +44,23 @@ public class User implements UserDetails {
     @Column(name = "lastname", unique = false, nullable = false)
     private String lastname;
 
+    //@Column(name = "address", unique = false, nullable = false)
+    //private String address;
+
     @Column(name = "enabled", unique = false, nullable = false)
     private boolean enabled;
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    protected Address address;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-
     private List<Role> roles;
 
     public User() {

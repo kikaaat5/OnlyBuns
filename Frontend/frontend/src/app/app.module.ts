@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';  
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { LoginComponent } from './login/login.component';
@@ -19,6 +18,8 @@ import {ConfigService} from './service/config.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { AngularMaterialModule } from './angular-material/angular-material.module';
+import { ActivateAccountComponent } from './activate-account/activate-account.component';
+
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
@@ -34,6 +35,7 @@ import { HomeComponent } from './home/home.component';
     SignUpComponent,
     LoginComponent,
     HeaderComponent,
+    ActivateAccountComponent,
     FollowingComponent,
     TrendsComponent,
     NearbyComponent,

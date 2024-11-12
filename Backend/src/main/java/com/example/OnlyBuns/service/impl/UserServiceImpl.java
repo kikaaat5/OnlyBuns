@@ -3,9 +3,11 @@ package com.example.OnlyBuns.service.impl;
 import java.util.List;
 
 import com.example.OnlyBuns.dto.UserRequest;
+import com.example.OnlyBuns.model.Address;
 import com.example.OnlyBuns.model.Role;
 import com.example.OnlyBuns.model.User;
 import com.example.OnlyBuns.repository.UserRepository;
+import com.example.OnlyBuns.service.AddressService;
 import com.example.OnlyBuns.service.RoleService;
 import com.example.OnlyBuns.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private AddressService addressService;
+
 	@Override
 	public User findByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsername(username);
+		return userRepository.findByEmail(username);
 	}
 
 	public User findById(Long id) throws AccessDeniedException {
 		return userRepository.findById(id).orElseGet(null);
+	}
+
+	public User findByEmail(String email) throws AccessDeniedException {
+		System.out.println(email);
+		return userRepository.findByUsername(email);
 	}
 
 	public List<User> findAll() throws AccessDeniedException {
@@ -43,12 +53,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User save(UserRequest userRequest) {
+		Address address = addressService.findByStreetAndCityAndPostalCodeAndCountry(
+				userRequest.getStreet(),
+				userRequest.getCity(),
+				userRequest.getPostalCode(),
+				userRequest.getCountry());
+
+		if (address == null) {
+			address = new Address(userRequest.getStreet(),
+					userRequest.getCity(),
+					userRequest.getPostalCode(),
+					userRequest.getCountry());
+			addressService.save(address);
+		}
 		User u = new User();
 		u.setUsername(userRequest.getUsername());
 		// pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
 		// treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
 		u.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-		
+		u.setAddress(address);
 		u.setFirstName(userRequest.getFirstname());
 		u.setLastName(userRequest.getLastname());
 		u.setEnabled(true);
@@ -63,7 +86,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+		User user;
+		if (username.matches("^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,}$")) {
+			user = userRepository.findByEmail(username);
+		} else {
+			user = userRepository.findByUsername(username);
+		}
+		if (user == null) {
+			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+		} else {
+			return user;
+		}
+	}
+
+	public UserDetails loadUserByUsernameNew(String username) throws UsernameNotFoundException {
+		User user = userRepository.findByEmail(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
 		} else {
