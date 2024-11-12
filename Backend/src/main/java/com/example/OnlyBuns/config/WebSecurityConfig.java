@@ -74,6 +74,7 @@ public class WebSecurityConfig {
 				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(authorize -> authorize
 								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
+								.requestMatchers(HttpMethod.PUT, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
 						.requestMatchers("/api/clients").permitAll()
