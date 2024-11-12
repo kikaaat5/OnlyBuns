@@ -3,8 +3,8 @@ export interface Client {
     email: string;
     username: string;
     password?: string; 
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     enabled: boolean;
     numberOfPosts: number;
     following: number;

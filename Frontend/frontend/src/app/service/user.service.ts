@@ -30,4 +30,8 @@ export class UserService {
     return this.apiService.get(this.config.users_url);
   }
 
+  getUserId(): number | null {
+    return this.currentUser ? this.currentUser.id : null;
+  }
+
 }
