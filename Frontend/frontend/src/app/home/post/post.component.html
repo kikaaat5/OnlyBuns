@@ -36,7 +36,7 @@
           </div>
        
           <!-- Datum i vreme kreiranja objave - automatski setovan -->
-        <p><strong>Vreme kreiranja:</strong> {{ newPost.createdAt | date:'short' }}</p>
+        <p><strong>Vreme kreiranja:</strong> {{ newPost.createdAt }}</p>
   
         <button mat-raised-button color="primary" type="submit">Dodaj objavu</button>
         <button mat-button (click)="closeCreatePostForm()">Otkaži</button>

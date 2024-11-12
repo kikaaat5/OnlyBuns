@@ -53,7 +53,7 @@ import { MapComponent } from './map/map.component';
     PostComponent,
     ClientListComponent,
     PostListComponent,
-    MapComponent
+    MapComponent,
     ActivateAccountComponent,
     FollowingComponent,
     TrendsComponent,
