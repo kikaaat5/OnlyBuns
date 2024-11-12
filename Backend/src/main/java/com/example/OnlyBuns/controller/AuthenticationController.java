@@ -60,9 +60,11 @@ public class AuthenticationController {
 			@RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
 		// Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
 		// AuthenticationException
-		System.out.println("useererererere" + authenticationRequest.getUsername());
+		System.out.println("asdaadaa" + authenticationRequest.getEmail());
+		System.out.println("asdaadaa" + authenticationRequest.getPassword());
+
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+				authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
 		// Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
 		// kontekst

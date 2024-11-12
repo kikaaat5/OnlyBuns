@@ -28,7 +28,7 @@ export class AuthService {
     });
     // const body = `username=${user.username}&password=${user.password}`;
     const body = {
-      'username': user.username,
+      'email': user.username,
       'password': user.password
     };
 

@@ -52,7 +52,7 @@ public class UserController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
 	public User user(Principal user) {
 		System.out.println("ususussusuusuassa");
-		return this.userService.findByUsername(user.getName());
+		return this.userService.findByEmail(user.getName());
 	}
 	
 	@GetMapping("/foo")

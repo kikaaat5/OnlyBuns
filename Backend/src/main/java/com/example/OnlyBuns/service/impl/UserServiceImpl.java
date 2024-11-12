@@ -30,16 +30,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User findByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsername(username);
+		return userRepository.findByEmail(username);
 	}
 
 	public User findById(Long id) throws AccessDeniedException {
 		return userRepository.findById(id).orElseGet(null);
 	}
 
-	//public User findByEmail(String email) throws AccessDeniedException {
-		//return userRepository.findByEmail(email);
-	//}
+	public User findByEmail(String email) throws AccessDeniedException {
+		System.out.println(email);
+		return userRepository.findByUsername(email);
+	}
 
 	public List<User> findAll() throws AccessDeniedException {
 		return userRepository.findAll();
@@ -67,7 +68,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+		User user;
+		if(username.contains("@")){
+			 user = userRepository.findByEmail(username);
+		}
+		else{
+			 user = userRepository.findByUsername(username);
+		}
+		if (user == null) {
+			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+		} else {
+			return user;
+		}
+	}
+
+	public UserDetails loadUserByUsernameNew(String username) throws UsernameNotFoundException {
+		User user = userRepository.findByEmail(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
 		} else {
