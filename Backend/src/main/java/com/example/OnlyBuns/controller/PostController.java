@@ -54,4 +54,11 @@ public class PostController {
     public List<Post> findPostsByUserId(@PathVariable int userId) {
         return postService.findPostsByUserId(userId);
     }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<Void> likePost(@PathVariable int postId) {
+        postService.likePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
 }
