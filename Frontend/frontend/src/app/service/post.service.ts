@@ -45,4 +45,14 @@ export class PostService {
     console.log('create metoda servis',post)
     return this.http.post<Post>(this.apiUrl, post);
   }
+
+  likePost(postId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${postId}/like`, {}).pipe(
+      catchError((error) => {
+        console.error('Error occurred while liking the post:', error);
+        return throwError(error);
+      })
+    );
+  }
+  
 }

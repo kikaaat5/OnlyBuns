@@ -251,3 +251,18 @@
     display: block;
     margin-top: 10px;
   }
+  .like-button {
+    background-color: #ff4081;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  
+  .like-button:hover {
+    background-color: #ff1a66;
+  }
+  
