@@ -5,6 +5,7 @@
     padding: 20px;
     background-color: #F5D0A9;
     border-radius: 8px;
+    margin-bottom: 120px;
 }
 
 /* Pretraga i sortiranje */
@@ -112,3 +113,7 @@ button.mat-raised-button:hover {
     font-weight: bold;
     color: #3e4e67;
 }
+
+.mat-paginator {
+    margin-top: 250px; /* Postavlja malu udaljenost između klijenata i paginacione trake */
+  }
