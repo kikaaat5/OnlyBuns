@@ -1,5 +1,5 @@
 <div class="social-network-nav">
-  <div class="menu-container">
+  <div *ngIf="!isAdmin()" class="menu-container">
     <ul>
       <li>
         <a routerLink="following" routerLinkActive="active">
