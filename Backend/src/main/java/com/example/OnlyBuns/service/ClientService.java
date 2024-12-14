@@ -1,6 +1,8 @@
 package com.example.OnlyBuns.service;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import com.example.OnlyBuns.dto.AddressDto;
+import com.example.OnlyBuns.dto.ClientDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.Address;
 import com.example.OnlyBuns.model.Role;
@@ -39,8 +41,50 @@ public class ClientService {
     @Autowired
     private AddressService addressService;
 
-    public List<Client> findAll() {
-        return clientRepository.findAll();
+    public List<ClientDto> findAll() {
+        List<Client> clients = clientRepository.findAll();
+        return clients.stream().map(this::mapToDto).toList();
+    }
+
+    public ClientDto getById(int id) {
+        return clientRepository.findById(id).map(this::mapToDto).orElse(null);
+    }
+    private ClientDto mapToDto(Client client) {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setId(client.getId());
+        clientDto.setUsername(client.getUsername());
+        clientDto.setPassword(client.getPassword()); // Izbegavaj ako nije potrebno
+        clientDto.setName(client.getFirstName());
+        clientDto.setLastname(client.getLastName());
+        clientDto.setEmail(client.getEmail());
+        String roles = client.getRoles()
+                .stream()
+                .map(Role::getName) // Pretpostavlja se da `Role` ima `name` polje
+                .reduce((role1, role2) -> role1 + ", " + role2)
+                .orElse(null);
+        clientDto.setRole(roles); // Pretpostavka da `Role` ima `getName()`
+        clientDto.setNumberOfPosts(client.getNumberOfPosts());
+        clientDto.setFollowers(client.getFollowers());
+        clientDto.setFollowing(client.getFollowing());
+        clientDto.setActive(client.isActive());
+
+        // Mapiranje adrese (ako postoji)
+        if (client.getAddress() != null) {
+            AddressDto addressDto = new AddressDto();
+            addressDto.setCity(client.getAddress().getCity());
+            addressDto.setStreet(client.getAddress().getStreet());
+            addressDto.setCountry(client.getAddress().getCountry());
+            addressDto.setPostalCode(client.getAddress().getPostalCode());
+            clientDto.setAddress(addressDto);
+
+            // Direktna polja adrese
+            clientDto.setCity(client.getAddress().getCity());
+            clientDto.setStreet(client.getAddress().getStreet());
+            clientDto.setCountry(client.getAddress().getCountry());
+            clientDto.setPostalCode(client.getAddress().getPostalCode());
+        }
+
+        return clientDto;
     }
 
     public void save(Client client){clientRepository.save(client);}
@@ -93,7 +137,6 @@ public class ClientService {
     public void deleteById(int id) {
         clientRepository.deleteById(id);
     }
-
 
     public List<Client> searchByName(String name) {
         return clientRepository.findByFirstnameContainingIgnoreCase(name);

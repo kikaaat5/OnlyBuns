@@ -45,4 +45,13 @@ export class PostService {
     console.log('create metoda servis',post)
     return this.http.post<Post>(this.apiUrl, post);
   }
+
+  getPostsByUserId(userId: number): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/${userId}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching posts for user:', error);
+        return throwError(error);
+      })
+    );
+  }
 }

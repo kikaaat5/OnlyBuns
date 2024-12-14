@@ -35,8 +35,8 @@ export class ClientListComponent implements OnInit {
   }*/
   filterClients(): void {
         this.filteredClients = this.clients.filter(client => {
-          const matchesName = client.firstName && client.firstName.toLowerCase().includes(this.searchCriteria.name.toLowerCase());
-          const matchesSurname = client.lastName && client.lastName.toLowerCase().includes(this.searchCriteria.surname.toLowerCase());
+          const matchesName = client.firstname && client.firstname.toLowerCase().includes(this.searchCriteria.name.toLowerCase());
+          const matchesSurname = client.lastname && client.lastname.toLowerCase().includes(this.searchCriteria.surname.toLowerCase());
           const matchesEmail = client.email && client.email.toLowerCase().includes(this.searchCriteria.email.toLowerCase());
           const matchesMinPosts = this.searchCriteria.minPosts ? client.numberOfPosts >= this.searchCriteria.minPosts : true;
           const matchesMaxPosts = this.searchCriteria.maxPosts ? client.numberOfPosts <= this.searchCriteria.maxPosts : true;
@@ -66,8 +66,8 @@ export class ClientListComponent implements OnInit {
   loadClients(): void {
     this.clientService.getAllClients().subscribe(
       (data: Client[]) => {
-        this.clients = data;  
         console.log(data);
+        this.clients = data;  
         this.filteredClients = data;
       },
       (error) => {

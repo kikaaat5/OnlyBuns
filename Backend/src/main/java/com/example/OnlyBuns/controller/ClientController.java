@@ -1,7 +1,11 @@
 package com.example.OnlyBuns.controller;
 
+import com.example.OnlyBuns.dto.ClientDto;
+import com.example.OnlyBuns.dto.AddressDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.Client;
+import com.example.OnlyBuns.model.Role;
+import com.example.OnlyBuns.model.User;
 import com.example.OnlyBuns.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +27,7 @@ public class ClientController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Client> getAllClients() {
+    public List<ClientDto> getAllClients() {
         return clientService.findAll();
     }
 
@@ -37,8 +41,13 @@ public class ClientController {
         clientService.deleteById(id);
     }
 
+    @GetMapping("/{id}")
+    public ClientDto getClient(@PathVariable int id) {
+        return clientService.getById(id);
+    }
+
     @GetMapping("/search")
-    public List<Client> searchClients(
+    public List<ClientDto> searchClients(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String surname,
             @RequestParam(required = false) String email,

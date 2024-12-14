@@ -40,12 +40,12 @@
     <div class="client-cards">
       <mat-card *ngFor="let client of filteredClients" class="client-card">
         <mat-card-header>
-          <mat-card-title>{{ client.firstName }} {{ client.lastName }}</mat-card-title>
+          <mat-card-title>{{ client.firstname }} {{ client.lastname }}</mat-card-title>
           <mat-card-subtitle>{{ client.username }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           <p><strong>Email:</strong> {{ client.email }}</p>
-          <p><strong>Posts</strong> {{ client.numberOfPosts }}</p>
+          <p><strong>Posts:</strong> {{ client.numberOfPosts }}</p>
           <p><strong>Following:</strong> {{ client.following }}</p>
         </mat-card-content>
       </mat-card>

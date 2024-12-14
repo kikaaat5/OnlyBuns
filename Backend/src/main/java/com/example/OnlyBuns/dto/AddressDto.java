@@ -1,6 +1,6 @@
 package com.example.OnlyBuns.dto;
 
-public class AddressRequest {
+public class AddressDto {
     private String city;
 
     private String street;

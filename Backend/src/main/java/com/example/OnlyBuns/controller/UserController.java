@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.OnlyBuns.dto.AddressDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.User;
+import com.example.OnlyBuns.model.Role;
 import com.example.OnlyBuns.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,6 @@ public class UserController {
 	// Korisnik jeste autentifikovan, ali nije autorizovan da pristupi resursu
 	@GetMapping("/user/{userId}")
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CLIENT')")
-
 	public User loadById(@PathVariable Long userId) {
 		return this.userService.findById(userId);
 	}
@@ -54,11 +54,23 @@ public class UserController {
 
 	@GetMapping("/whoami")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
-	public User user(Principal user) {
+	public UserRequest user(Principal user) {
 		System.out.println("ususussusuusuassa");
 		User u = this.userService.findByEmail(user.getName());
-		//UserRequest ur = modelMapper.map(u, UserRequest.class);
-		return u;
+		UserRequest ur = modelMapper.map(u, UserRequest.class);
+		if (u.getRoles() != null && !u.getRoles().isEmpty()) {
+			String roles = u.getRoles()
+					.stream()
+					.map(Role::getName) // Pretpostavlja se da `Role` ima `name` polje
+					.reduce((role1, role2) -> role1 + ", " + role2)
+					.orElse(null);
+			ur.setRole(roles);
+		} else {
+			ur.setRole(null);
+		}
+		AddressDto adr = modelMapper.map(u.getAddress(), AddressDto.class);
+		ur.setAddress(adr);
+		return ur;
 	}
 
 

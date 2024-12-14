@@ -5,9 +5,9 @@ VALUES ('ROLE_CLIENT');
 INSERT INTO addresses (city, country, postal_code, street) values ('Trebinje', 'BiH', 81100,'Republike Srpske 17');
 
 INSERT INTO client (
-    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id)
+    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id, followers)
 VALUES
-    (true, true, 100, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1);
+    (true, true, 100, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1, 5);
 
 INSERT INTO public.user_role(
     role_id, user_id)
@@ -23,9 +23,9 @@ INSERT INTO public.user_role(
 VALUES (1, 2);
 
 INSERT INTO client (
-    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id)
+    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id, followers)
 VALUES
-    (true, true, 70, 20, nextval('user_seq'), '2024-11-11 21:53:50.02', 'ana@gmail.com', 'Djurdjevic', 'Marija', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'Mara', 1);
+    (true, true, 70, 20, nextval('user_seq'), '2024-11-11 21:53:50.02', 'ana@gmail.com', 'Djurdjevic', 'Marija', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'Mara', 1, 2);
 
 INSERT INTO public.user_role(
     role_id, user_id)
