@@ -10,6 +10,7 @@ import com.example.OnlyBuns.repository.UserRepository;
 import com.example.OnlyBuns.service.AddressService;
 import com.example.OnlyBuns.service.RoleService;
 import com.example.OnlyBuns.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -81,6 +82,37 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		List<Role> roles = roleService.findByName("ROLE_CLIENT");
 		u.setRoles(roles);
 		
+		return this.userRepository.save(u);
+	}
+
+	public User updateUser(Long id, UserRequest userRequest) {
+		Address address = addressService.findByStreetAndCityAndPostalCodeAndCountry(
+				userRequest.getStreet(),
+				userRequest.getCity(),
+				userRequest.getPostalCode(),
+				userRequest.getCountry());
+
+		if (address == null) {
+			address = new Address(userRequest.getStreet(),
+					userRequest.getCity(),
+					userRequest.getPostalCode(),
+					userRequest.getCountry());
+			addressService.save(address);
+		}
+
+		User u = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+		// pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
+		// treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
+		//if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+			//u.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+		//}
+		u.setAddress(address);
+		u.setFirstName(userRequest.getFirstname());
+		u.setLastName(userRequest.getLastname());
+		u.setEnabled(true);
+		List<Role> roles = roleService.findByName(userRequest.getRole());
+		u.setRoles(roles);
+
 		return this.userRepository.save(u);
 	}
 

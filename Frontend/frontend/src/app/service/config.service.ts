@@ -32,6 +32,10 @@ export class ConfigService {
     return this._users_url;
   }
 
+  get user_url(): string {
+    return this._user_url;
+  }
+
   private _foo_url = this._api_url + '/foo';
 
   get foo_url(): string {

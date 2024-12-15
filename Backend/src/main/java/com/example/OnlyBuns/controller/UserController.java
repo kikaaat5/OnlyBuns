@@ -10,15 +10,13 @@ import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.User;
 import com.example.OnlyBuns.model.Role;
 import com.example.OnlyBuns.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.modelmapper.ModelMapper;
 
 // Primer kontrolera cijim metodama mogu pristupiti samo autorizovani korisnici
@@ -80,4 +78,13 @@ public class UserController {
         fooObj.put("foo", "bar");
         return fooObj;
     }
+
+	@Transactional
+	@PostMapping("/user/{id}")
+	public ResponseEntity<UserRequest> updateUser(@PathVariable Long id, @RequestBody UserRequest userUpdateDto) {
+		User updatedUser = userService.updateUser(id, userUpdateDto);
+		UserRequest ur = modelMapper.map(updatedUser, UserRequest.class);
+		System.out.println("Ažurirani korisnik: " + updatedUser);
+		return ResponseEntity.ok(ur);
+	}
 }

@@ -14,4 +14,5 @@ public interface UserService {
     List<User> findAll ();
 	User save(UserRequest userRequest);
     public UserDetails loadUserByUsernameNew(String username);
+    public User updateUser(Long id, UserRequest userRequest);
 }

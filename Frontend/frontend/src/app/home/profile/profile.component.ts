@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserService } from 'src/app/service';
+import { AuthService, UserService } from 'src/app/service';
 import { Address } from 'src/app/model/address.model';
 import { Post } from 'src/app/model/post.model';
 import { PostService } from 'src/app/service/post.service';
@@ -30,7 +30,12 @@ export class ProfileComponent {
   posts: Post[] = []; 
   newPassword: string = ''; 
   confirmPassword: string = ''; 
-  address: Address | null = null;
+  address: Address = {
+    city : '',
+    country : '',
+    postalCode : 0,
+    street : ''
+  };
   editableAddress: Address = {
     city : '',
     country : '',
@@ -43,7 +48,7 @@ export class ProfileComponent {
   isEditProfileModalVisible = false;
   isClient = false;
 
-  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService) { }
+  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private authService : AuthService) { }
 
   ngOnInit(): void {
     this.getUserProfile();
@@ -68,6 +73,11 @@ export class ProfileComponent {
     this.user = this.userService.currentUser; 
     this.editableUser = this.user;
     this.address = this.user.address || null; 
+    this.user.city = this.address.city;
+    this.user.country = this.address.country;
+    this.user.postalCode = this.address.postalCode;
+    this.user.street = this.address.street;
+    console.log(this.user);
     this.editableAddress = this.user.address;
   }
 
@@ -130,4 +140,27 @@ export class ProfileComponent {
     const { street, city, country, postalCode } = this.address;
     return `${street}, ${city}, ${country}, ${postalCode}`;
   }
+
+  updateUserProfile(): void {
+    const userId = this.userService.getUserId();
+    console.log(this.editableUser);
+    if (userId === null) {
+      alert('Došlo je do greške: Korisnik nije prijavljen.');
+      return;
+    }
+    this.userService.updateUser(userId, this.editableUser).subscribe({
+      next: (updatedUser) => {
+        console.log(updatedUser);
+        alert('Profil je uspešno ažuriran.');
+        this.getUserProfile();
+        this.isEditProfileModalVisible = false;
+
+      },
+      error: (err) => {
+        console.error('Greška prilikom ažuriranja profila:', err);
+        alert('Došlo je do greške prilikom ažuriranja profila.');
+      },
+    });
+}
+  
 }

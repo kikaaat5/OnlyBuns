@@ -70,27 +70,27 @@
         <input
           type="text"
           id="street"
-          [(ngModel)]="editableAddress.street"
+          [(ngModel)]="editableUser.street"
         />
       </div>
       <div class="profile-field">
         <label for="city">City:</label>
-        <input type="text" id="city" [(ngModel)]="editableAddress.city" />
+        <input type="text" id="city" [(ngModel)]="editableUser.city" />
       </div>
       <div class="profile-field">
         <label for="postalCode">Postal Code:</label>
         <input
           type="number"
           id="postalCode"
-          [(ngModel)]="editableAddress.postalCode"
+          [(ngModel)]="editableUser.postalCode"
         />
       </div>
       <div class="profile-field">
         <label for="country">Country:</label>
-        <input type="text" id="country" [(ngModel)]="editableAddress.country" />
+        <input type="text" id="country" [(ngModel)]="editableUser.country" />
       </div>
     </div>
-    <button class="submit-button">Submit Changes</button>
+    <button (click)="updateUserProfile()" class="submit-button">Submit Changes</button>
   </div>
 </div>
 <div class="user-posts-section">
