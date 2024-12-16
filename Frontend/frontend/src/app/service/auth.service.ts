@@ -59,8 +59,6 @@ export class AuthService {
   logout() {
     this.userService.currentUser = null;
     localStorage.removeItem("jwt");
-    localStorage.removeItem("access-token");
-
     this.access_token = null;       
     this.router.navigate(['/login']);
   }
@@ -86,5 +84,13 @@ export class AuthService {
     console.log('Token returned by getToken:', token);
     return token;
   }
+
+  updatePassword(userId: number, oldPassword: string, newPassword: string) {
+    const body = { oldPassword, newPassword };
+    return this.apiService.post(`${this.config.user_url}/change-password/${userId}`, body).pipe(map(user => {  
+      this.logout();
+    }));
+  }
+
 
 }

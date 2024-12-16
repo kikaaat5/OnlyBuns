@@ -1,5 +1,6 @@
 package com.example.OnlyBuns.service;
 
+import com.example.OnlyBuns.dto.ChangePasswordDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,4 +16,5 @@ public interface UserService {
 	User save(UserRequest userRequest);
     public UserDetails loadUserByUsernameNew(String username);
     public User updateUser(Long id, UserRequest userRequest);
+    public User updateUsersPassword(Long id, ChangePasswordDto changePasswordDto);
 }

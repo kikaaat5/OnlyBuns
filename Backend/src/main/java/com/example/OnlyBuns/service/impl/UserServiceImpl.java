@@ -2,6 +2,7 @@ package com.example.OnlyBuns.service.impl;
 
 import java.util.List;
 
+import com.example.OnlyBuns.dto.ChangePasswordDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.Address;
 import com.example.OnlyBuns.model.Role;
@@ -100,6 +101,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			addressService.save(address);
 		}
 
+		System.out.println(address.getStreet());
 		User u = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 		// pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
 		// treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
@@ -114,6 +116,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		u.setRoles(roles);
 
 		return this.userRepository.save(u);
+	}
+
+	public User updateUsersPassword(Long id, ChangePasswordDto changePasswordDto) {
+		// Pronađi korisnika po ID-ju ili izbaci grešku
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+		// Provjeri da li se unesena stara lozinka poklapa sa postojećom (hashovanom) lozinkom
+		if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("Old password is incorrect");
+		}
+
+		// Postavi novu lozinku (hashovana)
+		user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+
+		// Sačuvaj korisnika u bazi
+		userRepository.save(user);
+
+		return user; // Možeš vratiti korisnika ili samo potvrditi promjenu
 	}
 
 	@Override

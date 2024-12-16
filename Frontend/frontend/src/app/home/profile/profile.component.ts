@@ -29,7 +29,8 @@ export class ProfileComponent {
   };
   posts: Post[] = []; 
   newPassword: string = ''; 
-  confirmPassword: string = ''; 
+  confirmPassword: string = '';
+  oldPassword: string = ''; 
   address: Address = {
     city : '',
     country : '',
@@ -46,7 +47,10 @@ export class ProfileComponent {
   isPasswordFormVisible: boolean = false; 
   isAddressFormVisible: boolean = false; 
   isEditProfileModalVisible = false;
+  changePasswordSucces = true;
   isClient = false;
+  isPasswordEntered = false;
+  errormessage : string = '';
 
   constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private authService : AuthService) { }
 
@@ -78,11 +82,28 @@ export class ProfileComponent {
     this.user.postalCode = this.address.postalCode;
     this.user.street = this.address.street;
     console.log(this.user);
+    console.log(this.address);
     this.editableAddress = this.user.address;
   }
 
   checkIfisClient() {
     this.isClient = (this.user.role === 'ROLE_CLIENT');
+  }
+
+  checkPassword(): boolean {
+    console.log('ssda');
+    console.log(this.oldPassword.trim() !== '');
+    return (
+      this.oldPassword.trim() !== '' &&
+      this.newPassword.trim() !== '' &&
+      this.confirmPassword.trim() !== '' &&
+      this.newPassword === this.confirmPassword
+    );
+  }
+
+  passwordMatchValidator() {
+    console.log(this.newPassword === this.confirmPassword);
+    return this.newPassword === this.confirmPassword; 
   }
 
   getUserPosts(): void {
@@ -98,17 +119,20 @@ export class ProfileComponent {
   }
 
   updatePassword(): void {
-    if (this.newPassword === this.confirmPassword) {
-      // Poziv servisa za promenu lozinke (trenutno zakomentarisano)
-      // this.userService.updatePassword(this.user.id, this.newPassword).subscribe(() => {
-      //   alert('Lozinka uspešno promenjena.');
-      //   this.newPassword = '';
-      //   this.confirmPassword = '';
-      //   this.isPasswordFormVisible = false;
-      // });
-    } else {
-      alert('Lozinke se ne poklapaju!');
-    }
+    this.authService.updatePassword(this.user.id, this.oldPassword, this.newPassword).subscribe({
+      next: () => {
+        alert('Lozinka je uspešno promenjena.');
+        this.oldPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.isPasswordFormVisible = false;
+        this.changePasswordSucces = true;
+      },
+      error: (err) => {
+        this.changePasswordSucces = false;
+        console.error('Greška prilikom promene lozinke:', err);
+      }
+    });
   }
 
   togglePasswordChange(): void {
@@ -121,16 +145,6 @@ export class ProfileComponent {
 
   toggleEditProfileModal() {
     this.isEditProfileModalVisible = !this.isEditProfileModalVisible;
-  }
-
-  saveAddress(): void {
-    if (this.address) {
-      // Poziv servisa za ažuriranje adrese korisnika (trenutno zakomentarisano)
-      // this.userService.updateAddress(this.user.id, this.address).subscribe(() => {
-      //   alert('Adresa uspešno ažurirana.');
-      //   this.isAddressFormVisible = false;
-      // });
-    }
   }
 
   get formattedAddress(): string {
@@ -151,10 +165,10 @@ export class ProfileComponent {
     this.userService.updateUser(userId, this.editableUser).subscribe({
       next: (updatedUser) => {
         console.log(updatedUser);
-        alert('Profil je uspešno ažuriran.');
-        this.getUserProfile();
+        this.user = updatedUser.body;
+        this.address = updatedUser.body.address;
         this.isEditProfileModalVisible = false;
-
+        alert('Profil je uspešno ažuriran.');
       },
       error: (err) => {
         console.error('Greška prilikom ažuriranja profila:', err);

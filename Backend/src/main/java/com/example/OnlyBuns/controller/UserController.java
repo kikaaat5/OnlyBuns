@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.OnlyBuns.dto.AddressDto;
+import com.example.OnlyBuns.dto.ChangePasswordDto;
 import com.example.OnlyBuns.dto.UserRequest;
 import com.example.OnlyBuns.model.User;
 import com.example.OnlyBuns.model.Role;
@@ -53,7 +54,6 @@ public class UserController {
 	@GetMapping("/whoami")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
 	public UserRequest user(Principal user) {
-		System.out.println("ususussusuusuassa");
 		User u = this.userService.findByEmail(user.getName());
 		UserRequest ur = modelMapper.map(u, UserRequest.class);
 		if (u.getRoles() != null && !u.getRoles().isEmpty()) {
@@ -86,5 +86,13 @@ public class UserController {
 		UserRequest ur = modelMapper.map(updatedUser, UserRequest.class);
 		System.out.println("Ažurirani korisnik: " + updatedUser);
 		return ResponseEntity.ok(ur);
+	}
+
+	@PostMapping("/user/change-password/{id}")
+	public UserRequest updateUsersPassword(@PathVariable Long id, @RequestBody ChangePasswordDto changePasswordDto) {
+		User updatedUser = userService.updateUsersPassword(id, changePasswordDto);
+		UserRequest ur = modelMapper.map(updatedUser, UserRequest.class);
+		System.out.println("Ažurirani korisnik: " + updatedUser.getAddress().getStreet());
+		return ur;
 	}
 }

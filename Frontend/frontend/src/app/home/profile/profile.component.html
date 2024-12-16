@@ -2,9 +2,9 @@
   <div class="profile-header">
     <h1 class="username">{{ user.username }}</h1>
     <div class="profile-stats">
-      <button class="edit-button" (click)="toggleEditProfileModal()">Edit Profile</button> 
       <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
       <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
+      <button class="edit-button" (click)="toggleEditProfileModal()">Edit Profile</button> 
     </div>
   </div>
 
@@ -35,36 +35,12 @@
     </div>
   </div>
 
-  <button *ngIf="isEditProfileModalVisible" class="action-button" (click)="togglePasswordChange()">
-    Change Password
-  </button>
-
-  <div *ngIf="isPasswordFormVisible" class="password-section">
-    <div class="profile-field">
-      <label for="new-password">New Password:</label>
-      <input type="password" id="new-password" [(ngModel)]="newPassword" />
-    </div>
-
-    <div class="profile-field">
-      <label for="confirm-password">Confirm new Password:</label>
-      <input
-        type="password"
-        id="confirm-password"
-        [(ngModel)]="confirmPassword"
-      />
-    </div>
-  </div>
-
   <div *ngIf="isEditProfileModalVisible" class="profile-section">
     <div class="profile-field">
-      <label for="address">Address:</label>
-      <p class="profile-field">{{ formattedAddress }}</p>
-      <button class="action-button change-address-button" (click)="toggleAddressForm()">
-        Change Address
-      </button>
+      <label class="address">Address</label>
     </div>
 
-    <div *ngIf="isAddressFormVisible" class="address-section">
+    <div class="address-section">
       <div class="profile-field">
         <label for="street">Street and number:</label>
         <input
@@ -91,6 +67,39 @@
       </div>
     </div>
     <button (click)="updateUserProfile()" class="submit-button">Submit Changes</button>
+  </div>
+
+  <div *ngIf="isEditProfileModalVisible" class="password-section">
+    <div class="profile-field">
+      <label class="address">Password</label>
+    </div>
+    <div class="profile-field">
+      <label for="old-password">Old Password:</label>
+      <input type="password"
+       id="old-password" 
+      [(ngModel)]="oldPassword" />
+    </div>
+
+    <div class="profile-field">
+      <label for="new-password">New Password:</label>
+      <input type="password"
+       id="new-password" 
+      [(ngModel)]="newPassword" />
+    </div>
+
+    <div class="profile-field">
+      <label for="confirm-password">Confirm new Password:</label>
+      <input
+        type="password"
+        id="confirm-password"
+        [(ngModel)]="confirmPassword"
+      />
+    </div>
+    <span *ngIf="!passwordMatchValidator()" class="error-message"> Passwords do not match </span>
+    <span *ngIf="!changePasswordSucces" class="error-message"> Old password is not correct </span>
+    <button [disabled]="!checkPassword()" class="password-button" (click)="updatePassword()">
+      Change password
+    </button>
   </div>
 </div>
 <div class="user-posts-section">

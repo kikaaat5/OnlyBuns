@@ -3,6 +3,7 @@ import {ApiService} from './api.service';
 import {ConfigService} from './config.service';
 import {map} from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
 
   constructor(
     private apiService: ApiService,
-    private config: ConfigService
+    private config: ConfigService,
   ) {
   }
 
@@ -38,4 +39,5 @@ export class UserService {
     return this.apiService.post(`${this.config.user_url}/${id}`, user);
   }
 
+ 
 }
