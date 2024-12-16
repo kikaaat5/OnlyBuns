@@ -125,6 +125,21 @@ onFileSelected(event: any): void {
   }
 }
 
+likePost(postId: number): void {
+  if (!this.hasSignedIn()) {
+    alert('Please log in to like posts.'); 
+    return;
+  }
+
+  this.postService.likePost(postId).subscribe(() => {
+    const post = this.posts.find(p => p.id === postId);
+    if (post) {
+      post.likesCount += 1; 
+    }
+  });
+}
+
+
 
 }
 

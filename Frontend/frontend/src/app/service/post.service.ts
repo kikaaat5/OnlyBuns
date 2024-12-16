@@ -54,4 +54,14 @@ export class PostService {
       })
     );
   }
+
+  likePost(postId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${postId}/like`, {}).pipe(
+      catchError((error) => {
+        console.error('Error occurred while liking the post:', error);
+        return throwError(error);
+      })
+    );
+  }
+
 }

@@ -38,7 +38,7 @@
     
     <!-- Prikaz klijenata -->
     <div class="client-cards">
-      <mat-card *ngFor="let client of filteredClients" class="client-card">
+      <mat-card *ngFor="let client of displayedClients" class="client-card">
         <mat-card-header>
           <mat-card-title>{{ client.firstname }} {{ client.lastname }}</mat-card-title>
           <mat-card-subtitle>{{ client.username }}</mat-card-subtitle>
@@ -50,5 +50,13 @@
         </mat-card-content>
       </mat-card>
     </div>
+
+    <mat-paginator
+  [length]="totalItems"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 20]"
+  (page)="onPageChange($event)">
+</mat-paginator>
+
   </div>
   
