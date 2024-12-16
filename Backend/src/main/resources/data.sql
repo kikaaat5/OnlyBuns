@@ -7,17 +7,17 @@ INSERT INTO addresses (city, country, postal_code, street) VALUES ('Trebinje', '
 
 -- Dodavanje klijenta
 INSERT INTO client (
-    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id)
+    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id, followers)
 VALUES
-    (true, true, 100, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1),
-    (true, true, 50, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'ana@gmail.com', 'petrovic', 'ana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ana', 1),
-    (true, true, 75, 7, nextval('user_seq'), '2024-11-11 21:53:50.02', 'nikola@gmail.com', 'jovanovic', 'nikola', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'nikola', 1),
-    (true, true, 120, 12, nextval('user_seq'), '2024-11-11 21:53:50.02', 'petar@gmail.com', 'milenkovic', 'petar', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'petar', 1),
-    (true, true, 80, 8, nextval('user_seq'), '2024-11-11 21:53:50.02', 'mila@gmail.com', 'markovic', 'mila', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'mila', 1),
-    (true, true, 110, 11, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milica@gmail.com', 'jovanovic', 'milica', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milica', 1),
-    (true, true, 60, 6, nextval('user_seq'), '2024-11-11 21:53:50.02', 'sanja@gmail.com', 'petrovic', 'sanja', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'sanja', 1),
-    (true, true, 50, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jelena@gmail.com', 'jankovic', 'jelena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'jelena', 1),
-    (true, true, 90, 9, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milena@gmail.com', 'jovanovic', 'milena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milena', 1);
+    (true, true, 100, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1, 4),
+    (true, true, 50, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'ana@gmail.com', 'petrovic', 'ana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ana', 1, 6),
+    (true, true, 75, 7, nextval('user_seq'), '2024-11-11 21:53:50.02', 'nikola@gmail.com', 'jovanovic', 'nikola', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'nikola', 1, 8),
+    (true, true, 120, 12, nextval('user_seq'), '2024-11-11 21:53:50.02', 'petar@gmail.com', 'milenkovic', 'petar', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'petar', 1, 1),
+    (true, true, 80, 8, nextval('user_seq'), '2024-11-11 21:53:50.02', 'mila@gmail.com', 'markovic', 'mila', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'mila', 1, 2),
+    (true, true, 110, 11, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milica@gmail.com', 'jovanovic', 'milica', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milica', 1, 0),
+    (true, true, 60, 6, nextval('user_seq'), '2024-11-11 21:53:50.02', 'sanja@gmail.com', 'petrovic', 'sanja', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'sanja', 1, 10),
+    (true, true, 50, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jelena@gmail.com', 'jankovic', 'jelena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'jelena', 1, 2),
+    (true, true, 90, 9, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milena@gmail.com', 'jovanovic', 'milena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milena', 1, 5);
 
 -- Dodavanje uloge korisnicima (klijenti)
 INSERT INTO public.user_role(role_id, user_id)
@@ -33,7 +33,6 @@ VALUES
 INSERT INTO public.user_role(role_id, user_id)
 VALUES (1, 10);
 
--- Ažuriranje tipa kolone slike u tabeli post na TEXT
 ALTER TABLE post
 ALTER COLUMN image_path TYPE TEXT;
 

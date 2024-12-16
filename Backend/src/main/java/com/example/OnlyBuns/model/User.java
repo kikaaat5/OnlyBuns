@@ -1,6 +1,8 @@
 package com.example.OnlyBuns.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,15 +36,15 @@ public class User implements UserDetails {
     @Column(name = "username", unique = false, nullable = false)
     protected String username;
 
-    @JsonIgnore
-    @Column(name = "password", unique = false, nullable = false)
-    protected String password;
-
     @Column(name = "name", unique = false, nullable = false)
     protected String firstname;
 
     @Column(name = "lastname", unique = false, nullable = false)
     protected String lastname;
+
+    @JsonIgnore
+    @Column(name = "password", unique = false, nullable = false)
+    protected String password;
 
     //@Column(name = "address", unique = false, nullable = false)
     //private String address;
@@ -53,7 +55,6 @@ public class User implements UserDetails {
     @Column(name = "last_password_reset_date")
     protected Timestamp lastPasswordResetDate;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     protected Address address;

@@ -11,15 +11,18 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthService {
 
+  private access_token;
+
   constructor(
     private apiService: ApiService,
     private userService: UserService,
     private config: ConfigService,
     private router: Router
+    
   ) {
+    this.access_token = localStorage.getItem("jwt"); 
   }
 
-  private access_token = null;
 
   login(user:any) {
     const loginHeaders = new HttpHeaders({
@@ -56,13 +59,13 @@ export class AuthService {
   logout() {
     this.userService.currentUser = null;
     localStorage.removeItem("jwt");
-    this.access_token = null;
+    this.access_token = null;       
     this.router.navigate(['/login']);
   }
 
   activateAccount(token: string): Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${this.getToken()}`,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
@@ -71,11 +74,23 @@ export class AuthService {
   }
 
   tokenIsPresent() {
-    return this.access_token != undefined && this.access_token != null;
+    const isTokenPresent = !!(this.access_token || localStorage.getItem('jwt'));
+    console.log('Is token present:', isTokenPresent);
+    return isTokenPresent;
   }
 
-  getToken() {
-    return this.access_token;
+  getToken(): string | null {
+    const token = localStorage.getItem("jwt");
+    console.log('Token returned by getToken:', token);
+    return token;
   }
+
+  updatePassword(userId: number, oldPassword: string, newPassword: string) {
+    const body = { oldPassword, newPassword };
+    return this.apiService.post(`${this.config.user_url}/change-password/${userId}`, body).pipe(map(user => {  
+      this.logout();
+    }));
+  }
+
 
 }

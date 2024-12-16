@@ -49,8 +49,8 @@ export class ClientListComponent implements OnInit {
   // Filtriranje klijenata
   filterClients(): void {
     this.filteredClients = this.clients.filter(client => {
-      const matchesName = client.firstName?.toLowerCase().includes(this.searchCriteria.name.toLowerCase()) || false;
-      const matchesSurname = client.lastName?.toLowerCase().includes(this.searchCriteria.surname.toLowerCase()) || false;
+      const matchesName = client.firstname?.toLowerCase().includes(this.searchCriteria.name.toLowerCase()) || false;
+      const matchesSurname = client.lastname?.toLowerCase().includes(this.searchCriteria.surname.toLowerCase()) || false;
       const matchesEmail = client.email?.toLowerCase().includes(this.searchCriteria.email.toLowerCase()) || false;
       const matchesMinPosts = this.searchCriteria.minPosts ? client.numberOfPosts >= this.searchCriteria.minPosts : true;
       const matchesMaxPosts = this.searchCriteria.maxPosts ? client.numberOfPosts <= this.searchCriteria.maxPosts : true;

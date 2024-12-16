@@ -1,1 +1,138 @@
-<p>profile works!</p>
+<div class="profile-container">
+  <div class="profile-header">
+    <h1 class="username">{{ user.username }}</h1>
+    <div class="profile-stats">
+      <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
+      <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
+      <button class="edit-button" (click)="toggleEditProfileModal()">Edit Profile</button> 
+    </div>
+  </div>
+
+  <div *ngIf="isEditProfileModalVisible" class="profile-section">
+    <div class="profile-field">
+      <label for="email">Email:</label>
+      <p id="email">{{ user.email }}</p>
+    </div>
+
+    <div class="profile-field">
+      <label for="firstname">First Name:</label>
+      <input
+        type="text"
+        id="firstname"
+        [(ngModel)]="editableUser.firstname"
+        class="editable-field"
+      />
+    </div>
+
+    <div class="profile-field">
+      <label for="lastname">Last Name:</label>
+      <input
+        type="text"
+        id="lastname"
+        [(ngModel)]="editableUser.lastname"
+        class="editable-field"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="isEditProfileModalVisible" class="profile-section">
+    <div class="profile-field">
+      <label class="address">Address</label>
+    </div>
+
+    <div class="address-section">
+      <div class="profile-field">
+        <label for="street">Street and number:</label>
+        <input
+          type="text"
+          id="street"
+          [(ngModel)]="editableUser.street"
+        />
+      </div>
+      <div class="profile-field">
+        <label for="city">City:</label>
+        <input type="text" id="city" [(ngModel)]="editableUser.city" />
+      </div>
+      <div class="profile-field">
+        <label for="postalCode">Postal Code:</label>
+        <input
+          type="number"
+          id="postalCode"
+          [(ngModel)]="editableUser.postalCode"
+        />
+      </div>
+      <div class="profile-field">
+        <label for="country">Country:</label>
+        <input type="text" id="country" [(ngModel)]="editableUser.country" />
+      </div>
+    </div>
+    <button (click)="updateUserProfile()" class="submit-button">Submit Changes</button>
+  </div>
+
+  <div *ngIf="isEditProfileModalVisible" class="password-section">
+    <div class="profile-field">
+      <label class="address">Password</label>
+    </div>
+    <div class="profile-field">
+      <label for="old-password">Old Password:</label>
+      <input type="password"
+       id="old-password" 
+      [(ngModel)]="oldPassword" />
+    </div>
+
+    <div class="profile-field">
+      <label for="new-password">New Password:</label>
+      <input type="password"
+       id="new-password" 
+      [(ngModel)]="newPassword" />
+    </div>
+
+    <div class="profile-field">
+      <label for="confirm-password">Confirm new Password:</label>
+      <input
+        type="password"
+        id="confirm-password"
+        [(ngModel)]="confirmPassword"
+      />
+    </div>
+    <span *ngIf="!passwordMatchValidator()" class="error-message"> Passwords do not match </span>
+    <span *ngIf="!changePasswordSucces" class="error-message"> Old password is not correct </span>
+    <button [disabled]="!checkPassword()" class="password-button" (click)="updatePassword()">
+      Change password
+    </button>
+  </div>
+</div>
+<div class="user-posts-section">
+  <div class="posts-container">
+    <div *ngFor="let post of posts; let i = index" class="post-card" [ngClass]="{ 'new-row': i % 3 === 0 }">
+      <div class="post-header">
+        <h3>{{ post.description }}</h3>
+        <div class="post-actions">
+          <button  *ngIf="user" class="delete-button">×</button>
+          <button  *ngIf="user" class="delete-button">✎</button>
+        </div>
+        <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
+      </div>
+
+      <div class="post-image">
+        <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" />
+        <ng-template #noImage>
+          <p>No image available</p>
+        </ng-template>
+      </div>
+
+      <div class="post-footer">
+        <p>Likes: {{ post.likesCount }}</p>
+      </div>
+
+      <div class="post-comments">
+        <h4>Comments</h4>
+        <div *ngFor="let comment of post.comments" class="comment">
+          <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
+          <small>{{ comment.createdAt | date: 'short' }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

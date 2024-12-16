@@ -15,7 +15,7 @@
              <button *ngIf="hasSignedIn() && isAdmin()" color="warn" mat-raised-button routerLink="/client-list">
                 <span>Clients</span>
             </button>
-            <button color="warn" *ngIf="!isAdmin()" mat-raised-button routerLink="/posts">
+            <button color="warn" *ngIf="!hasSignedIn()" mat-raised-button routerLink="/posts">
                 <span>All Posts</span>  
               </button>
 

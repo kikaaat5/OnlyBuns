@@ -46,6 +46,15 @@ export class PostService {
     return this.http.post<Post>(this.apiUrl, post);
   }
 
+  getPostsByUserId(userId: number): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/${userId}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching posts for user:', error);
+        return throwError(error);
+      })
+    );
+  }
+
   likePost(postId: number): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${postId}/like`, {}).pipe(
       catchError((error) => {
@@ -54,5 +63,5 @@ export class PostService {
       })
     );
   }
-  
+
 }

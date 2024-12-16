@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Clock;
+
 //Kontroler zaduzen za autentifikaciju korisnika
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -114,6 +116,7 @@ public class AuthenticationController {
 
 		try{
 			if(userRequest.getRole().equals("ROLE_CLIENT")){
+				System.out.println("usaooo");
 				Client client = this.clientService.save(userRequest);
 				emailService.sendRegistrationActivation(client);
 				return new ResponseEntity<>(client, HttpStatus.CREATED);

@@ -54,6 +54,10 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  isAdmin() {
+    return this.userService.currentUser?.role === 'ROLE_ADMIN';
+  }
+
   forgeResonseObj(obj:any, res:any, path:any) {
     obj['path'] = path;
     obj['method'] = 'GET';
