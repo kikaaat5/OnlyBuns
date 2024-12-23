@@ -5,6 +5,7 @@ import { Post } from 'src/app/model/post.model';
 import { PostService } from 'src/app/service/post.service';
 import { ClientService } from 'src/app/service/client.service';
 import { Client } from 'src/app/model/client.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -51,41 +52,77 @@ export class ProfileComponent {
   isClient = false;
   isPasswordEntered = false;
   errormessage : string = '';
+  notMyProfile = false;
 
-  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private authService : AuthService) { }
+  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private authService : AuthService,  private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.getUserProfile();
-    this.getUserPosts(); 
-    this.checkIfisClient();
+    this.route.params.subscribe(params => {
+      const userId = params['userId'] ? +params['userId'] : null; 
+      console.log('userididididid', userId);
+      if (userId) {
+        this.notMyProfile = true;
+        console.log('usao i ovdje');
+        this.getUserProfile(userId); 
+      } else {
+        this.notMyProfile = false;
+        this.getUserProfile(this.userService.currentUser.id); 
+      }
+    });
+  
   }
 
-  getUserProfile(): void {
-    const id = this.userService.currentUser.id;
-    if (this.userService.currentUser.role === 'ROLE_CLIENT') {
+  getUserProfile(id: number): void {
+    console.log('usao i ovdje', id);
+    if(this.notMyProfile){
+      console.log('usao jer nisam ulogovan');
       this.clientService.getClientById(id).subscribe({
         next: (data) => {
           console.log(data);
           this.client = data; 
+          this.user = this.client; 
+          this.getUserPosts(); 
+          this.checkIfisClient();
         },
         error: (err) => {
           console.error('Greška prilikom dohvatanja klijenta:', err);
         },
       });
+      
     }
 
-    this.user = this.userService.currentUser; 
-    this.editableUser = this.user;
-    this.address = this.user.address || null; 
-    this.user.city = this.address.city;
-    this.user.country = this.address.country;
-    this.user.postalCode = this.address.postalCode;
-    this.user.street = this.address.street;
-    console.log(this.user);
-    console.log(this.address);
-    this.editableAddress = this.user.address;
+    if(!this.notMyProfile){
+      if (this.userService.currentUser.role === 'ROLE_CLIENT') {
+        this.clientService.getClientById(id).subscribe({
+          next: (data) => {
+            console.log(data);
+            this.client = data; 
+            this.getUserPosts(); 
+            this.checkIfisClient();
+          },
+          error: (err) => {
+            console.error('Greška prilikom dohvatanja klijenta:', err);
+          },
+        });
+      }
+  
+      this.user = this.userService.currentUser; 
+      this.editableUser = this.user;
+      this.address = this.user.address || null; 
+      this.user.city = this.address.city;
+      this.user.country = this.address.country;
+      this.user.postalCode = this.address.postalCode;
+      this.user.street = this.address.street;
+      console.log(this.user);
+      console.log(this.address);
+      this.editableAddress = this.user.address;
+    }
   }
 
+  hasSignedIn() {
+    return !!this.userService.currentUser;
+  }
+  
   checkIfisClient() {
     this.isClient = (this.user.role === 'ROLE_CLIENT');
   }
@@ -107,8 +144,8 @@ export class ProfileComponent {
   }
 
   getUserPosts(): void {
-    const userId = this.userService.currentUser.id; 
-    this.postService.getPostsByUserId(userId).subscribe(
+    //const userId = this.userService.currentUser.id; 
+    this.postService.getPostsByUserId(this.client.id).subscribe(
       (data) => {
         this.posts = data;
       },

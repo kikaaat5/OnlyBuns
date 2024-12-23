@@ -92,7 +92,9 @@ public class WebSecurityConfig {
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
 						.requestMatchers("/api/clients").permitAll()
-								.requestMatchers("/api/posts").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/clients/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/posts/posts/**").permitAll()
+						.requestMatchers("/api/posts").permitAll()
 						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju

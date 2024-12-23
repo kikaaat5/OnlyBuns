@@ -26,7 +26,6 @@ public class ClientController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<ClientDto> getAllClients() {
         return clientService.findAll();
     }

@@ -31,6 +31,7 @@
 
     <div *ngFor="let post of posts" class="post-card">
       <div class="post-header">
+        <h3 (click)="goToUserProfile(post.userId)">{{ getAuthorsUsername(post) }}</h3>
         <h3>{{ post.description }}</h3>
         <div class="post-actions">
             <button (click)="deletePost(post.id)" *ngIf="hasSignedIn()" class="delete-button">×</button>
