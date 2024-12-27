@@ -21,6 +21,7 @@ export class UserService {
   getMyInfo() {
     return this.apiService.get(this.config.whoami_url)
       .pipe(map(user => {
+        console.log('trenuti user jeeeeeeeeeee', user);
         this.currentUser = user;
         console.log(this.currentUser);
         return user;

@@ -30,11 +30,14 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeqGen")
     protected Long id;
 
-    @Column(name = "email", unique = false, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     protected String email;
 
-    @Column(name = "username", unique = false, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     protected String username;
+
+    //@Version
+    //private Integer version = 0;
 
     @Column(name = "name", unique = false, nullable = false)
     protected String firstname;
@@ -149,6 +152,14 @@ public class User implements UserDetails {
     public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
+
+    //public Integer getVersion() {
+        //return version;
+    //}
+
+    //public void setVersion(Integer version) {
+        //this.version = version;
+    //}
 
     @JsonIgnore
     @Override

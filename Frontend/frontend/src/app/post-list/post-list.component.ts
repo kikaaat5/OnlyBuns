@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { PostService } from '../service/post.service'; 
 import { DatePipe } from '@angular/common'; 
 import {UserService} from '../service/user.service';
+import { Client } from '../model/client.model';
+import { ClientService } from '../service/client.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-post-list',
@@ -15,20 +18,53 @@ export class PostListComponent implements OnInit {
   editedPost: any = null;
   selectedImageBase64: string | null = null;
   loggedUserId: number | null = null;
-
-  constructor(private userService: UserService, private postService: PostService) {}
-
-
+  clients: Client[] = [];
+ 
+  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private route: ActivatedRoute,
+    private router: Router) {}
   
   ngOnInit(): void {
     this.loggedUserId = this.userService.getUserId();
     this.loadPosts();
+    this.loadClients();  
   }
 
   hasSignedIn() {
     return !!this.userService.currentUser;
   }
   
+  loadClients(): void {
+    this.clientService.getAllClients().subscribe(
+      (data: Client[]) => {
+        console.log(data);
+        this.clients = data;  
+      },
+      (error) => {
+        console.error('Došlo je do greške prilikom učitavanja klijenata', error);
+      }
+    );
+  }
+
+  getAuthorsUsername(post: any): string {
+    if (post !== undefined && this.clients) {
+      const client = this.clients.find(client => client.id === post.userId);
+      if (client) {
+        return `${client.username}`;
+      }
+    }
+    return 'Nepoznat autor'; 
+  }
+
+  goToUserProfile(userId?: number): void {
+    console.log('usaaaaaaao ovdje treba da ode na profil glupi');
+    console.log(userId);
+    if (userId) {
+      this.router.navigate(['/profile', userId]);
+    } else {
+      console.error('User ID is required to navigate to the profile page.');
+    }
+  }
+
   getStaticComments() {
     return [
       { id: 1, userId: 2, content: 'Ovo je fantastična slika!', createdAt: '2024-11-10T12:30:00' },

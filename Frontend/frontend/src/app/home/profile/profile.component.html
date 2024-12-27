@@ -4,7 +4,7 @@
     <div class="profile-stats">
       <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
       <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
-      <button class="edit-button" (click)="toggleEditProfileModal()">Edit Profile</button> 
+      <button class="edit-button" *ngIf="hasSignedIn()" (click)="toggleEditProfileModal()">Edit Profile</button> 
     </div>
   </div>
 
@@ -107,11 +107,6 @@
     <div *ngFor="let post of posts; let i = index" class="post-card" [ngClass]="{ 'new-row': i % 3 === 0 }">
       <div class="post-header">
         <h3>{{ post.description }}</h3>
-        <div class="post-actions">
-          <button  *ngIf="user" class="delete-button">×</button>
-          <button  *ngIf="user" class="delete-button">✎</button>
-        </div>
-        <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
       </div>
 
       <div class="post-image">
