@@ -50,6 +50,7 @@
   
       <div class="post-footer">
         <p>Likes: {{ post.likesCount }}</p>
+        <button (click)="likePost(post.id)" class="like-button">Like ❤️</button>
       </div>
       
       <div class="post-comments">
