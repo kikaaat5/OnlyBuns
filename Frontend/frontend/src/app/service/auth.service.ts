@@ -18,11 +18,38 @@ export class AuthService {
     private userService: UserService,
     private config: ConfigService,
     private router: Router
-    
   ) {
     this.access_token = localStorage.getItem("jwt"); 
   }
 
+  initializeAuthState() {
+    const token = this.getToken();
+    if (token) {
+      // Optionally validate the token with the server
+      this.access_token = token;
+      this.initializeSession();
+    } else {
+      this.logout();
+    }
+  }
+
+  initializeSession() {
+    const token = this.getToken();
+    if (token) {
+      // Load user information
+      this.userService.getMyInfo().subscribe(
+        (user) => {
+          console.log('User successfully initialized:', user);
+        },
+        (err) => {
+          console.error('Error initializing user:', err);
+          this.logout(); // Logout if token is invalid
+        }
+      );
+    } else {
+      this.logout(); // Logout if no token is found
+    }
+  }
 
   login(user:any) {
     const loginHeaders = new HttpHeaders({
@@ -74,7 +101,8 @@ export class AuthService {
   }
 
   tokenIsPresent() {
-    const isTokenPresent = !!(this.access_token || localStorage.getItem('jwt'));
+    const token = this.getToken();
+    const isTokenPresent = !!token;
     console.log('Is token present:', isTokenPresent);
     return isTokenPresent;
   }

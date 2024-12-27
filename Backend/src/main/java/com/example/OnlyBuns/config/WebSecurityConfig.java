@@ -1,9 +1,13 @@
 package com.example.OnlyBuns.config;
 
+import com.example.OnlyBuns.security.auth.LoginRateLimitingFilter;
 import com.example.OnlyBuns.security.auth.RestAuthenticationEntryPoint;
 import com.example.OnlyBuns.security.auth.TokenAuthenticationFilter;
 import com.example.OnlyBuns.service.impl.UserServiceImpl;
 import com.example.OnlyBuns.util.TokenUtils;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterConfig;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,16 +16,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -45,6 +46,17 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+	@Bean
+	public RateLimiter loginRateLimiter() {
+		// Konfiguracija RateLimiter-a sa potrebnim parametrima
+		RateLimiterConfig config = RateLimiterConfig.custom()
+				.limitForPeriod(5)  // Limitiraj na 1 zahtev po periodu
+				.limitRefreshPeriod(java.time.Duration.ofSeconds(60))  // Period osvežavanja
+				.timeoutDuration(java.time.Duration.ofMillis(0))  // Timeout na 0 ms
+				.build();
+		return RateLimiterRegistry.of(config).rateLimiter("loginRateLimiter");
+	}
 
 	@Bean
  	public DaoAuthenticationProvider authenticationProvider() {
@@ -90,6 +102,7 @@ public class WebSecurityConfig {
 								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
 								.requestMatchers(HttpMethod.PUT, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
+						.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
 						.requestMatchers("/api/clients").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/clients/**").permitAll()
@@ -100,8 +113,8 @@ public class WebSecurityConfig {
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
 				.formLogin(Customizer.withDefaults())  // Omogućava formu za prijavu
 
+				.addFilterBefore(new LoginRateLimitingFilter(loginRateLimiter()), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userService()), BasicAuthenticationFilter.class)
-
 				.logout(logout -> logout
 						.logoutUrl("/signout")
 						.logoutSuccessUrl("/signin")
@@ -116,7 +129,7 @@ public class WebSecurityConfig {
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
 
-				.requestMatchers(HttpMethod.POST, "/auth/login")
+				//.requestMatchers(HttpMethod.POST, "/auth/login")
 				.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
 						"/*/*.html", "/*/*.css", "/*/*.js");
 

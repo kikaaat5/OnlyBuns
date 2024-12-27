@@ -54,6 +54,7 @@ public class UserController {
 	@GetMapping("/whoami")
 	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
 	public UserRequest user(Principal user) {
+		System.out.println("USERNAMEEEEEEEEEEEEEEEEEEEEE" + user.getName());
 		User u = this.userService.findByEmail(user.getName());
 		UserRequest ur = modelMapper.map(u, UserRequest.class);
 		if (u.getRoles() != null && !u.getRoles().isEmpty()) {
@@ -79,7 +80,6 @@ public class UserController {
         return fooObj;
     }
 
-	@Transactional
 	@PostMapping("/user/{id}")
 	public ResponseEntity<UserRequest> updateUser(@PathVariable Long id, @RequestBody UserRequest userUpdateDto) {
 		User updatedUser = userService.updateUser(id, userUpdateDto);

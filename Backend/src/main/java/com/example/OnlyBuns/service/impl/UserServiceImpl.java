@@ -12,6 +12,9 @@ import com.example.OnlyBuns.service.AddressService;
 import com.example.OnlyBuns.service.RoleService;
 import com.example.OnlyBuns.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,8 +56,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.findAll();
 	}
 
+	@Transactional(readOnly = false)
 	@Override
 	public User save(UserRequest userRequest) {
+		/*if (userRepository.findByUsername(userRequest.getUsername()) != null) {
+			throw new IllegalArgumentException("Korisničko ime već postoji.");
+		}
+
+		if (userRepository.findByEmail(userRequest.getEmail()) != null) {
+			throw new IllegalArgumentException("Email već postoji.");
+		}
+		*/
+
 		Address address = addressService.findByStreetAndCityAndPostalCodeAndCountry(
 				userRequest.getStreet(),
 				userRequest.getCity(),
@@ -70,16 +83,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		User u = new User();
 		u.setUsername(userRequest.getUsername());
-		// pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
-		// treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
 		u.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 		u.setAddress(address);
 		u.setFirstName(userRequest.getFirstname());
 		u.setLastName(userRequest.getLastname());
 		u.setEnabled(true);
 		u.setEmail(userRequest.getEmail());
-
-		// u primeru se registruju samo obicni korisnici i u skladu sa tim im se i dodeljuje samo rola USER
 		List<Role> roles = roleService.findByName("ROLE_CLIENT");
 		u.setRoles(roles);
 		
