@@ -4,8 +4,10 @@
     <div class="profile-stats">
       <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
       <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
-      <button class="edit-button" *ngIf="hasSignedIn()" (click)="toggleEditProfileModal()">Edit Profile</button> 
-    </div>
+      <button class="edit-button" *ngIf="hasSignedIn()" (click)="toggleEditProfileModal()">
+        <img src="assets/icons/compose.png" alt="Edit Profile" class="icon" />
+      </button>      
+        </div>
   </div>
 
   <div *ngIf="isEditProfileModalVisible" class="profile-section">
