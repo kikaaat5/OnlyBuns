@@ -108,6 +108,8 @@ public class WebSecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/clients/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/posts/posts/**").permitAll()
 						.requestMatchers("/api/posts").permitAll()
+						.requestMatchers("/api/likes").permitAll()
+						.requestMatchers("/api/likes/**").permitAll()
 						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
