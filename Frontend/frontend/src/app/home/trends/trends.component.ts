@@ -7,8 +7,6 @@ import { PostService } from 'src/app/service/post.service';
   templateUrl: './trends.component.html',
   styleUrls: ['./trends.component.css']
 })
-
-
 export class TrendsComponent {
 
   posts: Post[] = []; 
@@ -25,6 +23,7 @@ export class TrendsComponent {
     this.postService.getPosts().subscribe({
       next: (data) => {
         this.posts = data;
+        this.calculateCounts();
       },
       error: (err) => {
         console.error('Greška prilikom dohvatanja postova:', err);
@@ -32,8 +31,21 @@ export class TrendsComponent {
     });  
   }
 
-  getPostsTotalCount() {
-    this.postsTotalCount = this.posts.length;
-  }
+  calculateCounts() {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
   
+    this.postsTotalCount = this.posts.length;
+    this.lastMonthCount = this.posts.filter(post => {
+      const postDate = new Date(
+        Number(post.createdAt[0]),    
+        Number(post.createdAt[1]) - 1, 
+        Number(post.createdAt[2]),    
+        Number(post.createdAt[3]),    
+        Number(post.createdAt[4])     
+      ); 
+      console.log(postDate);
+      return postDate >= oneMonthAgo;
+    }).length;
+  }
 }

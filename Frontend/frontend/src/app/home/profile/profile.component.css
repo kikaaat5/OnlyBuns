@@ -10,20 +10,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.edit-button {
-  margin-bottom: 10px;
-  align-self: flex-start;
-  padding: 10px 20px;
-  margin-top: 15px;
-  margin-left: 0%;
-  font-size: 0.8em;
-  color: #fff;
-  background-color: #ff7043;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 .stat {
   margin-left: 8px; 
   font-size: large;
@@ -33,10 +19,21 @@
   margin-right: 4px; 
 }
 
-
-.edit-button:hover {
-  background-color: #ff5722;
+.icon {
+  width: 24px; /* Širina slike */
+  height: 24px; /* Visina slike */
+  cursor: pointer; 
+  border-color: white;/* Pokazivač kao za dugme */
 }
+
+.edit-button {
+  background: none; /* Uklanja pozadinu */
+  border: none; /* Uklanja okvir */
+  box-shadow: none; /* Uklanja senke */
+  padding: 0;
+  margin: 0;
+}
+
 
 .profile-header {
   display: flex;
@@ -170,6 +167,7 @@ button:disabled {
   display: block; /* Osigurava da zauzima ceo red */
   margin: 0 auto; /* Horizontalno centriranje */
   text-align: center; 
+  margin-right: 175px;
 }
 
 .submit-button {
