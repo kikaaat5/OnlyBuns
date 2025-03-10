@@ -33,6 +33,8 @@ export class UserService {
   }
 
   getUserId(): number | null {
+    this.getMyInfo();
+    console.log('IZ USER SERVISA SE JAVLJAM', this.currentUser)
     return this.currentUser ? this.currentUser.id : null;
   }
 

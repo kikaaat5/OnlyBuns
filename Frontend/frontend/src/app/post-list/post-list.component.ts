@@ -6,6 +6,7 @@ import { Client } from '../model/client.model';
 import { ClientService } from '../service/client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
@@ -21,7 +22,7 @@ export class PostListComponent implements OnInit {
   clients: Client[] = [];
  
   constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private route: ActivatedRoute,
-    private router: Router) {}
+    private router: Router,  private datePipe: DatePipe) {}
   
   ngOnInit(): void {
     this.loggedUserId = this.userService.getUserId();
@@ -167,12 +168,39 @@ likePost(postId: number): void {
     return;
   }
 
-  this.postService.likePost(postId).subscribe(() => {
+  if (this.loggedUserId === null) {
+    console.error('User ID is null');
+    return;
+  }
+
+   // Kreiranje novog objekta Like
+   const newLike = {
+    id: 0,
+    userId: this.loggedUserId,
+    postId: postId,
+    likedAt: this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss') || '' // Formatirano vreme
+  };
+
+  /*this.postService.likePost(postId).subscribe(() => {
     const post = this.posts.find(p => p.id === postId);
     if (post) {
       post.likesCount += 1; 
     }
-  });
+  });*/
+  this.postService.createLike(newLike).subscribe(
+    () => {
+      this.postService.likePost(postId).subscribe(() => {
+        const post = this.posts.find(p => p.id === postId);
+        if (post) {
+          post.likesCount += 1; 
+        }
+      });
+    },
+    (error) => {
+      console.error('Error creating like:', error);
+      alert('An error occurred while liking the post.');
+    }
+  );
 }
 
 
