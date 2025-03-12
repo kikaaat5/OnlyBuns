@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/bunny-care")
 @RequiredArgsConstructor
 public class BunnyCareController {
-
     private final BunnyCareLocationRepository repository;
 
     @GetMapping("/locations")
