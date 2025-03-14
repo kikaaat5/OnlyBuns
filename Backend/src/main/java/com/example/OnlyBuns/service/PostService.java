@@ -66,5 +66,7 @@ public class PostService {
     }
 
 
-
+    public Post findById(Integer id) {
+        return postRepository.findById(id).orElse(null);
+    }
 }

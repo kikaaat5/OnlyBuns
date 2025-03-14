@@ -8,5 +8,79 @@
       <h2>Last month's total</h2>
       <p>{{ lastMonthCount }}</p>
     </div>
+
+    <div class="trend-item">
+      <h2>TOP 10 most liked posts ever</h2>
+      <div class="user-posts-section">
+        <div class="posts-container">
+          <div *ngFor="let post of tenMostPopularPosts; let i = index" class="post-card" [ngClass]="{ 'new-row': i % 3 === 0 }">
+            <div class="post-header">
+              <h3>{{ post.description }}</h3>
+            </div>
+      
+            <div class="post-image">
+              <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" />
+              <ng-template #noImage>
+                <p>No image available</p>
+              </ng-template>
+            </div>
+      
+            <div class="post-footer">
+              <p>Likes: {{ post.likesCount }}</p>
+            </div>
+      
+            <div class="post-comments">
+              <h4>Comments</h4>
+              <div *ngFor="let comment of post.comments" class="comment">
+                <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
+                <small>{{ comment.createdAt | date: 'short' }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="trend-item">
+      <h2>TOP 5 last week's posts</h2>
+      <div class="user-posts-section">
+        <div class="posts-container">
+          <div *ngFor="let post of fiveLastWeeksMostPopularPosts; let i = index" class="post-card" [ngClass]="{ 'new-row': i % 3 === 0 }">
+            <div class="post-header">
+              <h3>{{ post.description }}</h3>
+            </div>
+      
+            <div class="post-image">
+              <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" />
+              <ng-template #noImage>
+                <p>No image available</p>
+              </ng-template>
+            </div>
+      
+            <div class="post-footer">
+              <p>Likes: {{ post.likesCount }}</p>
+            </div>
+      
+            <div class="post-comments">
+              <h4>Comments</h4>
+              <div *ngFor="let comment of post.comments" class="comment">
+                <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
+                <small>{{ comment.createdAt | date: 'short' }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div>
+      <div class="trend-item">
+        <h2>TOP 10 MOST ACTIVE USERS FOR LAST WEEK</h2>
+        <div class="client-cards">
+          <mat-card *ngFor="let client of topTenLastWeeksMostActiveClients" class="client-card">
+            <mat-card-header>
+              <mat-card-title>{{ client.firstname }} {{ client.lastname }}</mat-card-title>
+              <mat-card-subtitle>{{ client.username }}</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
+      </div>
+    </div>
   </div>
   

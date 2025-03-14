@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { Client } from 'src/app/model/client.model';
 import { Post } from 'src/app/model/post.model';
+import { ClientService } from 'src/app/service/client.service';
 import { PostService } from 'src/app/service/post.service';
 
 @Component({
@@ -10,13 +12,19 @@ import { PostService } from 'src/app/service/post.service';
 export class TrendsComponent {
 
   posts: Post[] = []; 
+  tenMostPopularPosts: Post[] = [];
+  fiveLastWeeksMostPopularPosts: Post[] = [];
+  topTenLastWeeksMostActiveClients: Client[] = [];
   postsTotalCount: number = 0;
   lastMonthCount: number = 0;
 
-  constructor(private postService: PostService){}
+  constructor(private postService: PostService, private clientService: ClientService){}
 
   ngOnInit(): void {
     this.loadPosts();
+    this.loadTopTenPosts();
+    this.loadLastWeeksTopFivePosts();
+    this.loadTopTenClients();
   }
 
   loadPosts() {
@@ -24,6 +32,39 @@ export class TrendsComponent {
       next: (data) => {
         this.posts = data;
         this.calculateCounts();
+      },
+      error: (err) => {
+        console.error('Greška prilikom dohvatanja postova:', err);
+      },
+    });  
+  }
+
+  loadTopTenPosts() {
+    this.postService.getTenMostLikedPosts().subscribe({
+      next: (data) => {
+        this.tenMostPopularPosts = data;
+      },
+      error: (err) => {
+        console.error('Greška prilikom dohvatanja postova:', err);
+      },
+    });  
+  }
+
+  loadLastWeeksTopFivePosts() {
+    this.postService.getFiveLastWeeksMostLikedPosts().subscribe({
+      next: (data) => {
+        this.fiveLastWeeksMostPopularPosts = data;
+      },
+      error: (err) => {
+        console.error('Greška prilikom dohvatanja postova:', err);
+      },
+    });  
+  }
+
+  loadTopTenClients() {
+    this.clientService.getTopTenActiveClients().subscribe({
+      next: (data) => {
+        this.topTenLastWeeksMostActiveClients = data;
       },
       error: (err) => {
         console.error('Greška prilikom dohvatanja postova:', err);
