@@ -23,13 +23,11 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
-    private final LikeService likeService;
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @Autowired
-    public PostController(PostService postService, LikeService likeService) {
+    public PostController(PostService postService) {
         this.postService = postService;
-        this.likeService = likeService;
     }
 
     @GetMapping
@@ -71,40 +69,12 @@ public class PostController {
 
     @GetMapping("/posts/tenMostLikedEver")
     public List<Post> findTenMostLikedEver() {
-        List<Post> allPosts = postService.findAll();
-
-        return allPosts.stream()
-                .sorted((p1, p2) -> Integer.compare(p2.getLikesCount(), p1.getLikesCount())) // Sort descending by likes
-                .limit(10) // Get top 10
-                .collect(Collectors.toList());
+        return postService.findTenMostLikedEver();
     }
-
 
     @GetMapping("/posts/fiveLastWeeksMostLiked")
     public List<Post> findFiveMostLikedRecently() {
-        LocalDateTime oneWeekAgo = LocalDateTime.now().minusDays(7);
-
-        // Get all likes from the last 7 days
-        List<Like> recentLikes = likeService.findAll().stream()
-                .filter(like -> like.getLikedAt().isAfter(oneWeekAgo))
-                .collect(Collectors.toList());
-
-        // Count likes per postId
-        Map<Integer, Long> likeCounts = recentLikes.stream()
-                .collect(Collectors.groupingBy(Like::getPostId, Collectors.counting()));
-
-        // Get the top 5 postIds with the most likes in the last 7 days
-        List<Integer> topPostIds = likeCounts.entrySet().stream()
-                .sorted((a, b) -> Long.compare(b.getValue(), a.getValue())) // Sort descending by like count
-                .limit(5)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-
-        // Fetch and return the corresponding posts
-        return topPostIds.stream()
-                .map(postService::findById)
-                .filter(Objects::nonNull) // Ensure only existing posts are included
-                .collect(Collectors.toList());
+        return postService.findFiveMostLikedRecently();
     }
 
 }
