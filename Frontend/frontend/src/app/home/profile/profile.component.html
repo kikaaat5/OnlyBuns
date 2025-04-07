@@ -2,8 +2,35 @@
   <div class="profile-header">
     <h1 class="username">{{ user.username }}</h1>
     <div class="profile-stats">
-      <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
-      <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
+      <!-- Statistika o klijentima -->
+  <span *ngIf="isClient" class="stat" (click)="openFollowingModal()">
+    <strong>{{ client.following }}</strong> Following
+  </span>
+  <span *ngIf="isClient" class="stat" (click)="openFollowersModal()">
+    <strong>{{ client.followers }}</strong> Followers
+  </span>
+
+  <!-- Modal za "Following" -->
+  <div *ngIf="isFollowingModalOpen" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeFollowingModal()">&times;</span>
+      <h2>Following</h2>
+      <ul>
+        <li *ngFor="let followingUser of followingUsers">{{ followingUser.username }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modal za "Followers" -->
+  <div *ngIf="isFollowersModalOpen" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeFollowersModal()">&times;</span>
+      <h2>Followers</h2>
+      <ul>
+        <li *ngFor="let follower of followers">{{ follower.username }}</li>
+      </ul>
+    </div>
+  </div>
       <button class="edit-button" *ngIf="hasSignedIn()" (click)="toggleEditProfileModal()">
         <img src="assets/icons/compose.png" alt="Edit Profile" class="icon" />
       </button>      

@@ -53,6 +53,10 @@ export class ProfileComponent {
   isPasswordEntered = false;
   errormessage : string = '';
   notMyProfile = false;
+  followingUsers : Client[] = [];
+  followers : Client[] = [];
+  isFollowingModalOpen = false;
+  isFollowersModalOpen = false;
 
   constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private authService : AuthService,  private route: ActivatedRoute) { }
 
@@ -212,6 +216,22 @@ export class ProfileComponent {
         alert('Došlo je do greške prilikom ažuriranja profila.');
       },
     });
-}
+  }
+
+  openFollowingModal() {
+    this.isFollowingModalOpen = true;
+  }
+
+  closeFollowingModal() {
+    this.isFollowingModalOpen = false;
+  }
+
+  openFollowersModal() {
+    this.isFollowersModalOpen = true;
+  }
+
+  closeFollowersModal() {
+    this.isFollowersModalOpen = false;
+  }
   
 }
