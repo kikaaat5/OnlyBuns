@@ -80,8 +80,9 @@ public class PostService {
         return postRepository.findById(id).orElse(null);
     }
 
-    @Cacheable("tenMostLikedEver")
+    @Cacheable(value ="tenMostLikedEver", key = "'mostLiked'")
     public List<Post> findTenMostLikedEver() {
+        System.out.println("Fetching from DB");
         List<Post> allPosts = postRepository.findAll();
         return allPosts.stream()
                 .sorted((p1, p2) -> Integer.compare(p2.getLikesCount(), p1.getLikesCount())) // Sort descending by likes
@@ -89,7 +90,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable("fiveMostLikedRecently")
+    @Cacheable(value = "fiveMostLikedRecently", key = "'mostLikedRecently'")
     public List<Post> findFiveMostLikedRecently() {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusDays(7);
 

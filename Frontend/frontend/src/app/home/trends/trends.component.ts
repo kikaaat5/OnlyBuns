@@ -85,7 +85,6 @@ export class TrendsComponent {
         Number(post.createdAt[3]),    
         Number(post.createdAt[4])     
       ); 
-      console.log(postDate);
       return postDate >= oneMonthAgo;
     }).length;
   }
