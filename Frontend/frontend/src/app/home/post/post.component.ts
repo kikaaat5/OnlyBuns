@@ -2,6 +2,7 @@ import { afterNextRender, Component, Input } from '@angular/core';
 import { Post } from 'src/app/model/post.model';
 import { MapService } from 'src/app/service/map.service';
 import { PostService } from 'src/app/service/post.service';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-post',
@@ -10,16 +11,17 @@ import { PostService } from 'src/app/service/post.service';
 })
 export class PostComponent {
 
-  constructor(private postService: PostService, private mapService: MapService) {}
+  constructor(private postService: PostService, private mapService: MapService,private userService: UserService) {}
 
   posts = []; // Ovo će biti lista postojećih objava, popunjena iz servisa
   showCreatePostForm = false;
   showMap = false;
   location:string ='';
+  loggedUserId: number | null = 0;
 
   newPost: Post = {
     id: 0, 
-    userId: 1, // Example user ID; replace or set dynamically as needed
+    userId: 0, // Example user ID; replace or set dynamically as needed
     description: '',
     createdAt: new Date().toISOString(),
     imagePath: '',
@@ -30,6 +32,7 @@ export class PostComponent {
   };
 
   ngOnInit(): void {
+    this.loggedUserId = this.userService.getUserId();
   }
 
   openMap(){
@@ -42,17 +45,19 @@ export class PostComponent {
 
   closeCreatePostForm() {
     this.showCreatePostForm = false;
-    this.newPost = {
-      id: 0,
-      userId: 1,
-      description: '',
-      createdAt: new Date().toISOString(),
-      imagePath: '',
-      longitude: 0,
-      latitude: 0,
-      likesCount: 0,
-      comments: []
+   
+      this.newPost = {
+        id: 0,
+        userId:0,
+        description: '',
+        createdAt: new Date().toISOString(),
+        imagePath: '',
+        longitude: 0,
+        latitude: 0,
+        likesCount: 0,
+        comments: []
     };
+  
   }
 
   onLocationChange(): void {
@@ -82,6 +87,9 @@ export class PostComponent {
   }
 
   submitNewPost() {
+    if (this.loggedUserId !== null){
+      this.newPost.userId = this.loggedUserId ;
+    }
     this.postService.createPost(this.newPost).subscribe(
       response => {
         console.log('Post created successfully:', response);
