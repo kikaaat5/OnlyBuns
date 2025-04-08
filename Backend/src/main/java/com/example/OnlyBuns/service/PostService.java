@@ -5,6 +5,9 @@ import com.example.OnlyBuns.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @Service
 public class PostService {
@@ -63,6 +66,11 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         post.setLikesCount(post.getLikesCount() + 1);
         postRepository.save(post);
+    }
+
+    public Post findOne(int id) {
+        System.out.println(">>> Pozivam findById za id: " + id);
+        return postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
 

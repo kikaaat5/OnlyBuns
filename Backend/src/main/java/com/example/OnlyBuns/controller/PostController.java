@@ -55,6 +55,14 @@ public class PostController {
         return postService.findPostsByUserId(userId);
     }
 
+    @GetMapping("/test-cache/{id}")
+    public ResponseEntity<Post> testCache(@PathVariable int id) {
+        System.out.println(">>> Pozivam testCache za post id: " + id);
+        Post post = postService.findOne(id);
+        return ResponseEntity.ok(post);
+    }
+
+
     @PostMapping("/{postId}/like")
     public ResponseEntity<Void> likePost(@PathVariable int postId) {
         postService.likePost(postId);

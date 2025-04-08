@@ -18,6 +18,9 @@ export class PostComponent {
   showMap = false;
   location:string ='';
   loggedUserId: number | null = 0;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  
 
   newPost: Post = {
     id: 0, 
@@ -57,6 +60,9 @@ export class PostComponent {
         likesCount: 0,
         comments: []
     };
+    this.location = '';
+    this.showMap = false;
+
   
   }
 
@@ -90,16 +96,30 @@ export class PostComponent {
     if (this.loggedUserId !== null){
       this.newPost.userId = this.loggedUserId ;
     }
+    console.log(this.loggedUserId);
     this.postService.createPost(this.newPost).subscribe(
       response => {
         console.log('Post created successfully:', response);
+        this.successMessage = "Objava je uspešno dodata!";
+        this.errorMessage = null;
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 3000);
+        
         this.closeCreatePostForm();
       },
       error => {
         console.error('Error creating post:', error);
+        this.errorMessage = "Greška pri dodavanju objave.";
+        this.successMessage = null;
+        setTimeout(() => {
+          this.errorMessage = null;
+        }, 3000);
+        
       }
     );
   }
+
 
   onImageSelected(event: any) {
     const file = event.target.files[0];
