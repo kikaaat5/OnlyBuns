@@ -11,4 +11,5 @@
     followers: number;
     active: boolean;
     address: number;
+    isFollowing?: boolean;
   }

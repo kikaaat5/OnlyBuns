@@ -2,15 +2,27 @@
   <div class="profile-header">
     <h1 class="username">{{ user.username }}</h1>
     <div class="profile-stats">
-      <span *ngIf="isClient" class="stat"><strong>{{ client.following }}</strong>Following</span>
-      <span *ngIf="isClient" class="stat"><strong>{{ client.followers }}</strong>Followers</span>
-      <button class="edit-button" *ngIf="hasSignedIn()" (click)="toggleEditProfileModal()">
+      <span *ngIf="isClient" class="stat clickable-stat" (click)="openFollowListModal('following')">
+        <strong>{{ client.following }}</strong>Following
+      </span>
+      <span *ngIf="isClient" class="stat clickable-stat" (click)="openFollowListModal('followers')">
+        <strong>{{ client.followers }}</strong>Followers
+      </span>
+
+      <div *ngIf="notMyProfile && currentSignedInUserId !== null" class="follow-action">
+        <button 
+          [ngStyle]="getButtonStyle()"
+          (click)="toggleFollow()">
+          {{ getButtonText() }}
+        </button>
+      </div>
+      <button class="edit-button" *ngIf="!notMyProfile && hasSignedIn()" (click)="toggleEditProfileModal()">
         <img src="assets/icons/compose.png" alt="Edit Profile" class="icon" />
       </button>      
-        </div>
+    </div>
   </div>
 
-  <div *ngIf="isEditProfileModalVisible" class="profile-section">
+  <div *ngIf="isEditProfileModalVisible && !notMyProfile" class="profile-section">
     <div class="profile-field">
       <label for="email">Email:</label>
       <p id="email">{{ user.email }}</p>
@@ -37,7 +49,7 @@
     </div>
   </div>
 
-  <div *ngIf="isEditProfileModalVisible" class="profile-section">
+  <div *ngIf="isEditProfileModalVisible && !notMyProfile" class="profile-section">
     <div class="profile-field">
       <label class="address">Address</label>
     </div>
@@ -71,22 +83,22 @@
     <button (click)="updateUserProfile()" class="submit-button">Submit Changes</button>
   </div>
 
-  <div *ngIf="isEditProfileModalVisible" class="password-section">
+  <div *ngIf="isEditProfileModalVisible && !notMyProfile" class="password-section">
     <div class="profile-field">
       <label class="address">Password</label>
     </div>
     <div class="profile-field">
       <label for="old-password">Old Password:</label>
       <input type="password"
-       id="old-password" 
-      [(ngModel)]="oldPassword" />
+        id="old-password" 
+        [(ngModel)]="oldPassword" />
     </div>
 
     <div class="profile-field">
       <label for="new-password">New Password:</label>
       <input type="password"
-       id="new-password" 
-      [(ngModel)]="newPassword" />
+        id="new-password" 
+        [(ngModel)]="newPassword" />
     </div>
 
     <div class="profile-field">
@@ -104,6 +116,7 @@
     </button>
   </div>
 </div>
+
 <div class="user-posts-section">
   <div class="posts-container">
     <div *ngFor="let post of posts; let i = index" class="post-card" [ngClass]="{ 'new-row': i % 3 === 0 }">
@@ -131,5 +144,12 @@
       </div>
     </div>
   </div>
+   <app-follow-list-modal
+    [visible]="isFollowListModalVisible"
+    [followList]="followList"
+    [listType]="currentFollowListType"
+    [currentSignedInUserId]="currentSignedInUserId"
+    (toggleFollow)="handleToggleFollowFromModal($event)"
+    (close)="closeFollowListModal()"
+  ></app-follow-list-modal>
 </div>
-

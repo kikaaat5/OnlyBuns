@@ -15,6 +15,8 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     @Query("SELECT b from Client b where b.email=:string")
     Client findByEmail(String string);
 
+    @Query("SELECT b from Client b where b.username=:string")
+    Client findByName(String string);
     List<Client> findByEmailContainingIgnoreCase(String email);
 
     @Query("SELECT c FROM Client c WHERE c.numberOfPosts BETWEEN :minPosts AND :maxPosts")
