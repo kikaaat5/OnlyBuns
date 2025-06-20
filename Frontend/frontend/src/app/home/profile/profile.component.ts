@@ -496,4 +496,5 @@ private updateFollowStatusInModalList(clientId: number, newStatus: boolean): voi
       },
     });
   }
+
 }

@@ -2,6 +2,7 @@
   <div class="profile-header">
     <h1 class="username">{{ user.username }}</h1>
     <div class="profile-stats">
+
       <span *ngIf="isClient" class="stat clickable-stat" (click)="openFollowListModal('following')">
         <strong>{{ client.following }}</strong>Following
       </span>

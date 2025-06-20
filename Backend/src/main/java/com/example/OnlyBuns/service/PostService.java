@@ -1,18 +1,28 @@
 package com.example.OnlyBuns.service;
 
+import com.example.OnlyBuns.model.Like;
 import com.example.OnlyBuns.model.Post;
 import com.example.OnlyBuns.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final LikeService likeService;
 
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, LikeService likeService) {
         this.postRepository = postRepository;
+        this.likeService = likeService;
     }
 
     public List<Post> findAll() {
@@ -58,6 +68,7 @@ public class PostService {
         return postRepository.findAllByUserId(userId);
     }
 
+    @CacheEvict(value = {"tenMostLikedEver", "fiveMostLikedRecently"}, allEntries = true)
     public void likePost(int postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -65,6 +76,44 @@ public class PostService {
         postRepository.save(post);
     }
 
+    public Post findById(Integer id) {
+        return postRepository.findById(id).orElse(null);
+    }
 
+    @Cacheable(value ="tenMostLikedEver", key = "'mostLiked'")
+    public List<Post> findTenMostLikedEver() {
+        System.out.println("Fetching from DB");
+        List<Post> allPosts = postRepository.findAll();
+        return allPosts.stream()
+                .sorted((p1, p2) -> Integer.compare(p2.getLikesCount(), p1.getLikesCount())) // Sort descending by likes
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    @Cacheable(value = "fiveMostLikedRecently", key = "'mostLikedRecently'")
+    public List<Post> findFiveMostLikedRecently() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusDays(7);
+
+        // Get all likes from the last 7 days
+        List<Like> recentLikes = likeService.findAll().stream()
+                .filter(like -> like.getLikedAt().isAfter(oneWeekAgo))
+                .collect(Collectors.toList());
+
+        // Count likes per postId
+        Map<Integer, Long> likeCounts = recentLikes.stream()
+                .collect(Collectors.groupingBy(Like::getPostId, Collectors.counting()));
+
+        // Get the top 5 postIds with the most likes in the last 7 days
+        List<Integer> topPostIds = likeCounts.entrySet().stream()
+                .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
+                .limit(5)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        return topPostIds.stream()
+                .map(this::findById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
 }
