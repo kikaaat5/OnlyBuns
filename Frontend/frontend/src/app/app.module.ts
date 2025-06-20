@@ -35,6 +35,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MapComponent } from './map/map.component';
+import { CommonModule } from '@angular/common';
+import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
+import { FollowListModalComponent } from './home/follow-list-modal/follow-list-modal.component';
 
 
 
@@ -59,7 +62,9 @@ import { MapComponent } from './map/map.component';
     TrendsComponent,
     NearbyComponent,
     ChatComponent,
-    ProfileComponent
+    ProfileComponent,
+    PublicClientListComponent,
+    FollowListModalComponent
   ],
 
   imports: [
@@ -74,7 +79,7 @@ import { MapComponent } from './map/map.component';
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
-
+    CommonModule
 
   ],
   providers: [{

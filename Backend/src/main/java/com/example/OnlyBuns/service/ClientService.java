@@ -134,6 +134,10 @@ public class ClientService {
         return clientRepository.findByEmail(email);
     }
 
+    public Client findByUsername(String username) {
+        return clientRepository.findByName(username);
+    }
+
     public void deleteById(int id) {
         clientRepository.deleteById(id);
     }

@@ -1,0 +1,39 @@
+<div class="modal" [ngClass]="{'show': visible}" tabindex="-1" role="dialog" *ngIf="visible">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalTitle }}</h5> 
+        <button type="button" class="close" aria-label="Close" (click)="onClose()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="followList.length === 0" class="text-center text-muted">
+          <p *ngIf="listType === 'followers'">No followers.</p>
+          <p *ngIf="listType === 'following'">No followed.</p>
+        </div>
+        
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let client of followList">
+            <a [routerLink]="['/home/profile', client.id]" (click)="onClose()">
+              {{ client.username }} ({{ client.firstname }} {{ client.lastname }})
+            </a>
+             <button
+                *ngIf="client.id !== currentSignedInUserId"
+                [ngClass]="{'btn-unfollow': client.isFollowing, 'btn-follow': !client.isFollowing}"
+                (click)="toggleFollowFromModal(client)"
+                class="btn btn-sm"
+                >
+      {{ client.isFollowing ? 'Unfollow' : 'Follow' }}
+    </button>
+            </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade" [ngClass]="{'show': visible}" *ngIf="visible"></div>
