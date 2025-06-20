@@ -27,9 +27,9 @@
 }
 
 .edit-button {
-  background: none; /* Uklanja pozadinu */
-  border: none; /* Uklanja okvir */
-  box-shadow: none; /* Uklanja senke */
+  background: none; 
+  border: none; 
+  box-shadow: none; 
   padding: 0;
   margin: 0;
 }
@@ -156,7 +156,7 @@
 }
 
 button:disabled {
-  background-color: #cccccc; /* Light gray when disabled */
+  background-color: #cccccc; 
 }
 
 .password-button:enabled {
@@ -164,8 +164,8 @@ button:disabled {
 }
 
 .address {
-  display: block; /* Osigurava da zauzima ceo red */
-  margin: 0 auto; /* Horizontalno centriranje */
+  display: block; 
+  margin: 0 auto; 
   text-align: center; 
   margin-right: 175px;
 }
@@ -205,6 +205,7 @@ button:disabled {
 .post-card {
   background-color: #fff;
   border: 1px solid #ddd;
+  height: 600px;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
@@ -213,7 +214,7 @@ button:disabled {
 }
 
 .post-card.new-row {
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 .post-header {
@@ -255,4 +256,29 @@ button:disabled {
   .posts-container {
     grid-template-columns: repeat(3, 1fr);  
   }
+}
+.follow-action button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease-in-out;
+  margin-left: 10px; 
+}
+
+.follow-action button:disabled {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+  color: #666666 !important;
+}
+.profile-stats .stat.clickable-stat {
+  cursor: pointer; 
+  color: #007bff; 
+  text-decoration: none; 
+  margin: 0 10px; 
+}
+
+.profile-stats .stat.clickable-stat:hover {
+  text-decoration: underline; 
 }

@@ -99,6 +99,13 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers(HttpMethod.POST, "/api/follows/{followedClientId}/follow").authenticated()
+						.requestMatchers(HttpMethod.DELETE, "/api/follows/{followedClientId}/unfollow").authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/follows/{otherClientId}/isFollowing").authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/follows/{clientId}/following").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/follows/{clientId}/followers").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/follows/{clientId}/following/count").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/follows/{clientId}/followers/count").permitAll()
 								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
 								.requestMatchers(HttpMethod.PUT, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
