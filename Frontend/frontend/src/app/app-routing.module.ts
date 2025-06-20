@@ -41,7 +41,7 @@ const routes: Routes = [
         {path:'map',component:MapComponent}
       ]},
       // Ako 'posts' na top-levelu nije za ceo sajt, razmisli da bude child rute ovde
-      // { path: 'posts', component: PostListComponent}, 
+     { path: 'posts', component: PostListComponent}, 
       { path: 'explore-clients', component: PublicClientListComponent },
     ]
   },
@@ -54,10 +54,10 @@ const routes: Routes = [
     component: SignUpComponent,
   },
   {
-    path: 'client-list', component: ClientListComponent // Proveri da li se ovo koristi ili je zastarelo
+    path: 'client-list', component: ClientListComponent 
   },
   {
-    path: 'posts', // Proveri da li se ovo koristi ili je duplikat sa /home/post/posts
+    path: 'posts', 
     component: PostListComponent
   },
   {

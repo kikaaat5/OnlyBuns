@@ -124,7 +124,7 @@ export class PublicClientListComponent implements OnInit {
         error: (err) => {
           console.error('Greška pri praćenju:', err);
           const errorMsg = err.error || err.message || 'Nepoznata greška.';
-          //alert('Greška pri praćenju: ' + errorMsg);
+          alert(errorMsg);
         }
       });
     }
