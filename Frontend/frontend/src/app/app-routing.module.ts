@@ -3,13 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
-import { ClientListComponent } from './client-list/client-list.component'; // Proveri da li se ovo koristi
+import { ClientListComponent } from './client-list/client-list.component'; 
 import { PostListComponent } from './post-list/post-list.component';
 import { ActivateAccountComponent } from './activate-account/activate-account.component';
 import { FollowingComponent } from './home/following/following.component';
 import { TrendsComponent } from './home/trends/trends.component';
 import { ChatComponent } from './home/chat/chat.component';
-import { ProfileComponent } from './home/profile/profile.component'; // Putanja do tvoje ProfileComponent
+import { ProfileComponent } from './home/profile/profile.component';
 import { NearbyComponent } from './home/nearby/nearby.component';
 import { PostComponent } from './home/post/post.component';
 import { MapComponent } from './map/map.component';
@@ -19,7 +19,7 @@ import { PublicClientListComponent } from './home/public-client-list/public-clie
 const routes: Routes = [
   {
     path: '',
-    component: SignUpComponent, // Početna stranica za neprijavljene
+    component: SignUpComponent, 
   },
   {
     path: 'home',
@@ -28,9 +28,8 @@ const routes: Routes = [
       { path: 'following', component: FollowingComponent },
       { path: 'trends', component: TrendsComponent },
       { path: 'nearby', component: NearbyComponent },
-      { path: 'chat', component: ChatComponent }, // Uklonjen duplikat ako je bio
+      { path: 'chat', component: ChatComponent }, 
 
-      // UNIFIKOVANE RUTE ZA PROFIL UNUTAR HOME SEKCIIJE
       // Ruta za moj profil: /home/profile
       { path: 'profile', component: ProfileComponent },
       // Ruta za tuđi profil: /home/profile/:userId
@@ -40,7 +39,6 @@ const routes: Routes = [
         {path:'posts',component:PostListComponent},
         {path:'map',component:MapComponent}
       ]},
-      // Ako 'posts' na top-levelu nije za ceo sajt, razmisli da bude child rute ovde
      { path: 'posts', component: PostListComponent}, 
       { path: 'explore-clients', component: PublicClientListComponent },
     ]
@@ -64,12 +62,11 @@ const routes: Routes = [
     path: 'activate/:token', 
     component: ActivateAccountComponent,
   },
-  // OBAVEZNO UKLONJENA TOP-LEVEL RUTA ZA PROFIL KOJA SE KONFLIKTOVALA
-  // { path: 'profile/:userId', component: ProfileComponent } // OVO JE UKLONJENO
+  
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })], // useHash: true ostaje
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
