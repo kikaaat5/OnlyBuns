@@ -26,22 +26,10 @@ export class FollowListModalComponent implements OnInit {
   }
 
    toggleFollowFromModal(client: Client): void {
-    console.log('>>> toggleFollowFromModal - Kliknuto na dugme za klijenta:', client);
-    console.log('>>> toggleFollowFromModal - ID klijenta za emitovanje:', client.id);
-    console.log('>>> toggleFollowFromModal - isFollowing status za emitovanje:', client.isFollowing || false);
+    
     this.toggleFollow.emit({ clientId: client.id, isFollowing: client.isFollowing || false });
-    console.log('>>> toggleFollowFromModal - Događaj emitovan.'); // NEW LOG
-    //this.toggleFollow.emit({ clientId: client.id, isFollowing: client.isFollowing || false }); 
+     
   }
-
-  /*toggleFollowFromModal(client: Client): void {
-  console.log('Kliknuto na dugme za klijenta:', client);
-  console.log('ID klijenta:', client.id, 'Tip:', typeof client.id);
-  console.log('ID ulogovanog korisnika (currentSignedInUserId):', this.currentSignedInUserId, 'Tip:', typeof this.currentSignedInUserId);
-  console.log('Da li su ID-evi jednaki (client.id === currentSignedInUserId):', client.id === this.currentSignedInUserId);
-
-  this.toggleFollow.emit({ clientId: client.id, isFollowing: client.isFollowing || false });
-}*/
 
   get modalTitle(): string {
     if (this.listType === 'followers') {

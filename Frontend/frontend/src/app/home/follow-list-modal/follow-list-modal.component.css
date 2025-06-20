@@ -115,46 +115,46 @@
 }
 
 .list-group-item {
-  display: flex; /* Koristi flex za poravnavanje linka i potencijalnog dugmeta */
-  justify-content: space-between; /* Razmakni elemente */
-  align-items: center; /* Centriraj vertikalno */
-  padding: 0.85rem 1.25rem; /* Prilagodi padding */
-  border: none; /* Uklanjamo border za čistiji izgled */
-  border-bottom: 1px solid #f2f2f2; /* Diskretna linija između stavki */
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0.85rem 1.25rem; 
+  border: none; 
+  border-bottom: 1px solid #f2f2f2; 
 }
 
 .list-group-item:last-child {
-    border-bottom: none; /* Poslednja stavka nema donju liniju */
+    border-bottom: none; 
 }
 
 .list-group-item a {
-  font-weight: 500; /* Malo podebljan tekst linka */
-  color: #007bff; /* Standardna plava za linkove */
+  font-weight: 500; 
+  color: #007bff; 
   text-decoration: none;
-  transition: color 0.2s ease-in-out; /* Glatka tranzicija boje */
+  transition: color 0.2s ease-in-out; 
 }
 
 .list-group-item a:hover {
-  color: #0056b3; /* Tamnija plava pri hoveru */
-  text-decoration: underline; /* Podvučeno pri hoveru */
+  color: #0056b3; 
+  text-decoration: underline; 
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  padding: 1rem 1.5rem; /* Više paddinga */
-  border-top: 1px solid #e9ecef; /* Svetlija linija */
-  border-bottom-right-radius: 0.75rem; /* Prilagodi radius */
+  padding: 1rem 1.5rem; 
+  border-top: 1px solid #e9ecef; 
+  border-bottom-right-radius: 0.75rem; 
   border-bottom-left-radius: 0.75rem;
-  background-color: #f8f9fa; /* Blaga pozadina za podnožje */
+  background-color: #f8f9fa; 
 }
 
 .modal-footer .btn-secondary {
   background-color: #6c757d;
   border-color: #6c757d;
   color: white;
-  padding: 0.5rem 1.25rem; /* Veći padding za dugme */
-  border-radius: 0.3rem; /* Zaobljene ivice */
+  padding: 0.5rem 1.25rem; 
+  border-radius: 0.3rem; 
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
@@ -164,15 +164,15 @@
 }
 
 .btn-follow {
-  background-color: #28a745; /* Zelena boja */
+  background-color: #28a745; 
   color: white;
   border: 1px solid #28a745;
-  padding: 0.375rem 0.75rem; /* Standardni padding */
-  font-size: 0.875rem; /* Manji font */
-  border-radius: 0.25rem; /* Standardni radius */
+  padding: 0.375rem 0.75rem; 
+  font-size: 0.875rem; 
+  border-radius: 0.25rem; 
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap; /* Sprečava prelamanje teksta dugmeta */
+  white-space: nowrap; 
 }
 
 .btn-follow:hover {
@@ -180,9 +180,8 @@
   border-color: #1e7e34;
 }
 
-/* Stil za Unfollow dugme */
 .btn-unfollow {
-  background-color: #dc3545; /* Crvena boja */
+  background-color: #dc3545; 
   color: white;
   border: 1px solid #dc3545;
   padding: 0.375rem 0.75rem;
@@ -190,7 +189,7 @@
   border-radius: 0.25rem;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap; /* Sprečava prelamanje teksta dugmeta */
+  white-space: nowrap; 
 }
 
 .btn-unfollow:hover {
@@ -198,16 +197,14 @@
   border-color: #bd2130;
 }
 
-/* Stil za link u listi, da se lepo poravna sa dugmetom */
 .follow-list-link {
-    flex-grow: 1; /* Omogućava linku da zauzme sav dostupan prostor pre dugmeta */
-    margin-right: 10px; /* Razmak između linka i dugmeta */
-    white-space: nowrap; /* Sprečava prelamanje teksta */
-    overflow: hidden; /* Skriva prelivajući tekst */
-    text-overflow: ellipsis; /* Dodaje tri tačke ako je tekst predugačak */
+    flex-grow: 1;
+    margin-right: 10px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
 }
 
-/* Stil za praznu listu */
 .text-center.text-muted.mt-3 {
   padding: 1rem;
   font-style: italic;

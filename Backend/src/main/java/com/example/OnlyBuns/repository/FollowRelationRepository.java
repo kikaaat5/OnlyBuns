@@ -11,18 +11,14 @@ import java.util.Optional;
 
 @Repository
 public interface FollowRelationRepository extends JpaRepository<FollowRelation, Integer> {
-    // Metoda za proveru da li follower prati followed korisnika
+
     Optional<FollowRelation> findByFollowerAndFollowed(Client follower, Client followed);
 
-    // Metoda za pronalaženje svih praćenja gde je dati korisnik follower
     List<FollowRelation> findByFollower(Client follower);
 
-    // Metoda za pronalaženje svih praćenja gde je dati korisnik followed
     List<FollowRelation> findByFollowed(Client followed);
 
-    // Metoda za brojanje pratilaca za datog korisnika
     long countByFollowed(Client followed);
 
-    // Metoda za brojanje korisnika koje prati dati korisnik
     long countByFollower(Client follower);
 }

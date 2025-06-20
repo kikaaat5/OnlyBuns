@@ -272,15 +272,13 @@ button:disabled {
   cursor: not-allowed;
   color: #666666 !important;
 }
-/* ... (postojeci stilovi) ... */
-
 .profile-stats .stat.clickable-stat {
-  cursor: pointer; /* Menja kursor u ruku kada se pređe preko elementa */
-  color: #007bff; /* Možeš promeniti boju u željenu, npr. plavu kao link */
-  text-decoration: none; /* Uklanja podvučeno ako je bilo */
-  margin: 0 10px; /* Razmak između statova ako želiš */
+  cursor: pointer; 
+  color: #007bff; 
+  text-decoration: none; 
+  margin: 0 10px; 
 }
 
 .profile-stats .stat.clickable-stat:hover {
-  text-decoration: underline; /* Podvuče tekst kada se pređe mišem */
+  text-decoration: underline; 
 }
