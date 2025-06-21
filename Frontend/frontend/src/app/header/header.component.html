@@ -11,10 +11,6 @@
                 <span>Login</span>
             </button>
 
-             
-             <button *ngIf="hasSignedIn() && isAdmin()" color="warn" mat-raised-button routerLink="/client-list">
-                <span>Clients</span>
-            </button>
             <button color="warn" *ngIf="!hasSignedIn()" mat-raised-button routerLink="/posts">
                 <span>All Posts</span>  
               </button>

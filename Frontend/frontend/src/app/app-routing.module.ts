@@ -14,6 +14,7 @@ import { NearbyComponent } from './home/nearby/nearby.component';
 import { PostComponent } from './home/post/post.component';
 import { MapComponent } from './map/map.component';
 import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
+import { AnalyticsComponent } from './home/analytics/analytics.component';
 
 
 const routes: Routes = [
@@ -29,6 +30,8 @@ const routes: Routes = [
       { path: 'trends', component: TrendsComponent },
       { path: 'nearby', component: NearbyComponent },
       { path: 'chat', component: ChatComponent }, 
+      { path: 'all-users', component: ClientListComponent },
+       { path: 'analytics', component: AnalyticsComponent },
 
       // Ruta za moj profil: /home/profile
       { path: 'profile', component: ProfileComponent },
