@@ -82,6 +82,7 @@ export class PostComponent {
   }
 
   submitNewPost() {
+    console.log(this.newPost.imagePath)
     this.postService.createPost(this.newPost).subscribe(
       response => {
         console.log('Post created successfully:', response);
