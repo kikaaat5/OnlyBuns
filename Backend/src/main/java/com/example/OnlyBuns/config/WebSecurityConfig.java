@@ -109,6 +109,7 @@ public class WebSecurityConfig {
 								.requestMatchers(HttpMethod.DELETE, "/api/posts/{postId}").permitAll()
 								.requestMatchers(HttpMethod.PUT, "/api/posts/{postId}").permitAll()
 						.requestMatchers("/signin", "/signup", "/auth/**").permitAll()
+						.requestMatchers("/auth/activate/**").permitAll()
 						.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/api/foo").permitAll() // Dozvoljavaš ove rute bez autentifikacije
 						.requestMatchers("/api/clients").permitAll()
