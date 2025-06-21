@@ -16,10 +16,3 @@ export interface Post {
     content: string;
     createdAt: string;
   }
-
-  export interface Like {
-    id: number;
-    userId: number;
-    postId:  number;
-    createdAt: string;
-  }

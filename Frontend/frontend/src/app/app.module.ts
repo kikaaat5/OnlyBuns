@@ -38,6 +38,7 @@ import { MapComponent } from './map/map.component';
 import { CommonModule } from '@angular/common';
 import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
 import { FollowListModalComponent } from './home/follow-list-modal/follow-list-modal.component';
+import { AnalyticsComponent } from './home/analytics/analytics.component';
 
 
 
@@ -64,7 +65,8 @@ import { FollowListModalComponent } from './home/follow-list-modal/follow-list-m
     ChatComponent,
     ProfileComponent,
     PublicClientListComponent,
-    FollowListModalComponent
+    FollowListModalComponent,
+    AnalyticsComponent
   ],
 
   imports: [
