@@ -24,13 +24,16 @@ export class AuthService {
 
   initializeAuthState() {
     const token = this.getToken();
-    if (token) {
-      // Optionally validate the token with the server
-      this.access_token = token;
-      this.initializeSession();
-    } else {
-      this.logout();
-    }
+     if (window.location.href.includes('/activate/')) {
+    return;
+  }
+
+  if (token) {
+    this.access_token = token;
+    this.initializeSession();
+  } else {
+    this.logout();
+  }
   }
 
   initializeSession() {
@@ -91,13 +94,14 @@ export class AuthService {
   }
 
   activateAccount(token: string): Observable<any> {
+    console.log("usaosaoaoo activation radi nestoo");
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getToken()}`,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
   
-    return this.apiService.get(this.config.activation_url + `/${token}`, { headers });
+    return this.apiService.get(`${this.config.activation_url}/${token}`, { headers });
   }
 
   tokenIsPresent() {
