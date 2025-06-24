@@ -29,7 +29,7 @@ public class ImageCompressionService {
     }
 
 
-    @Scheduled(cron = "0 26 22 * * *")  // Svaki dan u 19:20
+    @Scheduled(cron = "0 49 22 * * *")  // Svaki dan u 19:20
     public void scheduledImageCompression() {
         System.out.println("⏰ Pokrećem zakazanu dnevnu kompresiju slika");
         compressOldImages();
