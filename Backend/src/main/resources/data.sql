@@ -17,7 +17,9 @@ VALUES
     (true, true, 110, 11, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milica@gmail.com', 'jovanovic', 'milica', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milica', 1, 0),
     (true, true, 60, 6, nextval('user_seq'), '2024-11-11 21:53:50.02', 'sanja@gmail.com', 'petrovic', 'sanja', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'sanja', 1, 10),
     (true, true, 50, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jelena@gmail.com', 'jankovic', 'jelena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'jelena', 1, 2),
-    (true, true, 90, 9, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milena@gmail.com', 'jovanovic', 'milena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milena', 1, 5);
+    (true, true, 90, 9, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milena@gmail.com', 'jovanovic', 'milena', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milena', 1, 5),
+    (false, true, 22, 0, nextval('user_seq'), '2024-11-11 21:53:50.02', 'kika@gmail.com', 'todorovic', 'kika', '$2a$10$MYd.H/Gp1ljLZm9OEfqokudaqQF9LNTlsdDFpIsxqjZtnKHsBhENC', 'kika', 1, 25);
+
 
 -- Dodavanje uloge korisnicima (klijenti)
 INSERT INTO public.user_role(role_id, user_id)

@@ -15,7 +15,10 @@
         <div>
           <input type="file" (change)="onImageSelected($event)" accept="image/*" />
         </div>
-        <img *ngIf="newPost.imagePath" [src]="newPost.imagePath" alt="Selected Image" class="preview-image"  required/>
+       <!-- <img *ngIf="newPost.imagePath" [src]="newPost.imagePath" alt="Selected Image" class="preview-image"  required/>-->
+       <div *ngIf="previewImageUrl">
+        <img [src]="previewImageUrl" alt="Pregled slike" style="max-width: 300px; max-height: 300px;" />
+      </div>
   
         <!-- Lokacija objave (adresa) -->
          <!-- Lokacija objave (adresa)

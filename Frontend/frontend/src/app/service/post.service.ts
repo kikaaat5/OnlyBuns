@@ -43,9 +43,9 @@ export class PostService {
     return this.http.put(`${this.apiUrl}/${postId}?userId=${userId}`, updatedPost);
   }
 
-  createPost(post: Post): Observable<Post> {
-    console.log('create metoda servis',post)
-    return this.http.post<Post>(this.apiUrl, post);
+  createPost(formData: FormData): Observable<any> {
+    console.log('create metoda servis',formData)
+    return this.http.post('http://localhost:8080/api/posts/create', formData);
   }
 
   getPostsByUserId(userId: number): Observable<Post[]> {

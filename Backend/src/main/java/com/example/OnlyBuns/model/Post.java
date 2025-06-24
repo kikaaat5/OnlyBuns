@@ -18,7 +18,7 @@ public class Post {
     @Getter
     private int id;
 
-    @Getter
+    @Getter @Setter
     private int userId;
 
     @Getter @Setter

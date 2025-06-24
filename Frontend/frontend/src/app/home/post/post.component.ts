@@ -20,7 +20,11 @@ export class PostComponent {
   loggedUserId: number | null = 0;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  
+  selectedImage: File | null = null;
+  imageBaseUrl = 'http://localhost:8080'; // backend URL
+  previewImageUrl: string | null = null;
+
+
 
   newPost: Post = {
     id: 0, 
@@ -62,6 +66,9 @@ export class PostComponent {
     };
     this.location = '';
     this.showMap = false;
+    this.previewImageUrl = null;
+    this.selectedImage = null;
+
 
   
   }
@@ -93,6 +100,38 @@ export class PostComponent {
   }
 
   submitNewPost() {
+    if (this.loggedUserId !== null) {
+      this.newPost.userId = this.loggedUserId;
+    }
+  
+    const formData = new FormData();
+    formData.append('description', this.newPost.description);
+    formData.append('userId', this.newPost.userId.toString());
+    formData.append('latitude', this.newPost.latitude.toString());
+    formData.append('longitude', this.newPost.longitude.toString());
+  
+    if (this.selectedImage) {
+      formData.append('image', this.selectedImage);
+    }
+    this.postService.createPost(formData).subscribe(
+      response => {
+        console.log('Post created successfully:', response);
+        this.successMessage = "Objava je uspešno dodata!";
+        this.errorMessage = null;
+        setTimeout(() => this.successMessage = null, 3000);
+        this.closeCreatePostForm();
+      },
+      error => {
+        console.error('Error creating post:', error);
+        this.errorMessage = "Greška pri dodavanju objave.";
+        this.successMessage = null;
+        setTimeout(() => this.errorMessage = null, 3000);
+      }
+    );
+  }
+
+
+  /*submitNewPost() {
     if (this.loggedUserId !== null){
       this.newPost.userId = this.loggedUserId ;
     }
@@ -118,10 +157,10 @@ export class PostComponent {
         
       }
     );
-  }
+  }*/
 
 
-  onImageSelected(event: any) {
+  /*onImageSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -132,7 +171,26 @@ export class PostComponent {
       };
       reader.readAsDataURL(file);
     }
+  }*/
+
+    onImageSelected(event: any) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedImage = file;
+    
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.previewImageUrl = e.target.result; // base64 privremeni prikaz
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+
+  getImageUrl(post: Post): string {
+    return post.imagePath ? `${this.imageBaseUrl}${post.imagePath}` : '';
   }
+  
 
   
 }
