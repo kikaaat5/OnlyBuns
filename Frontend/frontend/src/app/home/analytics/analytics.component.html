@@ -1,0 +1,53 @@
+<div class="analytics-container">
+  <h2>Analytics</h2>
+
+  <div *ngIf="isLoading" class="loading-spinner">Loading...</div>
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <button (click)="fetchAnalyticsData()">Try again</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <div class="stats-section">
+      <h3>Posts and comments</h3>
+      <div *ngIf="postCommentStats" class="grid-container">
+        <div class="stat-card">
+          <h4>Posts</h4>
+          <p>Weekly: <strong>{{ postCommentStats.weeklyPosts }}</strong></p>
+          <p>Monthly: <strong>{{ postCommentStats.monthlyPosts }}</strong></p>
+          <p>Yearly: <strong>{{ postCommentStats.yearlyPosts }}</strong></p>
+        </div>
+        <div class="stat-card">
+          <h4>Comments</h4>
+          <p>Weekly: <strong>{{ postCommentStats.weeklyComments }}</strong></p>
+          <p>Monthly: <strong>{{ postCommentStats.monthlyComments }}</strong></p>
+          <p>Yearly: <strong>{{ postCommentStats.yearlyComments }}</strong></p>
+        </div>
+      </div>
+      <p *ngIf="!postCommentStats">No data.</p>
+    </div>
+
+    <hr>
+
+    <div class="chart-section">
+      <h3>Client activity</h3>
+      <div class="chart-wrapper">
+        <ngx-charts-pie-chart
+            *ngIf="clientActivityStats && clientActivityStats.userActivity"
+            [view]="view"
+            [scheme]="colorScheme"
+            [results]="clientActivityStats.userActivity"
+            [gradient]="gradient"
+            [labels]="showLabels"
+            [legendPosition]="legendPosition"
+            [legend]="true"
+            [tooltipText]="customTooltipText"
+            (select)="onSelect($event)">
+        </ngx-charts-pie-chart>
+        <p *ngIf="!clientActivityStats || !clientActivityStats.userActivity || clientActivityStats.userActivity.length === 0">
+          No data.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,66 @@
-<div class="trends-container">
-    <div class="trend-item">
-      <h2>Total posts</h2>
+<div class="trends-page">
+  <div class="stats-section">
+    <div class="stat-card">
+      <h3>Total Posts</h3>
       <p>{{ postsTotalCount }}</p>
     </div>
-  
-    <div class="trend-item">
-      <h2>Last month's total</h2>
+    <div class="stat-card">
+      <h3>Last Month's Total</h3>
       <p>{{ lastMonthCount }}</p>
     </div>
   </div>
-  
+
+  <div class="trends-section">
+    <div class="trending-posts">
+      <h2>🔥 Top 10 Most Liked Posts Ever</h2>
+      <div class="posts-grid">
+        <div *ngFor="let post of tenMostPopularPosts" class="post-card">
+          <h4>{{ post.description }}</h4>
+          <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" class="post-image" />
+          <ng-template #noImage>
+            <p>No image available</p>
+          </ng-template>
+          <p class="likes">❤️ {{ post.likesCount }} Likes</p>
+          <div class="comments">
+            <h5>💬 Comments</h5>
+            <p *ngFor="let comment of post.comments">
+              <strong>{{ comment.userId }}:</strong> {{ comment.content }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trending-posts">
+      <h2>📅 Top 5 Posts From Last Week</h2>
+      <div class="posts-grid">
+        <div *ngFor="let post of fiveLastWeeksMostPopularPosts" class="post-card">
+          <h4>{{ post.description }}</h4>
+          <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" class="post-image" />
+          <ng-template #noImage>
+            <p>No image available</p>
+          </ng-template>
+          <p class="likes">❤️ {{ post.likesCount }} Likes</p>
+          <div class="comments">
+            <h5>💬 Comments</h5>
+            <p *ngFor="let comment of post.comments">
+              <strong>{{ comment.userId }}:</strong> {{ comment.content }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-users-section">
+    <h2>🏆 Top 10 Most Active Users This Week</h2>
+    <div class="user-cards">
+      <mat-card *ngFor="let client of topTenLastWeeksMostActiveClients" class="user-card">
+        <mat-card-header>
+          <mat-card-title>{{ client.firstname }} {{ client.lastname }}</mat-card-title>
+          <mat-card-subtitle>{{ client.username }}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  </div>
+</div>

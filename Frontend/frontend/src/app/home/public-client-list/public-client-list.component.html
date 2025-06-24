@@ -1,0 +1,36 @@
+<div class="client-list-container">
+  <h2>Discover other bunny lovers!</h2>
+
+  <div *ngIf="loading" class="loading-message">
+    Loading...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && clients.length === 0" class="no-clients-message">
+    No users.
+  </div>
+
+  <ul *ngIf="!loading && clients.length > 0" class="client-cards">
+    <li *ngFor="let client of clients" class="client-card">
+      <div class="client-info">
+        <h3 (click)="viewProfile(client.id)" class="clickable-username">
+          {{ client.username }}
+        </h3>
+        <p> {{ client.firstname }} {{ client.lastname }}</p>
+        <p> {{ client.email }}</p>
+        </div>
+      <div class="follow-action">
+        <button 
+          [disabled]="currentUserId === null"
+          [ngStyle]="getButtonStyle(client.id)"
+          (click)="toggleFollow(client.id)">
+          {{ getButtonText(client.id) }}
+        </button>
+        <span *ngIf="currentUserId === null" class="login-prompt">Log in to follow</span>
+      </div>
+    </li>
+  </ul>
+</div>

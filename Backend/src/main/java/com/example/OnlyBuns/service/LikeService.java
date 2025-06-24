@@ -23,4 +23,5 @@ public class LikeService {
     public Like save(Like like) {
         return likeRepository.save(like);
     }
+
 }

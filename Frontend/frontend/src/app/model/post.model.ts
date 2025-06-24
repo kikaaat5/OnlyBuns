@@ -18,7 +18,7 @@ export interface Post {
     createdAt: string;
   }
 
-  export interface Like {
+ export interface Like {
     id: number;
     userId: number;
     postId:  number;

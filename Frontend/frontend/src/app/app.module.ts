@@ -35,7 +35,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MapComponent } from './map/map.component';
-
+import { CommonModule } from '@angular/common';
+import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
+import { FollowListModalComponent } from './home/follow-list-modal/follow-list-modal.component';
+import { AnalyticsComponent } from './home/analytics/analytics.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -59,7 +64,10 @@ import { MapComponent } from './map/map.component';
     TrendsComponent,
     NearbyComponent,
     ChatComponent,
-    ProfileComponent
+    ProfileComponent,
+    PublicClientListComponent,
+    FollowListModalComponent,
+    AnalyticsComponent
   ],
 
   imports: [
@@ -74,7 +82,10 @@ import { MapComponent } from './map/map.component';
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
-
+    CommonModule,
+    BrowserAnimationsModule,
+    NgxChartsModule,
+    BrowserModule,
 
   ],
   providers: [{

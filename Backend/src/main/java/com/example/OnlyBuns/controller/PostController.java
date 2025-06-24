@@ -1,7 +1,9 @@
 package com.example.OnlyBuns.controller;
 
+import com.example.OnlyBuns.model.Like;
 import com.example.OnlyBuns.dto.PostDto;
 import com.example.OnlyBuns.model.Post;
+import com.example.OnlyBuns.service.LikeService;
 import com.example.OnlyBuns.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -83,6 +89,16 @@ public class PostController {
     public ResponseEntity<Void> likePost(@PathVariable int postId) {
         postService.likePost(postId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/posts/tenMostLikedEver")
+    public List<Post> findTenMostLikedEver() {
+        return postService.findTenMostLikedEver();
+    }
+
+    @GetMapping("/posts/fiveLastWeeksMostLiked")
+    public List<Post> findFiveMostLikedRecently() {
+        return postService.findFiveMostLikedRecently();
     }
 
 }

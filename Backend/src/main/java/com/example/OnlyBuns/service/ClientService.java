@@ -123,7 +123,8 @@ public class ClientService {
     public boolean activateUser(String email) {
         Client client = clientRepository.findByEmail(email);
         if (client != null) {
-            client.setActive(true); // Postavlja korisnika kao aktivnog
+            client.setActive(true);
+            client.setEnabled(true);// Postavlja korisnika kao aktivnog
             clientRepository.save(client);
             return true;// Spasavanje u bazi
         }
@@ -132,6 +133,10 @@ public class ClientService {
 
     public Client findByEmail(String email) {
         return clientRepository.findByEmail(email);
+    }
+
+    public Client findByUsername(String username) {
+        return clientRepository.findByName(username);
     }
 
     public void deleteById(int id) {

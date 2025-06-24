@@ -27,7 +27,7 @@ export class PostComponent {
 
 
   newPost: Post = {
-    id: 0, 
+    id: 0,
     userId: 0, // Example user ID; replace or set dynamically as needed
     description: '',
     createdAt: new Date().toISOString(),
@@ -53,7 +53,7 @@ export class PostComponent {
 
   closeCreatePostForm() {
     this.showCreatePostForm = false;
-   
+
       this.newPost = {
         id: 0,
         userId:0,
@@ -72,11 +72,11 @@ export class PostComponent {
     this.selectedImage = null;
 
 
-  
+
   }
 
   onLocationChange(): void {
-   
+
     if (this.location) {
       this.mapService.search(this.location).subscribe((result) => {
         if (result && result.length > 0) {
@@ -90,7 +90,7 @@ export class PostComponent {
   onLocationSelected(event: { lat: number; lng: number,address: string }): void {
     this.newPost.latitude = event.lat;
     this.newPost.longitude = event.lng;
-    this.location = event.address; 
+    this.location = event.address;
     console.log('Selected coordinates: ', event);
     this.mapService.reverseSearch(event.lat, event.lng ).subscribe((result) => {
       if (result && result.length > 0) {
@@ -105,13 +105,13 @@ export class PostComponent {
     if (this.loggedUserId !== null) {
       this.newPost.userId = this.loggedUserId;
     }
-  
+
     const formData = new FormData();
     formData.append('description', this.newPost.description);
     formData.append('userId', this.newPost.userId.toString());
     formData.append('latitude', this.newPost.latitude.toString());
     formData.append('longitude', this.newPost.longitude.toString());
-  
+
     if (this.selectedImage) {
       formData.append('image', this.selectedImage);
     }
@@ -146,7 +146,7 @@ export class PostComponent {
         setTimeout(() => {
           this.successMessage = null;
         }, 3000);
-        
+
         this.closeCreatePostForm();
       },
       error => {
@@ -156,7 +156,7 @@ export class PostComponent {
         setTimeout(() => {
           this.errorMessage = null;
         }, 3000);
-        
+
       }
     );
   }*/
@@ -168,7 +168,7 @@ export class PostComponent {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const imagePath = e.target.result;  // Ovo je duža putanja slike (base64)
-       
+
       this.newPost.imagePath = imagePath;
       };
       reader.readAsDataURL(file);
@@ -179,7 +179,7 @@ export class PostComponent {
       const file = event.target.files[0];
       if (file) {
         this.selectedImage = file;
-    
+
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.previewImageUrl = e.target.result; // base64 privremeni prikaz
@@ -192,7 +192,7 @@ export class PostComponent {
   getImageUrl(post: Post): string {
     return post.imagePath ? `${this.imageBaseUrl}${post.imagePath}` : '';
   }
-  
 
-  
+
+
 }

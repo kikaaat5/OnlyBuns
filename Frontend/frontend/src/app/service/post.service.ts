@@ -77,4 +77,12 @@ export class PostService {
     );
   }
 
+  getTenMostLikedPosts(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/tenMostLikedEver`);
+  }
+
+  getFiveLastWeeksMostLikedPosts(): Observable<Post[]>{
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/fiveLastWeeksMostLiked`);
+  }
+
 }
