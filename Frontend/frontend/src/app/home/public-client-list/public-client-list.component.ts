@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-public-client-list', 
   templateUrl: './public-client-list.component.html',
-  styleUrls: ['./public-client-list.component.css']
+  styleUrls: ['./public-list-client.component.css']
 })
 export class PublicClientListComponent implements OnInit {
 
