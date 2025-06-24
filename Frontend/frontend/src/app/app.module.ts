@@ -39,7 +39,8 @@ import { CommonModule } from '@angular/common';
 import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
 import { FollowListModalComponent } from './home/follow-list-modal/follow-list-modal.component';
 import { AnalyticsComponent } from './home/analytics/analytics.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -81,7 +82,10 @@ import { AnalyticsComponent } from './home/analytics/analytics.component';
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
-    CommonModule
+    CommonModule,
+    BrowserAnimationsModule,
+    NgxChartsModule,
+    BrowserModule,
 
   ],
   providers: [{
