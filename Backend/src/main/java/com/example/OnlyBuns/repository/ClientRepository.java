@@ -36,4 +36,11 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Query("SELECT c FROM Client c WHERE c.enabled = false")
     List<Client> findUnactivatedClients();
+
+    @Query("SELECT COUNT(DISTINCT p.userId) FROM Post p")
+    long countClientsWithPosts();
+
+    @Query("SELECT COUNT(DISTINCT comm.userId) FROM Comment comm " +
+            "WHERE comm.userId NOT IN (SELECT DISTINCT p.userId FROM Post p)")
+    long countClientsWithOnlyComments();
 }

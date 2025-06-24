@@ -50,3 +50,47 @@ VALUES
     (107, 40.6406, 35, 21, 6, '2024-12-12T09:30:00', 'Post 8 description', '/assets/images/bunny3.jpeg'),
     (108, 46.0511, 85, 22, 7, '2024-12-12T13:00:00', 'Post 9 description', '/assets/images/bunny4.jpeg'),
     (109, 44.8176, 95, 23, 9, '2024-12-12T14:00:00', 'Post 10 description', '/assets/images/bunny2.jpeg');
+
+-- Dodavanje komentara (ID-evi će biti automatski generisani)
+-- Komentari za poslednju nedelju (trenutni datum: 2025-06-23)
+INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
+                                                                      (2, 'Odličan post!', '2025-06-20T10:00:00', 100), -- Pre 3 dana
+                                                                      (3, 'Slažem se!', '2025-06-21T11:30:00', 100), -- Pre 2 dana
+                                                                      (4, 'Prelepo!', '2025-06-22T12:00:00', 101), -- Pre 1 dan
+                                                                      (5, 'Super content!', '2025-06-23T09:00:00', 102), -- Danas
+                                                                      (2, 'Komentar 5', '2025-06-19T15:00:00', 103); -- Pre 4 dana
+
+-- Komentari za poslednji mesec (ali ne poslednju nedelju)
+INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
+                                                                      (6, 'Interesantno!', '2025-06-01T10:00:00', 104), -- Početak juna
+                                                                      (7, 'Dobro rečeno.', '2025-05-25T14:00:00', 105), -- Krajem maja
+                                                                      (8, 'Volim ovo.', '2025-05-15T08:00:00', 106), -- Sredina maja
+                                                                      (9, 'Komentar 9', '2025-05-01T09:00:00', 107); -- Početak maja
+
+-- Komentari za poslednju godinu (ali ne poslednji mesec)
+INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
+                                                                      (1, 'Komentar 10', '2025-04-10T16:00:00', 108), -- April
+                                                                      (2, 'Komentar 11', '2025-03-20T11:00:00', 109), -- Mart
+                                                                      (3, 'Komentar 12', '2025-02-14T12:00:00', 100), -- Februar
+                                                                      (4, 'Komentar 13', '2025-01-05T13:00:00', 101), -- Januar
+                                                                      (5, 'Komentar 14', '2024-12-01T10:00:00', 102), -- Decembar prošle godine
+                                                                      (6, 'Komentar 15', '2024-11-20T14:00:00', 103), -- Novembar prošle godine (važno za godišnji test)
+                                                                      (7, 'Komentar 16', '2024-10-15T09:00:00', 104); -- Oktobar prošle godine
+
+-- Novi klijenti koji nemaju postove, samo komentare
+INSERT INTO client (
+    active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id, followers)
+VALUES
+    (true, true, 0, 0, nextval('user_seq'), '2024-11-11 21:53:50.02', 'samo.komentari1@gmail.com', 'komentar', 'prvi', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'samo_komentari1', 1, 0),
+    (true, true, 0, 0, nextval('user_seq'), '2024-11-11 21:53:50.02', 'samo.komentari2@gmail.com', 'komentar', 'drugi', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'samo_komentari2', 1, 0),
+    (true, true, 0, 0, nextval('user_seq'), '2024-11-11 21:53:50.02', 'neaktivni@gmail.com', 'neaktivni', 'neaktivni', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'neaktivni', 1, 0);
+
+-- Dodavanje uloga novim klijentima
+-- Ažurirano: Naredni ID-evi nakon 10 (Maja) su 11, 12, 13.
+INSERT INTO public.user_role(role_id, user_id)
+VALUES (2, 11), (2, 12), (2, 13);
+
+-- Komentari od klijenata koji nemaju postove (ID-evi 11 i 12)
+INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
+                                                                      (11, 'Super post!', '2025-06-23T10:00:00', 100),
+                                                                      (12, 'Slažem se sa ovim.', '2025-06-22T11:00:00', 101);
