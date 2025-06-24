@@ -4,6 +4,7 @@ export interface Post {
     description: string;
     createdAt: String;  
     imagePath: string;
+    compressedImagePath: string;
     longitude: number;
     latitude: number;
     likesCount: number;

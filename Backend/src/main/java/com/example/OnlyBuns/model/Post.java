@@ -33,6 +33,11 @@ public class Post {
     private String imagePath;
 
     @Getter @Setter
+    @Column(name = "compressed_image_path", length = 1024)
+    private String compressedImagePath;
+
+
+    @Getter @Setter
     private double longitude;
 
     @Getter @Setter
