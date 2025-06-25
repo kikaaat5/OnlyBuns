@@ -44,25 +44,7 @@
 			<version>6.5.3.Final</version>
 		</dependency>
 
-		<!-- L2 cache JCache -->
-		<dependency>
-			<groupId>org.hibernate.orm</groupId>
-			<artifactId>hibernate-jcache</artifactId>
-			<version>6.5.3.Final</version>
-		</dependency>
 
-		<!-- JSR 107 cache API -->
-		<dependency>
-			<groupId>javax.cache</groupId>
-			<artifactId>cache-api</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<!-- Caffeine kao JCache provider -->
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>jcache</artifactId>
-			<version>3.1.8</version>
-		</dependency>
 
 
 

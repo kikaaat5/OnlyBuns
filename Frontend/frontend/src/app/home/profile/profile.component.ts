@@ -60,6 +60,7 @@ export class ProfileComponent implements OnInit {
   isFollowListModalVisible: boolean = false; 
   followList: Client[] = []; 
   currentFollowListType: 'followers' | 'following' | null = null;
+  imageBaseUrl = 'http://localhost:8080';
 
   private routeSubscription: Subscription | undefined; 
 
