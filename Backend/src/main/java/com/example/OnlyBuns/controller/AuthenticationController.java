@@ -30,6 +30,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 //Kontroler zaduzen za autentifikaciju korisnika
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -99,6 +101,10 @@ public class AuthenticationController {
 		User usUser = this.userService.findByEmail(userRequest.getUsername());
 
 		String pass = passwordEncoder.encode(userRequest.getPassword());
+
+		if (!clientService.checkBloomFilter(userRequest.getUsername())) {
+			throw new IllegalArgumentException("Username probably already exists.");
+		}
 
 		if (existUser != null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
