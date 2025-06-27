@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 
@@ -26,10 +27,13 @@ import java.util.List;
 @Transactional
 public class ClientService {
     private final ClientRepository clientRepository;
+    public UsernameBloomFilter bloomFilter = new UsernameBloomFilter(List.of()); // init praznim
 
     @Autowired
     public ClientService(ClientRepository clientRepository) {
+
         this.clientRepository = clientRepository;
+        initializeBloomFilter();
     }
 
     @Autowired
@@ -40,6 +44,26 @@ public class ClientService {
 
     @Autowired
     private AddressService addressService;
+
+    public void initializeBloomFilter() {
+        List<String> allUsernames = clientRepository.findAll()
+                .stream()
+                .map(Client::getUsername)
+                .toList();
+
+        this.bloomFilter = new UsernameBloomFilter(allUsernames);
+        System.out.println("✅ Bloom Filter spreman sa " + allUsernames.size() + " korisnika.");
+    }
+
+    public boolean checkBloomFilter(String username) {
+        initializeBloomFilter();
+        if (bloomFilter == null) {
+            // U slučaju da Bloom filter još nije inicijalizovan
+            System.out.println("⚠ Bloom filter nije inicijalizovan, pretpostavljamo da korisnik ne postoji.");
+            return true; // Dozvoli registraciju
+        }
+        return !bloomFilter.probablyExists(username);
+    }
 
     public List<ClientDto> findAll() {
         List<Client> clients = clientRepository.findAll();
@@ -104,6 +128,7 @@ public class ClientService {
                     userRequest.getCountry());
             addressService.save(address);
         }
+
         c.setUsername(userRequest.getUsername());
 
         // pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
@@ -117,6 +142,9 @@ public class ClientService {
         c.setNumberOfPosts(0);
         List<Role> roles = roleService.findByName("ROLE_CLIENT");
         c.setRoles(roles);
+
+        bloomFilter.add(c.getUsername());
+
         return this.clientRepository.save(c);
     }
 

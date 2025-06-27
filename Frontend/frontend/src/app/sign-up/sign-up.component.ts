@@ -106,7 +106,13 @@ export class SignUpComponent implements OnInit {
             msgType: 'error',
             msgBody: 'A user with this username already exists. Please use a different username.'
           };
-        } else {
+        } else if(error.status == 401) {
+          this.notification = {
+            msgType: 'error',
+            msgBody: 'A user with this username might already exists. Please use a different username.'
+          };
+        } 
+        else {
           this.notification = {
             msgType: 'error',
             msgBody: 'Error occured!'
