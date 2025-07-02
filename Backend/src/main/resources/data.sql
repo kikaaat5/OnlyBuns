@@ -40,16 +40,16 @@ ALTER COLUMN image_path TYPE TEXT;
 INSERT INTO public.post(
     id, latitude, likes_count, longitude, user_id, created_at, description, image_path)
 VALUES
-    (100, 45.2671, 25, 19.8335, 1, '2024-11-11T08:30:00', 'Post 1 description', '/assets/images/bunny1.jpeg'),
-    (101, 44.8176, 15, 20.4633, 1, '2024-11-11T09:00:00', 'Post 2 description', '/assets/images/bunny2.jpeg'),
-    (102, 43.8486, 50, 21.7555, 1, '2024-11-10T16:45:00', 'Post 3 description', '/assets/images/bunny3.jpeg'),
-    (103, 40.6406, 10, 22.2287, 4, '2024-11-09T12:30:00', 'Post 4 description', '/assets/images/bunny4.jpeg'),
-    (104, 46.0511, 100, 19.8484, 5, '2024-11-08T14:00:00', 'Post 5 description', '/assets/images/bunny3.jpeg'),
-    (105, 44.8176, 60, 18, 3, '2024-12-12T10:00:00', 'Post 6 description', '/assets/images/bunny2.jpeg'),
-    (106, 43.8486, 75, 20, 3, '2024-12-12T11:00:00', 'Post 7 description', '/assets/images/bunny1.jpeg'),
-    (107, 40.6406, 35, 21, 6, '2024-12-12T09:30:00', 'Post 8 description', '/assets/images/bunny3.jpeg'),
-    (108, 46.0511, 85, 22, 7, '2024-12-12T13:00:00', 'Post 9 description', '/assets/images/bunny4.jpeg'),
-    (109, 44.8176, 95, 23, 9, '2024-12-12T14:00:00', 'Post 10 description', '/assets/images/bunny2.jpeg');
+    (100, 45.2671, 25, 19.8335, 1, '2024-11-11T08:30:00', 'Post 1 description', '/uploads/bunny1.jpeg'),
+    (101, 44.8176, 15, 20.4633, 1, '2024-11-11T09:00:00', 'Post 2 description', '/uploads/bunny2.jpeg'),
+    (102, 43.8486, 50, 21.7555, 1, '2024-11-10T16:45:00', 'Post 3 description', '/uploads/bunny3.jpeg'),
+    (103, 40.6406, 10, 22.2287, 4, '2024-11-09T12:30:00', 'Post 4 description', '/uploads/bunny4.jpeg'),
+    (104, 46.0511, 100, 19.8484, 5, '2024-11-08T14:00:00', 'Post 5 description', '/uploads/bunny3.jpeg'),
+    (105, 44.8176, 60, 18, 3, '2024-12-12T10:00:00', 'Post 6 description', '/uploads/bunny2.jpeg'),
+    (106, 43.8486, 75, 20, 3, '2024-12-12T11:00:00', 'Post 7 description', '/uploads/bunny1.jpeg'),
+    (107, 40.6406, 35, 21, 6, '2024-12-12T09:30:00', 'Post 8 description', '/uploads/bunny3.jpeg'),
+    (108, 46.0511, 85, 22, 7, '2024-12-12T13:00:00', 'Post 9 description', '/uploads/bunny4.jpeg'),
+    (109, 44.8176, 95, 23, 9, '2024-12-12T14:00:00', 'Post 10 description', '/uploads/bunny2.jpeg');
 
 -- Dodavanje komentara (ID-evi će biti automatski generisani)
 -- Komentari za poslednju nedelju (trenutni datum: 2025-06-23)

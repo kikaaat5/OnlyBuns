@@ -16,7 +16,7 @@
       <div class="posts-grid">
         <div *ngFor="let post of tenMostPopularPosts" class="post-card">
           <h4>{{ post.description }}</h4>
-          <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" class="post-image" />
+          <img *ngIf="post.imagePath; else noImage" [src]="imageBaseUrl + (post.compressedImagePath || post.imagePath)" alt="Post image" class="post-image" />
           <ng-template #noImage>
             <p>No image available</p>
           </ng-template>
@@ -36,7 +36,7 @@
       <div class="posts-grid">
         <div *ngFor="let post of fiveLastWeeksMostPopularPosts" class="post-card">
           <h4>{{ post.description }}</h4>
-          <img *ngIf="post.imagePath; else noImage" [src]="post.imagePath" alt="Post image" class="post-image" />
+          <img *ngIf="post.imagePath; else noImage" [src]="imageBaseUrl + (post.compressedImagePath || post.imagePath)" alt="Post image" class="post-image" />
           <ng-template #noImage>
             <p>No image available</p>
           </ng-template>

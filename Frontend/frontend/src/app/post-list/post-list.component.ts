@@ -20,6 +20,7 @@ export class PostListComponent implements OnInit {
   selectedImageBase64: string | null = null;
   loggedUserId: number | null = null;
   clients: Client[] = [];
+  imageBaseUrl: string = 'http://localhost:8080';
  
   constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private route: ActivatedRoute,
     private router: Router,  private datePipe: DatePipe) {}
