@@ -1,1 +1,56 @@
-<p>chat works!</p>
+<!-- src/app/home/chat/chat.component.html -->
+
+<div class="chat-container">
+  <div class="chat-sidebar">
+    <h2>Your chats</h2>
+    <div *ngIf="myChatRooms.length === 0 && (chatService.connectionStatus$ | async)">
+      <p>No available chats.</p>
+    </div>
+    <div *ngIf="!(chatService.connectionStatus$ | async)">
+      <p>Connecting to chat service...</p>
+    </div>
+
+    <ul class="chat-list">
+      <li *ngFor="let room of myChatRooms"
+          [class.selected]="room.id === selectedChatRoomId"
+          (click)="selectChatRoom(room.id)">
+        {{ room.name ? room.name : getPrivateChatName(room) }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="chat-main">
+    <div *ngIf="selectedChatRoom">
+      <h2 class="chat-header">{{ selectedChatRoom.name ? selectedChatRoom.name : getPrivateChatName(selectedChatRoom) }}</h2>
+      
+      <div class="messages-display" #messagesDisplay> 
+        <p *ngIf="chatMessages.length === 0" class="no-messages-text">No messages in this chat.</p>
+        
+        <div *ngFor="let message of chatMessages" 
+             class="message-bubble-wrapper"
+             [class.my-message-wrapper]="message.sender.id === currentUserId"
+             [class.other-message-wrapper]="message.sender.id !== currentUserId">
+          
+          <div class="message-bubble"
+               [class.my-message]="message.sender.id === currentUserId"
+               [class.other-message]="message.sender.id !== currentUserId">
+            
+            <strong *ngIf="message.sender.id !== currentUserId" class="message-sender">{{ message.sender.username }}</strong>
+            <p class="message-content">{{ message.content }}</p>
+            <span class="message-timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-input">
+        <textarea [(ngModel)]="messageContent" 
+                  placeholder="Unesite poruku..."
+                  (keydown.enter)="sendMessage($event)"></textarea> 
+        <button (click)="sendMessage()">Send</button>
+      </div>
+    </div>
+    <div *ngIf="!selectedChatRoom" class="no-chat-selected">
+      <p>Choose chat on the left.</p>
+    </div>
+  </div>
+</div>

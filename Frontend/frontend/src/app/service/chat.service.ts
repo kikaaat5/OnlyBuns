@@ -21,7 +21,7 @@ export class ChatService {
   private apiUrl = 'http://localhost:8080/api/chat';
   private wsUrl = 'http://localhost:8080/ws';
 
-  private stompClient!: Stomp.Client;
+  public stompClient!: Stomp.Client;
   private messageSubject = new Subject<ChatMessageDTO>();
   private connectionStatusSubject = new BehaviorSubject<boolean>(false);
   public messages$: Observable<ChatMessageDTO> = this.messageSubject.asObservable();

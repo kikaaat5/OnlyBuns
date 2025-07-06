@@ -9,7 +9,7 @@ export interface ChatRoomDTO {
   name: string | null; // null za privatne četove
   type: 'PRIVATE' | 'GROUP';
   admin?: ClientDTO; // Admin postoji samo za GROUP četove
-  // members?: ClientDTO[]; // Možeš dodati ako ti zatreba za prikaz članova
+  members: ClientDTO[]; // Možeš dodati ako ti zatreba za prikaz članova
 }
 
 // Model za poruku u četu

@@ -52,6 +52,8 @@ public class ClientDto {
     }
 
     public ClientDto(Long id, String username) {
+        this.id = id;
+        this.username = username;
     }
 
     public String getFirstname() {

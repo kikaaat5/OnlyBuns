@@ -20,7 +20,7 @@ public class WebSocketChatMessageController {
         this.chatMessageService = chatMessageService;
         this.messagingTemplate = messagingTemplate;
     }
-    @MessageMapping("/chat.sendMessage")
+    /*@MessageMapping("/chat.sendMessage")
     public ChatMessageDto sendMessage(@Payload MessageSendRequestDto request, Authentication authentication) {
         try {
             Integer senderId = Integer.parseInt(authentication.getName());
@@ -34,5 +34,5 @@ public class WebSocketChatMessageController {
             System.err.println("Invalid user ID format in WebSocket message: " + e.getMessage());
             return null;
         }
-    }
+    }*/
 }

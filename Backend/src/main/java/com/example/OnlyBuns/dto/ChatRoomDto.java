@@ -18,6 +18,6 @@ public class ChatRoomDto {
     private String name;
     private ChatRoomType type;
     private ClientDto admin;
-
+    private List<ClientDto> members;
     private ChatMessageDto lastMessage;
 }

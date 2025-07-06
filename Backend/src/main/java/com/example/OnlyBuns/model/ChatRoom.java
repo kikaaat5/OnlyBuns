@@ -23,7 +23,7 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     private ChatRoomType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id", nullable = true) // Administrator grupe (samo za GROUP)
     private Client admin;
 

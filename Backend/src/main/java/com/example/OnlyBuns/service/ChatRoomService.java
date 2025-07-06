@@ -21,10 +21,13 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
+import org.slf4j.Logger; // Dodaj import
+import org.slf4j.LoggerFactory;
 
 @Service
 
 public class ChatRoomService {
+    private static final Logger logger = LoggerFactory.getLogger(ChatRoomService.class);
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ClientRepository clientRepository;
@@ -118,18 +121,101 @@ public class ChatRoomService {
         return mapChatRoomToDTO(chatRoom);
     }
 
-    @Transactional(readOnly = true)
+   /* @Transactional(readOnly = true)
     public List<ChatRoomDto> getChatRoomsForUser(Integer userId) {
         Client user = clientRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Client not found with ID: " + userId));
 
         // Pronađi sva članstva za datog korisnika
-        List<ChatRoomMember> memberships = chatRoomMemberRepository.findByClient(user);
+        List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByClientWithMembers(userId); // Ovi ChatRoom objekti su EAGERLY LOADED sa članovima
+        return chatRooms.stream()
+                .map(this::mapChatRoomToDTO) // mapChatRoomToDTO sada sigurno ima dostupne članove
+                .collect(Collectors.toList());
+    }*/
 
-        // Mapiraj chat sobe u DTO-ove
-        return memberships.stream()
-                .map(ChatRoomMember::getChatRoom) // Dobij chat sobu iz članstva
-                .map(this::mapChatRoomToDTO)
+    /*@Transactional(readOnly = true)
+    public List<ChatRoomDto> getChatRoomsForUser(Integer userId) {
+        logger.info("Fetching chat rooms for user ID: {}", userId);
+        List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByClientWithMembers(userId);
+        logger.info("Found {} chat room entities for user ID: {}", chatRooms.size(), userId);
+
+        return chatRooms.stream()
+                .map(chatRoom -> {
+                    logger.debug("--- Processing ChatRoom Entity ID: {} (Type: {}) ---", chatRoom.getId(), chatRoom.getType());
+
+                    // Logovi za admina entiteta
+                    if (chatRoom.getAdmin() != null) {
+                        logger.debug("  Admin Entity in ChatRoom {}: ID={}, Username='{}', Email='{}'",
+                                chatRoom.getId(), chatRoom.getAdmin().getId(), chatRoom.getAdmin().getUsername(), chatRoom.getAdmin().getEmail());
+                    } else {
+                        logger.debug("  ChatRoom {} has no admin entity.", chatRoom.getId());
+                    }
+
+                    // Logovi za članove entiteta
+                    if (chatRoom.getMembers() != null && !chatRoom.getMembers().isEmpty()) {
+                        logger.debug("  ChatRoom {} has {} members in entity collection:", chatRoom.getId(), chatRoom.getMembers().size());
+                        chatRoom.getMembers().forEach(member -> {
+                            if (member.getClient() != null) {
+                                logger.debug("    Member Entity: Client ID={}, Username='{}', Email='{}'",
+                                        member.getClient().getId(), member.getClient().getUsername(), member.getClient().getEmail());
+                            } else {
+                                logger.warn("    Member found with null Client entity for ChatRoom ID: {}", chatRoom.getId());
+                            }
+                        });
+                    } else {
+                        logger.warn("  ChatRoom {} has no members loaded or members list is null (after JOIN FETCH).", chatRoom.getId());
+                    }
+
+                    // Sada mapiraj u DTO
+                    ChatRoomDto dto = mapChatRoomToDTO(chatRoom);
+                    logger.debug("--- Finished mapping ChatRoom Entity ID: {} to DTO ---", chatRoom.getId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }*/
+
+    @Transactional(readOnly = true) // Transakcija mora biti aktivna!
+    public List<ChatRoomDto> getChatRoomsForUser(Integer userId) {
+        logger.info("Fetching chat rooms for user ID: {}", userId);
+        // KLJUČNO: Koristi novu metodu koja samo dohvaća ChatRoom entitete
+        List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByClientId(userId);
+        logger.info("Found {} chat room entities for user ID: {}", chatRooms.size(), userId);
+
+        return chatRooms.stream()
+                .map(chatRoom -> {
+                    logger.debug("--- Processing ChatRoom Entity ID: {} (Type: {}) ---", chatRoom.getId(), chatRoom.getType());
+
+                    // Sada, kada se pristupa chatRoom.getMembers() unutar transakcije,
+                    // Hibernate će ih lenjo učitati.
+                    // Logovi za admina entiteta
+                    if (chatRoom.getAdmin() != null) {
+                        logger.debug("  Admin Entity in ChatRoom {}: ID={}, Username='{}', Email='{}'",
+                                chatRoom.getId(), chatRoom.getAdmin().getId(), chatRoom.getAdmin().getUsername(), chatRoom.getAdmin().getEmail());
+                    } else {
+                        logger.debug("  ChatRoom {} has no admin entity.", chatRoom.getId());
+                    }
+
+                    // Logovi za članove entiteta
+                    // OVO JE MESTO GDE SE SADA DESAVA LAZY LOADING
+                    if (chatRoom.getMembers() != null) { // Proveri da li je kolekcija inicijalizovana
+                        logger.debug("  ChatRoom {} has {} members in entity collection (lazy loaded):", chatRoom.getId(), chatRoom.getMembers().size());
+                        chatRoom.getMembers().forEach(member -> {
+                            if (member.getClient() != null) {
+                                logger.debug("    Member Entity: Client ID={}, Username='{}', Email='{}'",
+                                        member.getClient().getId(), member.getClient().getUsername(), member.getClient().getEmail());
+                            } else {
+                                logger.warn("    Member found with null Client entity for ChatRoom ID: {}", chatRoom.getId());
+                            }
+                        });
+                    } else {
+                        logger.warn("  ChatRoom {} members list is null (should not happen if mapped correctly).", chatRoom.getId());
+                    }
+
+                    // Sada mapiraj u DTO
+                    ChatRoomDto dto = mapChatRoomToDTO(chatRoom);
+                    logger.debug("--- Finished mapping ChatRoom Entity ID: {} to DTO ---", chatRoom.getId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -227,13 +313,47 @@ public class ChatRoomService {
         dto.setName(chatRoom.getName());
         dto.setType(chatRoom.getType());
 
+        // KLJUČNO: Popuni admin DTO
         if (chatRoom.getAdmin() != null) {
             dto.setAdmin(mapClientToDTO(chatRoom.getAdmin()));
+            logger.debug("  Mapped admin for ChatRoom ID {}: Client ID {}, Username: {}", chatRoom.getId(), dto.getAdmin().getId(), dto.getAdmin().getUsername());
+        } else {
+            logger.debug("  ChatRoom ID {} has no admin (likely a private chat).", chatRoom.getId());
         }
+
+        // KLJUČNA IZMENA: Popuni listu članova!
+        // Moraš osigurati da chatRoom.getMembers() nije null i da su članovi dohvaćeni
+        // (zbog LazyInitializationException, zbog čega smo dodali JOIN FETCH u repozitorijum).
+        if (chatRoom.getMembers() != null) {
+            List<ClientDto> memberDtos = chatRoom.getMembers().stream()
+                    .map(member -> {
+                        ClientDto clientDto = mapClientToDTO(member.getClient()); // Mapiraj Client entitet u ClientDto
+                        logger.debug("  Mapping member Client ID {} ({}) to DTO for ChatRoom ID {}", clientDto.getId(), clientDto.getUsername(), chatRoom.getId());
+                        return clientDto;
+                    })
+                    .collect(Collectors.toList());
+            dto.setMembers(memberDtos); // Postavi popunjenu listu
+        } else {
+            dto.setMembers(new ArrayList<>()); // Uvek vrati praznu listu ako nema članova
+            logger.warn("  ChatRoom ID {} members list is null during DTO mapping. Setting to empty list.", chatRoom.getId());
+        }
+
+        // ... (lastMessage ako ga popunjavaš)
+
         return dto;
     }
 
     private ClientDto mapClientToDTO(Client client) {
+        if (client == null) {
+            logger.warn("Attempted to map a null Client entity to ClientDto.");
+            return null; // Ili baci izuzetak
+        }
+        // Proveri da li su ID i username dostupni u Client entitetu
+        if (client.getId() == null || client.getUsername() == null) {
+            logger.warn("Client entity ID or Username is null for Client ID: {}. Cannot fully map to ClientDto.", client.getId());
+            // Možeš vratiti ClientDto sa null vrednostima ili baciti izuzetak
+            return new ClientDto(null, null); // Vrati DTO sa null-ovima ako podaci nedostaju
+        }
         return new ClientDto(client.getId(), client.getUsername());
     }
 }
