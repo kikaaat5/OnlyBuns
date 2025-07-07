@@ -15,46 +15,38 @@ import { filter, take, tap, switchMap, catchError } from 'rxjs/operators';
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
-  // --- Podaci za prikaz ---
   myChatRooms: ChatRoomDTO[] = [];
   selectedChatRoomId: number | null = null;
   selectedChatRoom: ChatRoomDTO | null = null;
   chatMessages: ChatMessageDTO[] = [];
   messageContent: string = '';
 
-  // --- Pomoćne varijable ---
   currentUserId: number | null = null;
   isAdminOfSelectedRoom: boolean = false;
 
-  // Varijable za "New Chat" funkcionalnost (privatni i grupni)
   showNewChatPanel: boolean = false;
   chatCreationType: 'private' | 'group' = 'private';
 
-  // Za privatni chat
   searchQuery: string = '';
   foundUsers: ClientDTO[] = [];
   selectedUserToChat: ClientDTO | null = null;
 
-  // Za grupni chat kreiranje
   newGroupName: string = '';
   groupMemberSearchQuery: string = '';
   foundUsersForGroup: ClientDTO[] = [];
-  selectedGroupMembers: ClientDTO[] = []; // Ovo je za kreiranje NOVE grupe
+  selectedGroupMembers: ClientDTO[] = []; 
 
-  // Varijable za "Manage Members" funkcionalnost
   showManageMembersPanel: boolean = false;
   membersToManage: ClientDTO[] = [];
   manageMembersSearchQuery: string = '';
   foundUsersForManageMembers: ClientDTO[] = [];
-  selectedUsersToAdd: ClientDTO[] = []; // Ovo je za dodavanje članova u POSTOJEĆU grupu
+  selectedUsersToAdd: ClientDTO[] = []; 
 
-  // --- RxJS pretplate (za čišćenje resursa) ---
   private chatRoomSubscription: Subscription | undefined;
   private messageSubscription: Subscription | undefined;
   private connectionStatusSubscription: Subscription | undefined;
   private userPollingSubscription: Subscription | undefined;
   private searchSubscription: Subscription | undefined;
-  // NOVO: STOMP pretplata, sada ponovo upravljana u komponenti
   private stompSubscription: any | undefined;
 
 
@@ -105,7 +97,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           console.log('ChatComponent: WebSocket povezan. Učitavam chat sobe i pretplaćujem se na poruke.');
           this.loadMyChatRooms();
 
-          // Ova pretplata hvata poruke koje ChatService emituje (npr. one koje stižu direktno sa STOMP teme u selectChatRoom)
           this.messageSubscription = this.chatService.messages$.subscribe(message => {
             console.log('ChatComponent: Primljena poruka iz servisa:', message);
             if (message && message.chatRoomId === this.selectedChatRoomId) {
@@ -124,7 +115,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
               if (this.myChatRooms.length > 0) {
                   this.selectChatRoom(parsedRoomId);
               } else {
-                  // Ako sobe nisu učitane, čekaj da se učitaju pa onda selektuj sobu
                   this.chatService.getMyChatRooms().pipe(
                       tap(rooms => this.myChatRooms = rooms),
                       filter(rooms => rooms.some(r => r.id === parsedRoomId)),
@@ -147,7 +137,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       console.log('WebSocket connection status in ChatComponent:', isConnected);
       if (!isConnected && this.currentUserId !== null) {
         console.warn('WebSocket konekcija je prekinuta. Resetujem stanje chata.');
-        // Opcionalno, odjavi STOMP pretplatu i resetuj UI
         if (this.stompSubscription) {
           this.stompSubscription.unsubscribe();
           this.stompSubscription = undefined;
@@ -187,7 +176,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.searchSubscription.unsubscribe();
       console.log('ChatComponent: Odjavljena search pretplata.');
     }
-    // KLJUČNO: Odjavi se od STOMP pretplate kada se komponenta uništi
     if (this.stompSubscription) {
       this.stompSubscription.unsubscribe();
       console.log('ChatComponent: Odjavljena STOMP pretplata u ngOnDestroy.');
@@ -216,9 +204,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  // Uklonjena trackByMessageId funkcija
-
-
   loadMyChatRooms(): void {
     console.log('Učitavam chat sobe...');
     if (this.currentUserId === null) {
@@ -234,7 +219,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         });
         console.log('Učitane chat sobe:', this.myChatRooms);
         if (this.selectedChatRoomId) {
-             this.selectChatRoom(this.selectedChatRoomId); // Ponovo selektuj istu sobu ako je bila selektovana
+             this.selectChatRoom(this.selectedChatRoomId); 
         }
       },
       (error) => {
@@ -258,7 +243,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showManageMembersPanel = false;
     this.selectedUsersToAdd = [];
 
-    // KLJUČNO: Odjavi se od prethodne STOMP pretplate pre pretplate na novu sobu
     if (this.stompSubscription) {
         this.stompSubscription.unsubscribe();
         console.log('ChatComponent: Odjavljena prethodna STOMP pretplata.');
@@ -268,7 +252,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.chatService.getChatRoomDetails(roomId).subscribe({
       next: (roomDetails: ChatRoomDTO) => {
         this.selectedChatRoom = roomDetails;
-        this.chatMessages = []; // Obriši poruke iz prethodnog chata
+        this.chatMessages = []; 
 
         this.checkAdminStatus();
         this.membersToManage = this.selectedChatRoom?.members ? [...this.selectedChatRoom.members] : [];
@@ -289,18 +273,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         );
 
-        // KLJUČNO: Pretplati se na WebSocket temu za ovu specifičnu sobu
         if (this.chatService.stompClient && this.chatService.stompClient.connected) {
           this.stompSubscription = this.chatService.stompClient.subscribe(`/topic/chat/room/${selectedRoomId}`, (message: any) => {
             console.log('ChatComponent: Primljena poruka DIREKTNO sa STOMP pretplate za sobu', selectedRoomId, ':', JSON.parse(message.body));
-            // Emituj poruku kroz messagesSubject u servisu da bi je obradio ngOnInit pretplatnik
             this.chatService['messageSubject'].next(JSON.parse(message.body));
           });
           console.log('ChatComponent: Nova STOMP pretplata AKTIVNA za sobu:', selectedRoomId);
         } else {
           console.warn('ChatComponent: StompClient nije povezan, ne mogu se pretplatiti na sobu. Pokušavam da ponovo povežem.');
-          // Opcionalno: Pokušaj ponovno povezivanje ili prikaži poruku korisniku
-          this.chatService.connect(); // Pokušaj ponovno povezivanje
+          this.chatService.connect(); 
         }
 
         this.router.navigate(['/chat', roomId], { replaceUrl: true });
@@ -345,8 +326,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.messageContent = '';
   }
 
-  // --- METODE ZA ZAPOČINJANJE NOVOG CHATA (PRIVATNI/GRUPNI) ---
-
   toggleNewChatPanel(): void {
     this.showNewChatPanel = !this.showNewChatPanel;
     if (this.showNewChatPanel) {
@@ -375,8 +354,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.foundUsersForGroup = [];
     this.selectedGroupMembers = [];
   }
-
-  // --- METODE ZA PRIVATNI CHAT ---
 
   searchUsers(): void {
     if (this.searchQuery.trim().length < 2) {
@@ -443,12 +420,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       error: (error) => {
         console.error('Error initiating private chat:', error);
-        alert('Failed to start private chat: ' + (error.error?.message || error.message));
+        //alert('Failed to start private chat: ' + (error.error?.message || error.message));
       }
     });
   }
-
-  // --- METODE ZA KREIRANJE GRUPNOG CHATA ---
 
   searchUsersForGroup(): void {
     if (this.groupMemberSearchQuery.trim().length < 2) {
@@ -479,7 +454,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  removeMemberFromSelectedGroupMembers(memberId: number): void { // Nova metoda
+  removeMemberFromSelectedGroupMembers(memberId: number): void { 
     this.selectedGroupMembers = this.selectedGroupMembers.filter(m => m.id !== memberId);
   }
 
@@ -532,8 +507,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
   }
-
-  // --- METODE ZA UPRAVLJANJE ČLANOVIMA GRUPE (POSTOJEĆA GRUPA) ---
 
   checkAdminStatus(): void {
     if (this.selectedChatRoom && this.selectedChatRoom.type === 'GROUP' && this.currentUserId !== null) {
@@ -592,7 +565,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  // NOVA METODA: Uklanja člana iz privremene liste 'selectedUsersToAdd'
   removeMemberFromSelectedUsersToAdd(memberId: number): void {
     this.selectedUsersToAdd = this.selectedUsersToAdd.filter(m => m.id !== memberId);
   }
@@ -631,12 +603,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.loadMyChatRooms();
         this.manageMembersSearchQuery = '';
         this.foundUsersForManageMembers = [];
-        this.selectedUsersToAdd = []; // Resetuj listu nakon što su svi obrađeni
+        this.selectedUsersToAdd = []; 
       }
     });
   }
 
-  removeMemberFromGroup(memberId: number): void { // Ovo je za uklanjanje iz POSTOJEĆE grupe (poziva backend)
+  removeMemberFromGroup(memberId: number): void { 
     if (!this.selectedChatRoomId || !this.currentUserId) {
       alert('No chat room selected or user not logged in.');
       return;

@@ -24,8 +24,8 @@ public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMember, 
             "JOIN cr.members crm1 JOIN cr.members crm2 " +
             "WHERE cr.type = 'PRIVATE' " +
             "AND crm1.client.id = :user1Id AND crm2.client.id = :user2Id " +
-            "AND crm1.id != crm2.id " + // Osigurava da se radi o dva različita clana
-            "AND (SELECT COUNT(m) FROM ChatRoomMember m WHERE m.chatRoom = cr) = 2") // Osigurava da soba ima TACNO 2 clana
+            "AND crm1.id != crm2.id " +
+            "AND (SELECT COUNT(m) FROM ChatRoomMember m WHERE m.chatRoom = cr) = 2")
     Optional<ChatRoom> findPrivateChatRoomByTwoMembers(@Param("user1Id") Integer user1Id, @Param("user2Id") Integer user2Id);
 
 }

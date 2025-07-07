@@ -47,14 +47,8 @@ export class ChatService {
     const ws = new SockJS(this.wsUrl);
     this.stompClient = Stomp.over(ws);
 
-    // Konfiguracija STOMP logovanja (opciono, za debug)
-    // this.stompClient.debug = (str) => {
-    //   console.log(str);
-    // };
-
      const headers = {
-      'Authorization': `Bearer ${token}`, 
-      // 'X-Auth-Token': token 
+      'Authorization': `Bearer ${token}`,  
     };
 
     this.stompClient.connect(headers, () => {

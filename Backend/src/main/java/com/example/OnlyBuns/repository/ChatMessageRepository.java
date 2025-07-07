@@ -2,7 +2,6 @@ package com.example.OnlyBuns.repository;
 
 import com.example.OnlyBuns.model.ChatMessage;
 import com.example.OnlyBuns.model.ChatRoom;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
