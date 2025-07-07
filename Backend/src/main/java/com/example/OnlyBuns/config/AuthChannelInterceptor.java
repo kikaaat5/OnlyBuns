@@ -1,4 +1,4 @@
-package com.example.OnlyBuns.config; // Ili neki drugi odgovarajući paket
+package com.example.OnlyBuns.config;
 
 import com.example.OnlyBuns.service.impl.UserServiceImpl;
 import com.example.OnlyBuns.util.TokenUtils;
@@ -31,12 +31,10 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            // Pokušaj da izvučeš "Authorization" heder
             List<String> authorization = accessor.getNativeHeader("Authorization");
             String authToken = null;
 
             if (authorization != null && !authorization.isEmpty()) {
-                // Hejder obično izgleda kao "Bearer [token]"
                 String bearerToken = authorization.get(0);
                 if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
                     authToken = bearerToken.substring(7);
@@ -49,13 +47,10 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 if (username != null) {
                     UserDetails userDetails = userService.loadUserByUsername(username);
                     if (tokenUtils.validateToken(authToken, userDetails)) {
-                        // Kreiraj autentifikacioni token
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
 
-                        // Postavi korisnika u security kontekst za ovu WebSocket sesiju
                         accessor.setUser(authentication);
-                        // Opciono: postavi i u globalni SecurityContextHolder ako zatreba
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
