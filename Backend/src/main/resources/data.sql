@@ -107,29 +107,30 @@ INSERT INTO chat_room (id, name, type, admin_id) VALUES (3, NULL, 'PRIVATE', NUL
 INSERT INTO chat_room (id, name, type, admin_id) VALUES (4, 'OnlyBuns Tim', 'GROUP', 1); -- Jana (Client ID 1) je admin ove chat sobe
 INSERT INTO chat_room (id, name, type, admin_id) VALUES (5, 'Zeka Ljubitelji', 'GROUP', 3); -- Nikola (Client ID 3) je admin ove chat sobe
 
--- 2. Dodavanje Članova u Chat Sobe (ChatRoomMember)
--- Članovi privatnih četova
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (1, 1, 'MEMBER'); -- Jana u čet sobi 1
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (2, 1, 'MEMBER'); -- Ana u čet sobi 1
 
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (3, 2, 'MEMBER'); -- Nikola u čet sobi 2
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (4, 2, 'MEMBER'); -- Petar u čet sobi 2
+-- 2. Dodavanje Članova u Chat Sobe (ChatRoomMember) sa ispravnim joined_at vrednostima
 
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (5, 3, 'MEMBER'); -- Mila u čet sobi 3
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (6, 3, 'MEMBER'); -- Milica u čet sobi 3
+-- Članovi privatnih četova - joined_at je NULL
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (1, 1, 'MEMBER', NULL); -- Jana u čet sobi 1
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (2, 1, 'MEMBER', NULL); -- Ana u čet sobi 1
 
--- Članovi grupnog četa "OnlyBuns Tim" (Chat Room ID 4)
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (1, 4, 'ADMIN');   -- Jana (ID 1) je sada ADMIN chat sobe
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (2, 4, 'MEMBER');  -- Ana
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (3, 4, 'MEMBER');  -- Nikola
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (7, 4, 'MEMBER');  -- Sanja
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (3, 2, 'MEMBER', NULL); -- Nikola u čet sobi 2
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (4, 2, 'MEMBER', NULL); -- Petar u čet sobi 2
 
--- Članovi grupnog četa "Zeka Ljubitelji" (Chat Room ID 5)
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (3, 5, 'ADMIN');   -- Nikola (ID 3) je sada ADMIN chat sobe
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (5, 5, 'MEMBER');  -- Mila
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (8, 5, 'MEMBER');  -- Jelena
-INSERT INTO chat_room_member (client_id, chat_room_id, role) VALUES (9, 5, 'MEMBER');  -- Milena
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (5, 3, 'MEMBER', NULL); -- Mila u čet sobi 3
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (6, 3, 'MEMBER', NULL); -- Milica u čet sobi 3
 
+-- Članovi grupnog četa "OnlyBuns Tim" (Chat Room ID 4) - joined_at je stvarni timestamp
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (1, 4, 'ADMIN', '2025-06-15 08:00:00');   -- Jana (ID 1) je sada ADMIN chat sobe
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (2, 4, 'MEMBER', '2025-06-15 08:01:00');  -- Ana
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (3, 4, 'MEMBER', '2025-06-15 08:02:00');  -- Nikola
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (7, 4, 'MEMBER', '2025-06-15 08:03:00');  -- Sanja
+
+-- Članovi grupnog četa "Zeka Ljubitelji" (Chat Room ID 5) - joined_at je stvarni timestamp
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (3, 5, 'ADMIN', '2025-06-20 12:00:00');   -- Nikola (ID 3) je sada ADMIN chat sobe
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (5, 5, 'MEMBER', '2025-06-20 12:01:00');  -- Mila
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (8, 5, 'MEMBER', '2025-06-20 12:02:00');  -- Jelena
+INSERT INTO chat_room_member (client_id, chat_room_id, role, joined_at) VALUES (9, 5, 'MEMBER', '2025-06-20 12:03:00');  -- Milena
 
 -- 3. Dodavanje Poruka (ChatMessage) - Senders moraju biti Client ID-evi
 -- Poruke za Privatni čet 1 (Jana - Ana)
@@ -153,3 +154,5 @@ INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (3
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (5, 5, 'Senooo! Uvek seno!', '2025-07-06 13:01:00');
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (8, 5, 'Važno je i sveže povrće.', '2025-07-06 13:02:00');
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (9, 5, 'Nemojte zaboraviti vodu!', '2025-07-06 13:03:00');
+
+SELECT setval('chat_room_id_seq', COALESCE((SELECT MAX(id) FROM chat_room), 1), false);

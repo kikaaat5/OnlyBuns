@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -25,6 +27,9 @@ public class ChatRoomMember {
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    @Column(name = "joined_at", nullable = true)
+    private LocalDateTime joinedAt;
 
     public ChatRoomMember() {}
 }

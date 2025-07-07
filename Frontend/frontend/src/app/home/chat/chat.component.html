@@ -3,37 +3,153 @@
 <div class="chat-container">
   <div class="chat-sidebar">
     <h2>Your chats</h2>
-    <div *ngIf="myChatRooms.length === 0 && (chatService.connectionStatus$ | async)">
-      <p>No available chats.</p>
-    </div>
-    <div *ngIf="!(chatService.connectionStatus$ | async)">
-      <p>Connecting to chat service...</p>
+    <button class="new-chat-button" (click)="toggleNewChatPanel()">
+      {{ showNewChatPanel ? '✖ Close New Chat' : '+ New Chat' }}
+    </button>
+
+    <div *ngIf="showNewChatPanel" class="new-chat-panel">
+      <div class="chat-type-selection">
+        <button [class.active]="chatCreationType === 'private'" (click)="selectChatCreationType('private')">Private Chat</button>
+        <button [class.active]="chatCreationType === 'group'" (click)="selectChatCreationType('group')">Group Chat</button>
+      </div>
+
+      <div *ngIf="chatCreationType === 'private'" class="private-chat-creation">
+        <h4>Start a new private chat</h4>
+        <input type="text"
+               placeholder="Search user by username..."
+               [(ngModel)]="searchQuery"
+               (ngModelChange)="searchUsers()"
+               class="search-input">
+
+        <div *ngIf="foundUsers.length > 0" class="found-users-list">
+          <div *ngFor="let user of foundUsers" class="user-item" (click)="selectUser(user)">
+            {{ user.username }}
+          </div>
+        </div>
+
+        <div *ngIf="selectedUserToChat" class="selected-user-info">
+          Selected: <strong>{{ selectedUserToChat.username }}</strong>
+          <button (click)="initiatePrivateChat()" class="start-chat-button">Chat</button>
+        </div>
+      </div>
+
+      <div *ngIf="chatCreationType === 'group'" class="group-chat-creation">
+        <h4>Create a new group chat</h4>
+        <input type="text"
+               placeholder="Group Name"
+               [(ngModel)]="newGroupName"
+               class="group-name-input">
+
+        <input type="text"
+               placeholder="Add members by username..."
+               [(ngModel)]="groupMemberSearchQuery"
+               (ngModelChange)="searchUsersForGroup()"
+               class="search-input">
+
+        <div *ngIf="foundUsersForGroup.length > 0" class="found-users-list">
+          <div *ngFor="let user of foundUsersForGroup" class="user-item" (click)="addMemberToGroup(user)">
+            {{ user.username }}
+          </div>
+        </div>
+
+        <div *ngIf="selectedGroupMembers.length > 0" class="selected-members-list">
+          <h5>Members to add:</h5>
+          <div *ngFor="let member of selectedGroupMembers" class="member-tag">
+            {{ member.username }}
+            <span class="remove-member" (click)="removeMemberFromSelectedGroupMembers(member.id)">&times;</span> <!-- IZMENJENA LINIJA -->
+          </div>
+        </div>
+
+        <button (click)="createGroupChat()" class="create-group-button">Create Group</button>
+      </div>
+      
+      <button (click)="cancelNewChatPanel()" class="cancel-button">Cancel</button>
     </div>
 
-    <ul class="chat-list">
-      <li *ngFor="let room of myChatRooms"
-          [class.selected]="room.id === selectedChatRoomId"
-          (click)="selectChatRoom(room.id)">
-        {{ room.name ? room.name : getPrivateChatName(room) }}
-      </li>
-    </ul>
+    <div class="chat-rooms-list" *ngIf="!showNewChatPanel">
+      <div *ngIf="myChatRooms.length === 0 && (chatService.connectionStatus$ | async)">
+        <p>No available chats.</p>
+      </div>
+      <div *ngIf="!(chatService.connectionStatus$ | async)">
+        <p>Connecting to chat service...</p>
+      </div>
+
+      <ul class="chat-list">
+        <li *ngFor="let room of myChatRooms"
+            [class.selected]="room.id === selectedChatRoomId"
+            (click)="selectChatRoom(room.id)">
+          {{ room.name ? room.name : getPrivateChatName(room) }}
+          <span *ngIf="room.type === 'GROUP'" class="group-chat-indicator">(Group)</span>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <div class="chat-main">
     <div *ngIf="selectedChatRoom">
-      <h2 class="chat-header">{{ selectedChatRoom.name ? selectedChatRoom.name : getPrivateChatName(selectedChatRoom) }}</h2>
-      
-      <div class="messages-display" #messagesDisplay> 
+      <div class="chat-header-area">
+        <h2 class="chat-header">{{ selectedChatRoom.name ? selectedChatRoom.name : getPrivateChatName(selectedChatRoom) }}</h2>
+        
+        <button *ngIf="selectedChatRoom.type === 'GROUP'" 
+                class="manage-members-button" 
+                (click)="toggleManageMembersPanel()">
+          {{ showManageMembersPanel ? 'Close Management' : 'Manage Members' }}
+        </button>
+      </div>
+
+      <div *ngIf="showManageMembersPanel && selectedChatRoom.type === 'GROUP'" class="manage-members-panel">
+        <h4>Manage Group Members</h4>
+        
+        <div class="current-members-list">
+          <h5>Current Members:</h5>
+          <div *ngIf="selectedChatRoom.members?.length === 0">No members.</div>
+          <div *ngFor="let member of selectedChatRoom.members" class="member-tag-existing">
+            {{ member.username }} 
+            <span *ngIf="member.id === selectedChatRoom.admin?.id" class="admin-indicator">(Admin)</span>
+            <span *ngIf="isAdminOfSelectedRoom && member.id !== currentUserId && member.id !== selectedChatRoom.admin?.id" 
+                  class="remove-member" 
+                  (click)="removeMemberFromGroup(member.id)">&times;</span>
+          </div>
+        </div>
+
+        <div class="add-members-section" *ngIf="isAdminOfSelectedRoom">
+          <h5>Add New Members:</h5>
+          <input type="text"
+                 placeholder="Search user to add..."
+                 [(ngModel)]="manageMembersSearchQuery"
+                 (ngModelChange)="searchUsersForManageMembers()"
+                 class="search-input">
+
+          <div *ngIf="foundUsersForManageMembers.length > 0" class="found-users-list">
+            <div *ngFor="let user of foundUsersForManageMembers" class="user-item" (click)="addMemberToExistingGroup(user)">
+              {{ user.username }}
+            </div>
+          </div>
+
+          <div *ngIf="selectedUsersToAdd.length > 0" class="selected-members-list">
+            <h6>Members to add:</h6>
+            <div *ngFor="let member of selectedUsersToAdd" class="member-tag">
+              {{ member.username }}
+              <span class="remove-member" (click)="removeMemberFromSelectedUsersToAdd(member.id)">&times;</span> <!-- IZMENJENA LINIJA -->
+            </div>
+            <button (click)="confirmAddSelectedMembers()" class="add-members-button">Add Selected</button>
+          </div>
+        </div>
+        
+        <button *ngIf="isAdminOfSelectedRoom" (click)="cancelManageMembersPanel()" class="cancel-button">Done</button>
+      </div>
+
+      <div class="messages-display" #messagesDisplay [class.hidden]="showManageMembersPanel">
         <p *ngIf="chatMessages.length === 0" class="no-messages-text">No messages in this chat.</p>
         
         <div *ngFor="let message of chatMessages" 
-             class="message-bubble-wrapper"
-             [class.my-message-wrapper]="message.sender.id === currentUserId"
-             [class.other-message-wrapper]="message.sender.id !== currentUserId">
+              class="message-bubble-wrapper"
+              [class.my-message-wrapper]="message.sender.id === currentUserId"
+              [class.other-message-wrapper]="message.sender.id !== currentUserId">
           
           <div class="message-bubble"
-               [class.my-message]="message.sender.id === currentUserId"
-               [class.other-message]="message.sender.id !== currentUserId">
+                [class.my-message]="message.sender.id === currentUserId"
+                [class.other-message]="message.sender.id !== currentUserId">
             
             <strong *ngIf="message.sender.id !== currentUserId" class="message-sender">{{ message.sender.username }}</strong>
             <p class="message-content">{{ message.content }}</p>
@@ -42,15 +158,15 @@
         </div>
       </div>
 
-      <div class="message-input">
+      <div class="message-input" [class.hidden]="showManageMembersPanel">
         <textarea [(ngModel)]="messageContent" 
-                  placeholder="Unesite poruku..."
+                  placeholder="Enter message..."
                   (keydown.enter)="sendMessage($event)"></textarea> 
         <button (click)="sendMessage()">Send</button>
       </div>
     </div>
     <div *ngIf="!selectedChatRoom" class="no-chat-selected">
-      <p>Choose chat on the left.</p>
+      <p>Select a conversation or start a new one</p>
     </div>
   </div>
 </div>

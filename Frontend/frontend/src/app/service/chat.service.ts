@@ -140,4 +140,8 @@ export class ChatService {
   public removeMemberFromGroupChat(roomId: number, memberToRemoveId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/rooms/${roomId}/members/${memberToRemoveId}`);
   }
+
+  public getChatRoomDetails(roomId: number): Observable<ChatRoomDTO> {
+    return this.http.get<ChatRoomDTO>(`${this.apiUrl}/rooms/${roomId}`);
+  }
 }

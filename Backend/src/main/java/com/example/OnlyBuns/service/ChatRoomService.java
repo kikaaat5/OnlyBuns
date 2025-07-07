@@ -16,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
@@ -113,6 +114,7 @@ public class ChatRoomService {
                 member.setClient(memberClient);
                 member.setChatRoom(chatRoom);
                 member.setRole(MemberRole.MEMBER); // Svi su MEMBER osim eksplicitnog admina
+                member.setJoinedAt(LocalDateTime.now());
                 chatRoomMemberRepository.save(member);
                 chatRoom.getMembers().add(member); // Dodaj u listu entiteta
             }
@@ -257,11 +259,6 @@ public class ChatRoomService {
             throw new IllegalArgumentException("Cannot add members to a private chat.");
         }
 
-        // Provera da li je trenutni korisnik admin grupe
-        if (chatRoom.getAdmin() == null || !chatRoom.getAdmin().getId().equals(currentUserId)) {
-            throw new SecurityException("Only the group admin can add members.");
-        }
-
         Client newMember = clientRepository.findById(newMemberId)
                 .orElseThrow(() -> new EntityNotFoundException("New member not found with ID: " + newMemberId));
 
@@ -274,6 +271,7 @@ public class ChatRoomService {
         member.setClient(newMember);
         member.setChatRoom(chatRoom);
         member.setRole(MemberRole.MEMBER);
+        member.setJoinedAt(LocalDateTime.now());
         chatRoomMemberRepository.save(member);
         chatRoom.getMembers().add(member); // Ažuriraj listu u entitetu
     }
@@ -283,11 +281,6 @@ public class ChatRoomService {
         ChatRoom chatRoom = findChatRoomById(chatRoomId);
         if (chatRoom.getType() == ChatRoomType.PRIVATE) {
             throw new IllegalArgumentException("Cannot remove members from a private chat.");
-        }
-
-        // Provera da li je trenutni korisnik admin grupe
-        if (chatRoom.getAdmin() == null || !chatRoom.getAdmin().getId().equals(currentUserId)) {
-            throw new SecurityException("Only the group admin can remove members.");
         }
 
         Client memberClient = clientRepository.findById(memberToRemoveId)

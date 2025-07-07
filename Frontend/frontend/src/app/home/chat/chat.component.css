@@ -1,276 +1,835 @@
 /* src/app/home/chat/chat.component.css */
 
+/* ========================================================= */
+/* GLAVNI KONTEJNER I STRUKTURA */
+/* ========================================================= */
+
 .chat-container {
-  display: flex;
-  height: calc(100vh - 60px); /* Prilagodi visinu, npr. 60px za visinu navigacije */
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f8f8f8;
-  margin: 20px; /* Dodaj marginu oko celog kontejnera */
+    display: flex;
+    box-sizing: border-box; /* Osigurava da padding i border budu uključeni u visinu */
+    height: calc(100vh - 40px); /* Oduzmi samo margine (20px gornja + 20px donja) */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; /* Sprečava prelivanje sadržaja izvan kontejnera */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    margin: 20px auto; /* Centriraj horizontalno, zadrži vertikalnu marginu */
+    width: calc(100% - 40px); /* Oduzmi 20px sa svake strane za marginu */
+    max-width: 1200px; /* Maksimalna širina na velikim ekranima */
 }
 
+/* ========================================================= */
+/* CHAT SIDEBAR */
+/* ========================================================= */
+
 .chat-sidebar {
-  width: 250px;
-  border-right: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    width: 250px;
+    border-right: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    height: 100%; /* Osiguraj da sidebar zauzme celu visinu od chat-containera */
+    overflow: hidden; /* Sprečava da sidebar sam ima skrolbar */
 }
 
 .chat-sidebar h2 {
-  font-size: 1.5em;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    flex-shrink: 0; /* Sprečava da se naslov smanjuje */
+}
+
+/* Dugme za "New Chat" */
+.new-chat-button {
+    background-color: #b56267; /* Boja iz tvojih stilova */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.2s ease;
+    align-self: stretch; /* Rastegnuti da popuni širinu */
+    flex-shrink: 0; /* Sprečava da se dugme smanjuje */
+}
+
+.new-chat-button:hover {
+    background-color: #a05055; /* Tamnija nijansa pri hoveru */
+}
+
+/* Panel za kreiranje novog chata */
+.new-chat-panel {
+    background-color: #f0f2f5; /* Svetlija pozadina za panel */
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px; /* Razmak od dugmeta "New Chat" */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-grow: 1; /* Omogućava panelu da zauzme sav dostupan prostor */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Omogući skrolovanje unutar panela ako je sadržaj predugačak */
+}
+
+.chat-type-selection {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.chat-type-selection button {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: #fcfcfc;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    border-radius: 0; /* Resetuj border-radius za dugmad */
+}
+
+.chat-type-selection button:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-right: none;
+}
+
+.chat-type-selection button:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.chat-type-selection button.active {
+    background-color: #b56267; /* Boja iz tvojih stilova */
+    color: white;
+    border-color: #b56267;
+}
+
+.chat-type-selection button:hover:not(.active) {
+    background-color: #e9ecef;
+}
+
+.private-chat-creation,
+.group-chat-creation {
+    flex-grow: 1; /* Omogućava im da zauzmu sav preostali prostor */
+    display: flex;
+    flex-direction: column;
+}
+
+.private-chat-creation h4,
+.group-chat-creation h4 {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.search-input,
+.group-name-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.found-users-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 120px; /* Ograniči visinu liste pronađenih korisnika */
+    overflow-y: auto; /* Omogući skrolovanje ako ima mnogo rezultata */
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+
+.user-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.user-item:hover {
+    background-color: #f0f0f0;
+}
+
+.selected-user-info {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e6f7ff; /* Svetlija plava/zelena nijansa */
+    border: 1px solid #b56267; /* Boja iz tvojih stilova */
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.selected-user-info strong {
+    color: #b56267; /* Boja iz tvojih stilova */
+}
+
+.start-chat-button,
+.create-group-button {
+    background-color: #b56267; /* Zelena boja iz tvojih stilova */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.start-chat-button:hover,
+.create-group-button:hover {
+    background-color: #a05055; /* Tamnija nijansa */
+}
+
+.selected-members-list {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    max-height: 100px;
+    overflow-y: auto;
+    background-color: #fff;
+    display: flex; /* Dodato za fleksibilan raspored tagova */
+    flex-wrap: wrap; /* Omogućava prelamanje tagova */
+    gap: 5px; /* Razmak između tagova */
+}
+
+.selected-members-list h5,
+.selected-members-list h6 { /* Dodato h6 */
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 5px;
+    width: 100%; /* Da naslov zauzme celu širinu */
+}
+
+.member-tag {
+    display: inline-flex; /* Za inline prikaz sa x dugmetom */
+    align-items: center;
+    background-color: #b56267; /* Boja iz tvojih stilova */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin: 4px; /* Ostavljeno, ali gap je sada primaran */
+    font-size: 0.85em;
+}
+
+.remove-member {
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: 1; /* Da x bude centrirano vertikalno */
+}
+
+.remove-member:hover {
+    color: #ffdddd;
+}
+
+.cancel-button {
+    background-color: #6c757d; /* Siva boja iz tvojih stilova */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+    align-self: stretch; /* Rastegnuti da popuni širinu */
+    flex-shrink: 0; /* Sprečava da se dugme smanjuje */
+}
+
+.cancel-button:hover {
+    background-color: #5a6268;
+}
+
+/* Lista postojećih chat soba */
+.chat-rooms-list {
+    flex-grow: 1; /* Da zauzme preostali prostor u sidebar-u */
+    overflow-y: auto; /* Omogućava skrolovanje liste soba */
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee; /* Linija iznad liste soba */
+    min-height: 0; /* Važno za flex kontejnere sa overflow-y:auto */
+}
+
+.chat-rooms-list p {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 20px;
 }
 
 .chat-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex-grow: 1;
-  overflow-y: auto; /* Omogućava skrolovanje liste chatova */
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .chat-list li {
-  padding: 12px 15px;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  font-size: 1.1em;
-  color: #555;
-  border-radius: 6px;
-  margin-bottom: 5px;
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 1.1em;
+    color: #555;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    display: flex; /* Dodaj flex za group-chat-indicator */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-list li:last-child {
+    border-bottom: none;
 }
 
 .chat-list li:hover {
-  background-color: #f0f0f0;
-  transform: translateX(3px);
+    background-color: #f0f0f0;
+    transform: translateX(3px);
 }
 
 .chat-list li.selected {
-  background-color: #e6f7ff;
-  color: #007bff;
-  font-weight: bold;
-  border-left: 4px solid #007bff;
-  padding-left: 11px;
+    background-color: #e6f7ff;
+    color: #b56267;
+    font-weight: bold;
+    border-left: 4px solid #b56267;
+    padding-left: 11px;
 }
 
-/* chat-main kao pozicionirajući kontekst */
+.group-chat-indicator {
+    font-size: 0.75em;
+    background-color: #6c757d;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    flex-shrink: 0; /* Sprečava da se indikator smanjuje */
+}
+
+.chat-list li.selected .group-chat-indicator {
+    background-color: #e9ecef; /* Svetlija boja indikatora kad je soba selektovana */
+    color: #495057;
+}
+
+/* ========================================================= */
+/* GLAVNI DEO CHATA (DESNA STRANA) */
+/* ========================================================= */
+
 .chat-main {
-  flex-grow: 1;
-  position: relative; /* KLJUČNO: Roditelj za apsolutno pozicionirane elemente */
-  background-color: #f0f2f5;
-  height: 100%; /* Osiguraj da zauzme celu visinu od roditelja */
+    flex-grow: 1; /* Zauzima sav preostali prostor */
+    position: relative; /* Roditelj za apsolutno pozicionirane elemente */
+    background-color: #f0f2f5;
+    height: 100%; /* Osiguraj da zauzme celu visinu od roditelja */
+    overflow: hidden; /* Sprečava da chat-main ima skrolbar */
+}
+.chat-header-area { /* IZMENJENO IME KLASE */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between; /* KLJUČNO: Razdvoji naslov i dugme */
+    align-items: center; /* Vertikalno poravnaj elemente */
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    height: 62.8px; /* Fiksna visina */
+    box-sizing: border-box; /* Uključi padding i border u visinu */
+    /* Ako želiš da ga malo spustiš vertikalno unutar headera, možeš povećati padding-top/bottom ovde. */
+    /* Npr. padding: 20px 20px; ako želiš malo više visine i spuštanja */
 }
 
-/* Header fiksiran na vrhu */
 .chat-header {
-  position: absolute; /* Apsolutno pozicioniran */
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2; /* Da bude iznad poruka */
-
-  font-size: 1.5em;
-  color: #333;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  text-align: center;
+    font-size: 1.5em;
+    color: #333;
+    margin: 0 auto; /* Centriraj naslov horizontalno unutar raspoloživog prostora */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1; /* Omogući naslovu da zauzme sav preostali prostor */
+    text-align: center; /* Centriraj TEKST naslova unutar svog elementa */
+    /* Uklonjena fiksna max-width, flex-grow i margin: auto će se pobrinuti za to */
+    /* Ako je naslov previše dugačak i preklapa dugme, smanji ovaj flex-grow ili dodaj max-width */
+    max-width: calc(100% - 150px); /* Ograniči širinu naslova da ostavi mesta za dugme */
 }
 
-/* Messages display između headera i inputa */
 .messages-display {
-  position: absolute; /* Apsolutno pozicioniran */
-  top: 62.8px; /* KLJUČNO: Počinje ispod headera (koristi izmerenu visinu) */
-  bottom: 92.4px; /* KLJUČNO: Završava iznad inputa (koristi izmerenu visinu) */
-  left: 0;
-  right: 0;
-  overflow-y: auto; /* Omogućava skrolovanje poruka */
-  box-sizing: border-box; /* Uključi padding u izračunatu visinu */
+    position: absolute; /* Apsolutno pozicioniran */
+    top: 62.8px; /* Počinje ispod headera (izmerena visina chat-header-group) */
+    bottom: 92.4px; /* Završava iznad inputa (izmerena visina message-input) */
+    left: 0;
+    right: 0;
+    overflow-y: auto; /* Omogućava skrolovanje poruka */
+    box-sizing: border-box; /* Uključi padding u izračunatu visinu */
+    padding: 10px; /* Originalni padding za sadržaj poruka */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #fcfcfc; /* Vrlo svetla pozadina za poruke */
+}
 
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.messages-display.hidden { /* Klasa za skrivanje */
+    display: none;
 }
 
 .no-messages-text {
-  text-align: center;
-  color: #777;
-  font-style: italic;
-  margin-top: 20px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 20px;
 }
 
-/* Stilovi za balončiće poruka (ostaju isti) */
+/* Stilovi za balončiće poruka */
 .message-bubble-wrapper {
-  display: flex;
-  width: 100%;
-}
-
-.message-bubble {
-  max-width: 70%;
-  padding: 10px 15px;
-  border-radius: 18px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  word-wrap: break-word;
-  font-size: 1em;
-  line-height: 1.4;
-  position: relative;
+    display: flex;
+    width: 100%; /* Osiguraj da wrapper zauzima celu širinu */
 }
 
 .my-message-wrapper {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
 
 .other-message-wrapper {
-  justify-content: flex-start;
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 70%; /* Maksimalna širina balončića */
+    padding: 10px 15px;
+    border-radius: 18px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word; /* Prelamanje dugih reči */
+    font-size: 1em;
+    line-height: 1.4;
+    position: relative;
 }
 
 .my-message {
-  background-color: #dcf8c6;
-  color: #333;
+    background-color: #b56267;
+    color: white;
+    border-bottom-right-radius: 2px; /* Zaobljeni uglovi */
 }
 
 .other-message {
-  background-color: #ffffff;
-  color: #333;
+    background-color: #ffffff;
+    color: #333;
+    border-bottom-left-radius: 2px; /* Zaobljeni uglovi */
 }
 
 .message-sender {
-  display: block;
-  font-size: 0.85em;
-  font-weight: bold;
-  color: #0056b3;
-  margin-bottom: 3px;
+    display: block;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #b56267; /* Boja iz tvojih stilova */
+    margin-bottom: 3px;
 }
 
 .message-content {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .message-timestamp {
-  font-size: 0.7em;
-  color: #777;
-  margin-top: 5px;
-  display: block;
-  text-align: right;
+    font-size: 0.7em;
+    /* NEW: Postavljamo boju teksta na osnovu boje pozadine balona */
+    /* Ako je pozadina tamna (kao kod my-message), timestamp je svetliji */
+    color: rgba(255, 255, 255, 0.9); /* Podrazumevana boja (za my-message) */
+    margin-top: 5px;
+    display: block;
+    text-align: right;
+}
+
+.other-message .message-timestamp {
+    color: #777; /* Originalna boja za druge poruke */
 }
 
 /* Input polje fiksirano na dnu */
 .message-input {
-  position: absolute; /* Apsolutno pozicioniran */
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2; /* Da bude iznad poruka */
+    position: absolute; /* Apsolutno pozicioniran */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2; /* Da bude iznad poruka */
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: 92.4px; /* Koristi izmerenu visinu za input */
+    box-sizing: border-box; /* Uključi padding i border u visinu */
+}
 
-  padding: 15px 20px;
-  border-top: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.message-input.hidden { /* Klasa za skrivanje */
+    display: none;
 }
 
 .message-input textarea {
-  flex-grow: 1;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  font-size: 1em;
-  resize: none;
-  min-height: 40px;
-  max-height: 100px;
-  overflow-y: auto;
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 1em;
+    resize: none;
+    min-height: 40px;
+    max-height: 100px;
+    overflow-y: auto;
 }
 
 .message-input button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
+    padding: 10px 20px;
+    background-color: #b56267; /* Boja iz tvojih stilova */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
 }
 
 .message-input button:hover {
-  background-color: #0056b3;
+    background-color: #a05055; /* Tamnija nijansa */
 }
 
-/* Responsive dizajn (ostaje isti) */
-@media (max-width: 768px) {
-  .chat-container {
-    flex-direction: column;
-    height: 100vh;
-    margin: 0;
-    border-radius: 0;
-  }
+.no-chat-selected {
+    flex-grow: 1; /* Omogućava divu da zauzme sav preostali prostor */
+    display: flex; /* Koristi flexbox za centriranje sadržaja */
+    flex-direction: column; /* Centriraj vertikalno */
+    justify-content: center; /* Centriraj horizontalno */
+    align-items: center; /* Centriraj vertikalno */
+    text-align: center; /* Osiguraj da je tekst centriran unutar paragrafa */
+    color: #888; /* Malo tamnija siva boja za tekst */
+    font-size: 1.0em; /* Veći font */
+    padding: 20px; /* Dodaj malo paddinga */
+    background-color: #fcfcfc; /* Vrlo svetla pozadina, da se razlikuje od ostatka */
+    border-radius: 0 0 8px 0; /* Zaobli samo donji desni ugao ako je chat-container zaobljen */
+}
 
-  .chat-sidebar {
-    width: 100%;
-    height: 150px;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-    overflow-x: auto;
-    flex-direction: row;
-    white-space: nowrap;
-  }
+.no-chat-selected p {
+    margin-bottom: 15px; /* Razmak između teksta i dugmeta (ako ga dodaš) */
+    font-size: 1.3em; /* Još malo veći font za tekst */
+    color: #555; /* Tamnija boja teksta */
+}
 
-  .chat-sidebar h2 {
-    display: none;
-  }
-
-  .chat-list {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    padding: 0 10px;
-  }
-
-  .chat-list li {
-    flex-shrink: 0;
-    border-left: none;
-    border-bottom: 4px solid transparent;
+.manage-members-button {
+    background-color: #b56267;
+    color: white;
+    border: none;
     padding: 8px 12px;
-    margin-right: 5px;
-    margin-bottom: 0;
-  }
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* Ne dozvoli da se dugme smanjuje */
+    margin-left: auto; /* Gurni dugme skroz desno */
+    /* Uklonjeni fiksni margin-top i margin-bottom jer align-items: center ovo rešava */
+}
 
-  .chat-list li.selected {
-    border-left: none;
-    border-bottom: 4px solid #007bff;
-    padding-left: 12px;
-  }
+.manage-members-button:hover {
+    background-color: #a05055; /* Vraćena boja */
+}
 
-  .chat-main {
-    flex-grow: 1;
-  }
+/* Panel za upravljanje članovima, sada je apsolutno pozicioniran preko svega */
+.manage-members-panel {
+    position: absolute; /* Apsolutno pozicioniran */
+    top: 0; /* Počinje od vrha chat-maina */
+    left: 0;
+    width: 100%;
+    height: 100%; /* Zauzima celu visinu chat-maina */
+    background-color: #f0f2f5; /* Pozadina panela */
+    z-index: 10; /* Da bude iznad svega ostalog */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box; /* Uključi padding u veličinu */
+    overflow-y: auto; /* Omogući skrolovanje ako je sadržaj predugačak */
+}
 
-  .message-bubble {
-    max-width: 85%;
-  }
 
-  .message-input {
-    flex-direction: row;
+.manage-members-panel h4 {
+    font-size: 1.3em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.current-members-list,
+.add-members-section {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.current-members-list h5,
+.add-members-section h5 {
+    font-size: 1.1em;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.member-tag-existing {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0e0e0; /* Svetlija pozadina za postojeće članove */
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 15px;
+    margin: 5px;
+    font-size: 0.9em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.member-tag-existing .remove-member {
+    color: #a05055; /* Crvena boja za X */
+    margin-left: 8px;
+    font-size: 1.2em;
+}
+
+.member-tag-existing .remove-member:hover {
+    color: #ff0000;
+}
+
+.admin-indicator {
+    font-size: 0.75em;
+    background-color: #b56267;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+.add-members-section h6 {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.add-members-section .search-input {
+    margin-bottom: 15px;
+}
+
+.add-members-section .found-users-list {
+    max-height: 150px; /* Može biti malo viši ovde */
+}
+
+/* Stil za listu članova koje treba dodati */
+.add-members-section .selected-members-list {
+    border: 1px dashed #ccc; /* Iscrtani border */
+    background-color: #fcfcfc;
     padding: 10px;
-  }
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    min-height: 50px; /* Daj malo minimalne visine */
+}
 
-  .message-input textarea {
-    min-height: 35px;
-  }
+.add-members-section .member-tag {
+    background-color: #6c757d; /* Druga boja za tagove članova koje treba dodati */
+}
 
-  .message-input button {
+.add-members-section .member-tag .remove-member {
+    color: white;
+}
+
+.add-members-section .member-tag .remove-member:hover {
+    color: #ffdddd;
+}
+
+/* Stil za dugme "Add Selected" */
+.add-members-button {
+    background-color: #b56267;
+    color: white;
     padding: 8px 15px;
-  }
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto; /* Pomeri dugme desno */
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.add-members-button:hover {
+    background-color: #a05055;
+}
+
+/* Dodatni stil za skrivanje elemenata kada je panel aktivan */
+.hidden {
+    display: none !important;
+}
+
+/* ========================================================= */
+/* RESPONSIVNI DIZAJN */
+/* ========================================================= */
+
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column; /* Na manjim ekranima, sidebar ide iznad main chata */
+        height: 100vh; /* Zauzmi celu visinu ekrana */
+        margin: 0; /* Ukloni marginu na mobilnom */
+        border-radius: 0; /* Ukloni zaobljenja na celom ekranu */
+        width: 100%; /* Na mobilnom zauzmi celu širinu */
+    }
+
+    .chat-sidebar {
+        width: 100%;
+        height: auto; /* Visina se prilagođava sadržaju */
+        min-height: 120px; /* Minimalna visina da se vidi dugme i bar jedan chat */
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        overflow-x: hidden; /* Sakrij horizontalni skrol */
+        flex-direction: row; /* Elementi u sidebar-u idu u red */
+        white-space: nowrap; /* Sprečava prelamanje teksta */
+        padding: 10px; /* Manji padding na mobilnom */
+        display: flex; /* Mora biti flex da bi se dugme i lista chatova slagali */
+        align-items: flex-start; /* Poravnaj na vrhu */
+        gap: 10px; /* Razmak između elemenata */
+    }
+
+    .chat-sidebar h2 {
+        display: none; /* Sakrij naslov "Your chats" na mobilnom */
+    }
+
+    .new-chat-button {
+        margin-bottom: 0; /* Resetuj marginu */
+        flex-shrink: 0; /* Ne dozvoli da se dugme smanjuje */
+        width: auto; /* Auto širina */
+        padding: 8px 12px; /* Manji padding */
+        font-size: 0.9em;
+    }
+
+    .chat-rooms-list {
+        flex-grow: 1; /* Lista soba zauzima preostali prostor */
+        overflow-x: auto; /* Omogući horizontalno skrolovanje za listu */
+        overflow-y: hidden; /* Sakrij vertikalno skrolovanje */
+        padding: 0; /* Ukloni padding */
+        border-top: none; /* Ukloni gornji border */
+        margin-top: 0; /* Ukloni gornju marginu */
+    }
+
+    .chat-list {
+        display: flex; /* Lista postaje horizontalna */
+        flex-direction: row;
+        gap: 8px; /* Mali razmak između chatova */
+        padding: 0 5px; /* Mali padding da se vide ivice */
+    }
+
+    .chat-list li {
+        flex-shrink: 0; /* Sprečava da se pojedini chatovi smanjuju */
+        border-left: none; /* Ukloni vertikalnu border */
+        border-bottom: 4px solid transparent; /* Dodaj border na dnu za selekciju */
+        padding: 8px 10px; /* Manji padding */
+        margin-right: 0; /* Ukloni marginu desno */
+        margin-bottom: 0; /* Ukloni marginu dole */
+        font-size: 1em;
+        text-align: center; /* Centriraj tekst */
+        min-width: 100px; /* Minimalna širina da se vidi ime chata */
+        max-width: 150px; /* Maksimalna širina */
+        overflow: hidden; /* Sakrij prelivajući tekst */
+        text-overflow: ellipsis; /* Dodaj tri tačke */
+        border-radius: 4px; /* Manji border-radius */
+    }
+
+    .chat-list li.selected {
+        border-left: none; /* Ukloni levi border */
+        border-bottom: 4px solid #b56267; /* Selektovani border ide dole */
+        padding-left: 10px; /* Resetuj padding */
+    }
+
+    /* Novi panel za chat na mobilnom */
+    .new-chat-panel {
+        position: absolute; /* Apsolutno pozicioniran preko svega */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10; /* Da bude iznad ostalog sadržaja */
+        background-color: #fff; /* Bela pozadina za panel */
+        border-radius: 0; /* Bez zaobljenja */
+        padding: 15px;
+    }
+
+    .chat-main {
+        flex-grow: 1; /* Zauzima preostali vertikalni prostor */
+        height: calc(100vh - 120px); /* Oduzmi visinu sidebar-a (približno) */
+    }
+
+    /* Prilagodi apsolutno pozicionirane elemente za mobilne uređaje */
+    .chat-header-group {
+        height: 60px; /* Možda manja visina na mobilnom */
+        padding: 10px 15px;
+    }
+
+    .chat-header {
+        font-size: 1.3em;
+    }
+
+    .manage-members-button {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .messages-display {
+        top: 60px; /* Prilagodi visini novog headera */
+        bottom: 80px; /* Prilagodi visini inputa */
+        padding: 5px;
+    }
+
+    .message-bubble {
+        max-width: 90%; /* Veća širina balona na manjim ekranima */
+        font-size: 0.95em;
+        padding: 8px 12px;
+    }
+
+    .message-input {
+        padding: 10px;
+        flex-direction: row; /* Zadrži redosled inputa i dugmeta */
+        gap: 8px;
+        height: 80px; /* Možda manja visina na mobilnom */
+    }
+
+    .message-input textarea {
+        min-height: 35px;
+        font-size: 0.95em;
+    }
+
+    .message-input button {
+        padding: 8px 15px;
+        font-size: 0.95em;
+    }
+
+    .manage-members-panel {
+        /* Takođe treba prilagoditi za mobilne uređaje ako je potrebno,
+           ali obično zauzima ceo prostor kao overlay */
+        padding: 15px;
+    }
 }

@@ -99,12 +99,13 @@ public class ChatMessageController {
     @GetMapping("/rooms/{roomId}/messages")
     public ResponseEntity<List<ChatMessageDto>> getChatHistory(
             @PathVariable Integer roomId,
-            Principal principal) {
+            Principal principal,
+            @RequestParam(defaultValue = "10") int limit) {
         logger.info("ChatMessageController (REST): Zahtev za istoriju chata za roomId: {}", roomId);
         try {
             Integer userId = getCurrentClientId();
             logger.info("ChatMessageController (REST): Dohvatam istoriju chata za sobu {} za korisnika ID: {}", roomId, userId);
-            List<ChatMessageDto> messages = chatMessageService.getChatHistory(roomId, userId);
+            List<ChatMessageDto> messages = chatMessageService.getChatHistory(roomId, userId, limit);
             logger.info("ChatMessageController (REST): Uspešno dohvaćeno {} poruka za sobu {}", messages.size(), roomId);
             return new ResponseEntity<>(messages, HttpStatus.OK);
         } catch (IllegalStateException e) {

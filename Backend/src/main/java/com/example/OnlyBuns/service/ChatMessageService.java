@@ -3,14 +3,15 @@ package com.example.OnlyBuns.service;
 import com.example.OnlyBuns.dto.ChatMessageDto;
 import com.example.OnlyBuns.dto.ClientDto;
 import com.example.OnlyBuns.dto.MessageSendRequestDto;
-import com.example.OnlyBuns.model.ChatMessage;
-import com.example.OnlyBuns.model.ChatRoom;
-import com.example.OnlyBuns.model.Client;
+import com.example.OnlyBuns.model.*;
 import com.example.OnlyBuns.repository.ChatMessageRepository;
 import com.example.OnlyBuns.repository.ChatRoomMemberRepository;
 import com.example.OnlyBuns.repository.ChatRoomRepository;
 import com.example.OnlyBuns.repository.ClientRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate; // <-- KLJUČNI IMPORT
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,8 +97,8 @@ public class ChatMessageService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageDto> getChatHistory(Integer chatRoomId, Integer userId) {
-        logger.info("ChatMessageService: Fetching chat history for roomId: {} for user ID: {}", chatRoomId, userId);
+    public List<ChatMessageDto> getChatHistory(Integer chatRoomId, Integer userId, int limit) {
+        /*logger.info("ChatMessageService: Fetching chat history for roomId: {} for user ID: {}", chatRoomId, userId);
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> {
@@ -123,6 +124,74 @@ public class ChatMessageService {
         logger.info("ChatMessageService: Found {} messages for chat room ID: {}", messages.size(), chatRoomId);
 
         return messages.stream()
+                .map(this::mapChatMessageToDTO)
+                .collect(Collectors.toList());*/
+        logger.info("ChatMessageService: Dohvatam istoriju chata za sobu ID: {} za korisnika ID: {}, sa limitom: {}", chatRoomId, userId, limit);
+
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> {
+                    logger.warn("ChatMessageService: Chat soba nije pronađena sa ID: {}", chatRoomId);
+                    return new EntityNotFoundException("Chat soba nije pronađena sa ID: " + chatRoomId);
+                });
+
+        Client user = clientRepository.findById(userId)
+                .orElseThrow(() -> {
+                    logger.warn("ChatMessageService: Korisnik (klijent) nije pronađen sa ID: {}", userId);
+                    return new EntityNotFoundException("Korisnik (klijent) nije pronađen sa ID: " + userId);
+                });
+
+        ChatRoomMember member = chatRoomMemberRepository.findByClientAndChatRoom(user, chatRoom)
+                .orElseThrow(() -> {
+                    logger.warn("ChatMessageService: Korisnik {} nije član chat sobe {}. Pristup istoriji odbijen.", userId, chatRoomId);
+                    return new SecurityException("Korisnik nije član ove chat sobe.");
+                });
+
+        List<ChatMessage> finalMessages = new ArrayList<>();
+
+        // Logika za joined_at zavisi od tipa sobe
+        if (chatRoom.getType() == ChatRoomType.GROUP) {
+            LocalDateTime joinedAt = member.getJoinedAt();
+            if (joinedAt == null) {
+                // Ovo se ne bi trebalo desiti za grupne chatove ako je logika validna
+                // Ali ako se desi, tretiramo kao da je pridružen odavno, tj. dohvatamo sve
+                logger.warn("ChatMessageService: 'joinedAt' je NULL za grupni chat sobu {} i člana {}. Dohvatam celu istoriju.", chatRoomId, userId);
+                finalMessages = chatMessageRepository.findByChatRoomOrderByTimestampAscWithSender(chatRoom);
+            } else {
+                // Dohvati 10 NAJNOVIJIH poruka PRE datuma pridruživanja
+                // Koristimo joinedAt kao gornju granicu za poruke PRE
+                List<ChatMessage> messagesBeforeJoined = chatMessageRepository.findTopNByChatRoomIdAndTimestampBefore(
+                        chatRoomId, joinedAt, limit);
+                logger.debug("Dohvaćeno {} poruka PRE joinedAt: {} za grupnu sobu: {}", messagesBeforeJoined.size(), joinedAt, chatRoomId);
+                Collections.reverse(messagesBeforeJoined); // Obrnuti redosled da budu hronološke
+
+                // Dohvati SVE poruke OD datuma pridruživanja
+                List<ChatMessage> messagesAfterJoined = chatMessageRepository.findByChatRoomIdAndTimestampGreaterThanEqualOrderByTimestampAsc(
+                        chatRoomId, joinedAt);
+                logger.debug("Dohvaćeno {} poruka OD joinedAt: {} za grupnu sobu: {}", messagesAfterJoined.size(), joinedAt, chatRoomId);
+
+                // Kombinuj liste: Prvo poruke pre joinedAt, zatim poruke posle joinedAt
+                // Koristimo Set da izbegnemo duplikate.
+                Set<ChatMessage> distinctMessages = new HashSet<>();
+                distinctMessages.addAll(messagesBeforeJoined);
+                distinctMessages.addAll(messagesAfterJoined);
+                finalMessages.addAll(distinctMessages);
+                finalMessages.sort(Comparator.comparing(ChatMessage::getTimestamp)); // Sortiraj celu listu
+            }
+        } else if (chatRoom.getType() == ChatRoomType.PRIVATE) {
+            // Za privatne četove, uvek dohvati celu istoriju (ili zadnji 'limit' poruka bez obzira na joinedAt)
+            logger.info("ChatMessageService: Dohvatam celu istoriju za privatnu sobu ID: {} za korisnika ID: {}", chatRoomId, userId);
+            // Možeš koristiti findByChatRoomOrderByTimestampAscWithSender(chatRoom) za celu istoriju,
+            // ili novu metodu koja će uzeti samo zadnji 'limit' poruka ako je potrebno
+            finalMessages = chatMessageRepository.findTopNByChatRoomIdOrderByTimestampDesc(chatRoomId, limit); // Prilagodi ovo da uzme top N
+            Collections.reverse(finalMessages); // Jer želimo uzlazni redosled, a topN je desc
+        } else {
+            logger.error("ChatMessageService: Nepoznat tip chat sobe: {}", chatRoom.getType());
+            throw new IllegalStateException("Nepoznat tip chat sobe.");
+        }
+
+        logger.info("ChatMessageService: Ukupno dohvaćeno {} poruka za sobu ID: {} za korisnika ID: {}.", finalMessages.size(), chatRoomId, userId);
+
+        return finalMessages.stream()
                 .map(this::mapChatMessageToDTO)
                 .collect(Collectors.toList());
     }
