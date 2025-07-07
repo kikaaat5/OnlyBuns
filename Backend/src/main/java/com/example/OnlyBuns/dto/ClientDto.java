@@ -51,6 +51,11 @@ public class ClientDto {
         this.followers = followers;
     }
 
+    public ClientDto(Long id, String username) {
+        this.id = id;
+        this.username = username;
+    }
+
     public String getFirstname() {
         return name;
     }

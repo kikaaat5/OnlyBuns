@@ -22,7 +22,18 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+     "paths": {
+      "net": [
+        "./node_modules/node-libs-browser/mock/net"
+      ],
+      "tls": [
+        "./node_modules/node-libs-browser/mock/tls"
+      ],
+      "fs": [
+        "./node_modules/node-libs-browser/mock/fs"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
