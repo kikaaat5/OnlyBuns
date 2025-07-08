@@ -84,5 +84,11 @@ export class PostService {
   getFiveLastWeeksMostLikedPosts(): Observable<Post[]>{
     return this.http.get<Post[]>(`${this.apiUrl}/posts/fiveLastWeeksMostLiked`);
   }
+   dislikePost(postId: number, userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.likeApiUrl}/${postId}/${userId}`, { responseType: 'text' as 'json' }); // Backend vraća string
+  }
 
+  getLikesByUserId(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.likeApiUrl}/user/${userId}`);
+  }
 }
