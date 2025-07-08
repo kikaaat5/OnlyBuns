@@ -99,13 +99,13 @@ INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
 -- 1. Dodavanje Chat Soba
 
 -- Privatni četovi (name je NULL)
-INSERT INTO chat_room (id, name, type, admin_id) VALUES (1, NULL, 'PRIVATE', NULL); -- Između jane (1) i ane (2)
-INSERT INTO chat_room (id, name, type, admin_id) VALUES (2, NULL, 'PRIVATE', NULL); -- Između nikole (3) i petra (4)
-INSERT INTO chat_room (id, name, type, admin_id) VALUES (3, NULL, 'PRIVATE', NULL); -- Između mile (5) i milice (6)
+INSERT INTO chat_room ( name, type, admin_id) VALUES ( NULL, 'PRIVATE', NULL); -- Između jane (1) i ane (2)
+INSERT INTO chat_room ( name, type, admin_id) VALUES ( NULL, 'PRIVATE', NULL); -- Između nikole (3) i petra (4)
+INSERT INTO chat_room ( name, type, admin_id) VALUES ( NULL, 'PRIVATE', NULL); -- Između mile (5) i milice (6)
 
 -- Grupni četovi (sa adminom, npr. Jana je admin grupe za "OnlyBuns Tim")
-INSERT INTO chat_room (id, name, type, admin_id) VALUES (4, 'OnlyBuns Tim', 'GROUP', 1); -- Jana (Client ID 1) je admin ove chat sobe
-INSERT INTO chat_room (id, name, type, admin_id) VALUES (5, 'Zeka Ljubitelji', 'GROUP', 3); -- Nikola (Client ID 3) je admin ove chat sobe
+INSERT INTO chat_room ( name, type, admin_id) VALUES ( 'OnlyBuns Tim', 'GROUP', 1); -- Jana (Client ID 1) je admin ove chat sobe
+INSERT INTO chat_room ( name, type, admin_id) VALUES ( 'Zeka Ljubitelji', 'GROUP', 3); -- Nikola (Client ID 3) je admin ove chat sobe
 
 
 -- 2. Dodavanje Članova u Chat Sobe (ChatRoomMember) sa ispravnim joined_at vrednostima
@@ -154,5 +154,3 @@ INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (3
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (5, 5, 'Senooo! Uvek seno!', '2025-07-06 13:01:00');
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (8, 5, 'Važno je i sveže povrće.', '2025-07-06 13:02:00');
 INSERT INTO chat_message (sender_id, chat_room_id, content, timestamp) VALUES (9, 5, 'Nemojte zaboraviti vodu!', '2025-07-06 13:03:00');
-
-SELECT setval('chat_room_id_seq', COALESCE((SELECT MAX(id) FROM chat_room), 1), false);

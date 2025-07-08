@@ -218,9 +218,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           return (a.name || '').localeCompare(b.name || '');
         });
         console.log('Učitane chat sobe:', this.myChatRooms);
-        if (this.selectedChatRoomId) {
+        /*if (this.selectedChatRoomId) {
              this.selectChatRoom(this.selectedChatRoomId); 
-        }
+        }*/
       },
       (error) => {
         console.error('Greška pri učitavanju chat soba:', error);
