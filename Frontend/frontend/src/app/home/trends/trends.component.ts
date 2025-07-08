@@ -17,7 +17,7 @@ export class TrendsComponent {
   topTenLastWeeksMostActiveClients: Client[] = [];
   postsTotalCount: number = 0;
   lastMonthCount: number = 0;
-  imageBaseUrl = 'http://localhost:8080';
+  imageBaseUrl = 'http://localhost:8080/api/images';
 
   constructor(private postService: PostService, private clientService: ClientService){}
 
