@@ -104,6 +104,7 @@ public class PostService {
         existingPost.setLatitude(updatedPost.getLatitude());
 
         return postRepository.save(existingPost);
+
     }
 
     public List<Post> findPostsByUserId(int userId) {
@@ -163,4 +164,13 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "imageBytesCache", key = "#relativeImagePath")
+    public byte[] getImageBytes(String relativeImagePath) throws IOException {
+        String cleanPath = relativeImagePath.startsWith("/uploads/") ? relativeImagePath.substring("/uploads/".length()) : relativeImagePath;
+
+        Path filePath = Paths.get(uploadDir, cleanPath);
+
+        System.out.println(">>> Učitavam sliku sa diska (i keširam u L2): " + filePath.toAbsolutePath());
+        return Files.readAllBytes(filePath);
+    }
 }

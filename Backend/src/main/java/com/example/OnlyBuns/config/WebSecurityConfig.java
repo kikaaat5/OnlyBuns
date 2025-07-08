@@ -119,6 +119,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/api/likes").permitAll()
 						.requestMatchers("/api/likes/**").permitAll()
 						.requestMatchers("/uploads/**").permitAll()
+						.requestMatchers("api/images/uploads/**").permitAll()
 						.anyRequest().authenticated()  // Sve ostale rute zahtevaju autentifikaciju
 				)
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
@@ -139,7 +140,7 @@ public class WebSecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring()
-
+				.requestMatchers("/api/images/**")
 				//.requestMatchers(HttpMethod.POST, "/auth/login")
 				.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
 						"/*/*.html", "/*/*.css", "/*/*.js");

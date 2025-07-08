@@ -5,6 +5,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.http.CacheControl;
+import java.util.concurrent.TimeUnit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,12 +25,13 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     //konfiguracija da bi se slike mogle javno servirati
-    @Override
+   /* @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path uploadDir = Paths.get("uploads");
         String uploadPath = uploadDir.toFile().getAbsolutePath();
 
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadPath + "/");
-    }
+                .addResourceLocations("file:" + uploadPath + "/")
+                .setCacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).noTransform().cachePublic());
+    }*/
 }

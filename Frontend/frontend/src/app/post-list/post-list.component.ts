@@ -10,21 +10,6 @@ import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Post } from '../model/post.model'; // <-- KLJUČNA PROMENA: Importuj tvoj Post model
 
-// UKLONJENO: Više ne treba da definišeš interfejs Post ovde!
-// interface Post {
-//   id: number;
-//   userId: number;
-//   description: string;
-//   imagePath: string;
-//   compressedImagePath?: string;
-//   latitude: number;
-//   longitude: number;
-//   likesCount: number;
-//   createdAt: Date;
-//   comments: any[];
-//   hasLiked?: boolean;
-// }
-
 
 @Component({
   selector: 'app-post-list',
@@ -39,7 +24,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   loggedUserId: number | null = null;
   clients: Client[] = [];
   followedClientIds: number[] = [];
-  imageBaseUrl: string = 'http://localhost:8080';
+  imageBaseUrl: string = 'http://localhost:8080/api/images';
 
   private userSubscription: Subscription | undefined;
 

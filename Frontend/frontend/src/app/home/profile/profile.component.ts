@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit {
   currentFollowListType: 'followers' | 'following' | null = null;
   isEditing: boolean = false;
   editedPost: any = null;
-  imageBaseUrl = 'http://localhost:8080';
+  imageBaseUrl = 'http://localhost:8080/api/images';
 
   private routeSubscription: Subscription | undefined; 
 
