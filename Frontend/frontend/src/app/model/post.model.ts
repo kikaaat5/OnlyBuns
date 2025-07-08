@@ -9,6 +9,7 @@ export interface Post {
     latitude: number;
     likesCount: number;
     comments: Comment[];  
+    hasLiked?: boolean; 
   }
   
   export interface Comment {

@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { PostService } from '../service/post.service'; 
-import { DatePipe } from '@angular/common'; 
-import {UserService} from '../service/user.service';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { PostService } from '../service/post.service';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../service/user.service';
 import { Client } from '../model/client.model';
 import { ClientService } from '../service/client.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FollowService } from '../service/follow.service';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import { Post } from '../model/post.model'; // <-- KLJUČNA PROMENA: Importuj tvoj Post model
 
 
 @Component({
@@ -13,53 +17,68 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./post-list.component.css'],
   providers: [DatePipe]
 })
-export class PostListComponent implements OnInit {
-  posts: any[] = [];
-  isEditing: boolean = false;    
-  editedPost: any = null;
-  selectedImageBase64: string | null = null;
+export class PostListComponent implements OnInit, OnDestroy {
+  @Input() showFollowingPostsOnly: boolean = false;
+
+  posts: Post[] = []; // Koristi importovani Post model
   loggedUserId: number | null = null;
   clients: Client[] = [];
-  imageBaseUrl: string = 'http://localhost:8080';
- 
-  constructor(private userService: UserService, private postService: PostService, private clientService: ClientService, private route: ActivatedRoute,
-    private router: Router,  private datePipe: DatePipe) {}
-  
+  followedClientIds: number[] = [];
+  imageBaseUrl: string = 'http://localhost:8080/api/images';
+
+  private userSubscription: Subscription | undefined;
+
+  constructor(
+    private userService: UserService,
+    private postService: PostService,
+    private clientService: ClientService,
+    private followService: FollowService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private datePipe: DatePipe
+  ) {}
+
   ngOnInit(): void {
-    this.loggedUserId = this.userService.getUserId();
-    this.loadPosts();
-    this.loadClients();  
+    this.userSubscription = this.userService.getMyInfo().subscribe({
+      next: (user) => {
+        this.loggedUserId = user ? user.id : null;
+        console.log('PostListComponent: loggedUserId postavljen iz getMyInfo():', this.loggedUserId);
+        this.loadData();
+      },
+      error: (err) => {
+        this.loggedUserId = null;
+        console.warn('PostListComponent: Greška pri dohvatanju informacija o korisniku:', err);
+        this.loadData();
+      }
+    });
   }
 
-  hasSignedIn() {
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
+
+  hasSignedIn(): boolean {
     return !!this.userService.currentUser;
   }
-  
-  loadClients(): void {
-    this.clientService.getAllClients().subscribe(
-      (data: Client[]) => {
-        console.log(data);
-        this.clients = data;  
-      },
-      (error) => {
-        console.error('Došlo je do greške prilikom učitavanja klijenata', error);
-      }
-    );
+
+  isClient(): boolean {
+    return this.hasSignedIn() && this.userService.currentUser?.role === 'ROLE_CLIENT';
   }
 
-  getAuthorsUsername(post: any): string {
+  getAuthorsUsername(post: Post): string { // Koristi Post model
     if (post !== undefined && this.clients) {
       const client = this.clients.find(client => client.id === post.userId);
       if (client) {
         return `${client.username}`;
       }
     }
-    return 'Nepoznat autor'; 
+    return 'Nepoznat autor';
   }
 
   goToUserProfile(userId?: number): void {
-    console.log('usaaaaaaao ovdje treba da ode na profil glupi');
-    console.log(userId);
+    console.log('Navigacija na profil korisnika sa ID:', userId);
     if (userId) {
       this.router.navigate(['/profile', userId]);
     } else {
@@ -67,7 +86,7 @@ export class PostListComponent implements OnInit {
     }
   }
 
-  getStaticComments() {
+  getStaticComments(): any[] {
     return [
       { id: 1, userId: 2, content: 'Ovo je fantastična slika!', createdAt: '2024-11-10T12:30:00' },
       { id: 2, userId: 3, content: 'Volim ove zečeve!', createdAt: '2024-11-10T13:00:00' },
@@ -75,137 +94,127 @@ export class PostListComponent implements OnInit {
     ];
   }
 
-  loadPosts(): void {
-    this.postService.getPosts().subscribe(
-      (data) => {
-        // Dodavanje statičkih komentara
-        this.posts = data.map(post => ({
+  loadData(): void {
+    console.log('loadData() pozvana. showFollowingPostsOnly:', this.showFollowingPostsOnly, 'loggedUserId:', this.loggedUserId);
+
+    if (this.showFollowingPostsOnly && this.loggedUserId === null) {
+      this.posts = [];
+      console.log('Nije moguće učitati postove praćenih: Korisnik nije ulogovan ili ID nije dostupan.');
+      return;
+    }
+
+    const clientsObservable = this.clientService.getAllClients();
+    let postsToFetchObservable: Observable<any[]>;
+
+    if (this.showFollowingPostsOnly && this.loggedUserId !== null) {
+      const followingObservable = this.followService.getFollowing(this.loggedUserId).pipe(
+        map(followingClients => followingClients.map(client => client.id)),
+        catchError(error => {
+          console.error('Greška pri dohvatanju liste praćenih korisnika:', error);
+          return of([]);
+        })
+      );
+
+      postsToFetchObservable = followingObservable.pipe(
+        switchMap(followedIds => {
+          this.followedClientIds = followedIds;
+          return this.postService.getPosts();
+        }),
+        map(allPosts => allPosts.filter(post => this.followedClientIds.includes(post.userId)))
+      );
+    } else {
+      postsToFetchObservable = this.postService.getPosts();
+    }
+
+    forkJoin([
+      clientsObservable,
+      postsToFetchObservable,
+      this.loggedUserId !== null ? this.postService.getLikesByUserId(this.loggedUserId) : of([])
+    ]).subscribe({
+      next: ([allClients, fetchedPosts, userLikes]) => {
+        this.clients = allClients;
+
+        const likedPostIds = new Set(userLikes.map(like => like.postId));
+
+        this.posts = fetchedPosts.map(post => ({
           ...post,
           createdAt: new Date(
-            Number(post.createdAt[0]),    // Year
-            Number(post.createdAt[1]) - 1, // Month (subtract 1 because months are 0-indexed in JS Date)
-            Number(post.createdAt[2]),    // Day
-            Number(post.createdAt[3]),    // Hour
-            Number(post.createdAt[4])     // Minute
+            Number(post.createdAt[0]),
+            Number(post.createdAt[1]) - 1,
+            Number(post.createdAt[2]),
+            Number(post.createdAt[3]),
+            Number(post.createdAt[4])
           ),
-          comments: this.getStaticComments(),  // Dodaj komentare svakom postu
+          comments: this.getStaticComments(),
+          hasLiked: likedPostIds.has(post.id) // Postavi hasLiked na osnovu dohvaćenih lajkova
         })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        console.log(this.posts);
+
+        console.log("Učitani postovi sa statusom lajkova:", this.posts.length, "postova.");
       },
-      (error) => {
-        console.error('Greška pri preuzimanju objava', error);
+      error: (error) => {
+        console.error('Greška pri učitavanju podataka:', error);
+        this.posts = [];
       }
-    );
-  } 
- 
-  deletePost(postId: number): void {
-    if (this.loggedUserId) {
-      this.postService.deletePost(postId, this.loggedUserId).subscribe(
-        (response) => {
-          console.log(`Post ${postId} deleted successfully`);
-          this.loadPosts();  
+    });
+  }
+
+  likePost(postId: number): void {
+    if (!this.isClient()) {
+      alert('Samo klijenti mogu lajkovati objave. Prijavite se kao klijent.');
+      return;
+    }
+
+    if (this.loggedUserId === null) {
+      console.error('User ID is null. Cannot like post.');
+      alert('Vaša korisnička sesija nije aktivna. Prijavite se ponovo.');
+      return;
+    }
+
+    const postToUpdate = this.posts.find(p => p.id === postId);
+
+    if (!postToUpdate) {
+      console.error('Post not found in local array:', postId);
+      return;
+    }
+
+    if (postToUpdate.hasLiked) {
+      // Ako je post već lajkovan, pozovi dislike
+      this.postService.dislikePost(postId, this.loggedUserId).subscribe(
+        () => {
+          postToUpdate.likesCount = Math.max(0, postToUpdate.likesCount - 1);
+          postToUpdate.hasLiked = false;
+          console.log(`Post ${postId} uspešno dislajkovan.`);
         },
         (error) => {
-          console.error(`Error deleting post ${postId}`, error);
-          alert('This is not your post to delete!');
+          console.error('Greška pri dislajkovanju:', error);
+          alert('Došlo je do greške prilikom dislajkovanja objave. Pokušajte ponovo.');
+        }
+      );
+    } else {
+      // Ako post nije lajkovan, pozovi createLike
+      const newLike = {
+        id: 0,
+        userId: this.loggedUserId,
+        postId: postId,
+        likedAt: this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss') || ''
+      };
+
+      this.postService.createLike(newLike).subscribe(
+        () => {
+          postToUpdate.likesCount += 1;
+          postToUpdate.hasLiked = true;
+          console.log(`Post ${postId} uspešno lajkovan.`);
+        },
+        (error) => {
+          console.error('Greška pri lajkovanju:', error);
+          if (error.status === 409) {
+            alert('Već ste lajkovali ovu objavu!');
+            postToUpdate.hasLiked = true; // Ažuriraj frontend stanje ako backend vrati 409
+          } else {
+            alert('Došlo je do greške prilikom lajkovanja objave. Pokušajte ponovo.');
+          }
         }
       );
     }
   }
-editPost(post: any): void {
-  this.isEditing = true;
-  this.editedPost = { ...post };  
 }
-
-updatePost(): void {
-  if (this.loggedUserId) {
-    this.postService.updatePost(this.editedPost.id, this.editedPost, this.loggedUserId).subscribe(
-      (response) => {
-        console.log(`Post ${this.editedPost.id} updated successfully`);
-        this.isEditing = false;
-        this.editedPost = null;
-        this.loadPosts();  
-      },
-      (error) => {
-        console.error(`Error updating post ${this.editedPost.id}`, error);
-        alert('This is not your post to update!');
-      }
-    );
-  }
-}
-
-cancelEdit(): void {
-  this.isEditing = false;
-  this.editedPost = null;
-}
-
-
-/*onFileSelected(event: any): void {
-  const file = event.target.files[0];  // Uzmi prvi fajl (ako ih je više)
-  
-  if (file) {
-    const filePath = file.name;  // Možeš čuvati samo ime fajla (putanja može biti relativna ili apstraktna)
-    this.editedPost.imagePath = filePath;  // Sačuvaj putanju u objekat post
-  }
-}*/
-
-onFileSelected(event: any): void {
-  const file = event.target.files[0];  // Uzmi prvi fajl (ako ih je više)
-  
-  if (file) {
-    const reader = new FileReader();  // Kreiraj FileReader
-    
-    reader.onload = () => {
-      this.editedPost.imagePath = reader.result as string;  // Sačuvaj Data URL slike u editedPost
-    };
-
-    reader.readAsDataURL(file);  // Čitaj fajl kao Data URL
-  }
-}
-
-likePost(postId: number): void {
-  if (!this.hasSignedIn()) {
-    alert('Please log in to like posts.'); 
-    return;
-  }
-
-  if (this.loggedUserId === null) {
-    console.error('User ID is null');
-    return;
-  }
-
-   // Kreiranje novog objekta Like
-   const newLike = {
-    id: 0,
-    userId: this.loggedUserId,
-    postId: postId,
-    likedAt: this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss') || '' // Formatirano vreme
-  };
-
-  /*this.postService.likePost(postId).subscribe(() => {
-    const post = this.posts.find(p => p.id === postId);
-    if (post) {
-      post.likesCount += 1; 
-    }
-  });*/
-  this.postService.createLike(newLike).subscribe(
-    () => {
-      this.postService.likePost(postId).subscribe(() => {
-        const post = this.posts.find(p => p.id === postId);
-        if (post) {
-          post.likesCount += 1; 
-        }
-      });
-    },
-    (error) => {
-      console.error('Error creating like:', error);
-      alert('An error occurred while liking the post.');
-    }
-  );
-}
-
-
-
-}
-
-

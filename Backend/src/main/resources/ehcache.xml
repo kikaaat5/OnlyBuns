@@ -57,5 +57,17 @@
             <heap unit="entries">100</heap>
         </resources>
     </cache>
+    <cache alias="imageBytesCache" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <ttl unit="days">30</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">500</heap>
+            <offheap unit="MB">256</offheap>
+            <disk persistent="true" unit="MB">512</disk>
+        </resources>
+    </cache>
 
 </config>
