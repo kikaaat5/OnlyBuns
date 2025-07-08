@@ -160,7 +160,7 @@
         <textarea [(ngModel)]="messageContent" 
                   placeholder="Enter message..."
                   (keydown.enter)="sendMessage($event)"></textarea> 
-        <button (click)="sendMessage()">Send</button>
+        <button (click)="sendMessage()">Send <i class="fas fa-heart"></i></button>
       </div>
     </div>
     <div *ngIf="!selectedChatRoom" class="no-chat-selected">
