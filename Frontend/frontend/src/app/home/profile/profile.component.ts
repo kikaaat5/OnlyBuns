@@ -60,6 +60,8 @@ export class ProfileComponent implements OnInit {
   isFollowListModalVisible: boolean = false; 
   followList: Client[] = []; 
   currentFollowListType: 'followers' | 'following' | null = null;
+  isEditing: boolean = false;
+  editedPost: any = null;
   imageBaseUrl = 'http://localhost:8080';
 
   private routeSubscription: Subscription | undefined; 
@@ -134,6 +136,48 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = 'Nije moguće dohvatiti profil korisnika. Pokušajte ponovo kasnije.';
       },
     });
+  }
+
+    deletePost(postId: number): void {
+    if (this.currentSignedInUserId && window.confirm('Are you sure you want to delete this post?')) {
+      this.postService.deletePost(postId, this.currentSignedInUserId).subscribe({
+        next: () => {
+          console.log(`Post ${postId} deleted successfully`);
+          this.getUserPosts(this.client.id); 
+        },
+        error: (error) => {
+          console.error(`Error deleting post ${postId}`, error);
+          alert('This is not your post to delete!');
+        }
+      });
+    }
+  }
+
+  editPost(post: any): void {
+    this.isEditing = true;
+    this.editedPost = { ...post }; 
+  }
+
+
+  updatePost(): void {
+    if (this.currentSignedInUserId && this.editedPost) {
+      this.postService.updatePost(this.editedPost.id, this.editedPost, this.currentSignedInUserId).subscribe({
+        next: () => {
+          console.log(`Post ${this.editedPost.id} updated successfully`);
+          this.cancelEdit(); 
+          this.getUserPosts(this.client.id); 
+        },
+        error: (error) => {
+          console.error(`Error updating post ${this.editedPost.id}`, error);
+          alert('This is not your post to update!');
+        }
+      });
+    }
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.editedPost = null;
   }
 
   checkFollowingStatus(followedClientId: number): void {

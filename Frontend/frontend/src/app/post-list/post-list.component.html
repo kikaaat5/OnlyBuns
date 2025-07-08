@@ -33,11 +33,7 @@
       <div class="post-header">
         <h3 (click)="goToUserProfile(post.userId)">{{ getAuthorsUsername(post) }}</h3>
         <h3>{{ post.description }}</h3>
-        <div class="post-actions">
-            <button (click)="deletePost(post.id)" *ngIf="hasSignedIn()" class="delete-button">×</button>
-            <button (click)="editPost(post)" *ngIf="hasSignedIn()" class="edit-button">✎</button>
-        </div>
-
+        
         <p class="post-location">Location: {{ post.latitude }}, {{ post.longitude }}</p>
       </div>
       
@@ -50,7 +46,7 @@
   
       <div class="post-footer">
         <p>Likes: {{ post.likesCount }}</p>
-        <button (click)="likePost(post.id)" class="like-button">Like ❤️</button>
+        <button (click)="likePost(post.id)" *ngIf="isClient()" class="like-button">Like ❤️</button>
       </div>
       
       <div class="post-comments">
