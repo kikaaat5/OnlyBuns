@@ -68,7 +68,7 @@ export class ClientListComponent implements OnInit {
   sortClients(criteria: string): void {
     this.sortCriteria = criteria; // Sačuvaj kriterijum za buduće pretrage
     if (criteria === 'followingCount') {
-      this.filteredClients.sort((a, b) => b.following - a.following);
+      this.filteredClients.sort((a, b) => b.followers - a.followers);
     } else if (criteria === 'email') {
       this.filteredClients.sort((a, b) => a.email.localeCompare(b.email));
     }

@@ -95,7 +95,7 @@
     margin-top: 10px;
   }
   
-  /* Footer za prikaz lajkova */
+  
   .post-footer {
     display: flex;
     justify-content: space-between;
@@ -103,7 +103,17 @@
     margin-top: 15px;
     font-size: 14px;
     color: #555;
+    padding-bottom: 5px; 
+    border-bottom: 1px solid #eee
   }
+
+  .post-footer p {
+  margin-top: 10px;
+  margin-left: 10px;
+  padding-right: 10px; 
+  font-weight: bold;
+  color: #333;
+}
   
   /* Stil za komentare */
   .post-comments {
@@ -252,7 +262,7 @@
     margin-top: 10px;
   }
   .like-button {
-    background-color: #ff4081;
+    background-color: #b56267;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -263,6 +273,46 @@
   }
   
   .like-button:hover {
-    background-color: #ff1a66;
+    background-color: #b56267;
   }
-  
+  .comments-toggle-section {
+  margin-top: 10px;
+  border-top: 1px solid #eee; /* Neka suptilna linija iznad komentara */
+  padding-top: 10px;
+}
+
+.comments-toggle-button {
+  background: none; /* Uklonite podrazumevanu pozadinu dugmeta */
+  border: none;      /* Uklonite ivicu dugmeta */
+  color: #b56267;    /* Postavite boju teksta na vašu primarnu boju */
+  cursor: pointer;   /* Pokažite da je klikabilno */
+  font-size: 1em;    /* Prilagodite veličinu fonta */
+  padding: 5px 10px; /* Dodajte malo paddinga */
+  width: 100%;       /* Da zauzme celu širinu ako želite */
+  text-align: left;  /* Poravnajte tekst levo */
+  transition: background-color 0.2s ease; /* Blaga animacija za hover */
+}
+
+.comments-toggle-button:hover {
+  background-color: #f0f0f0; /* Svetla pozadina na hover-u */
+}
+
+.comments-toggle-button h4 {
+  margin: 0; /* Uklonite podrazumevanu marginu za h4 unutar dugmeta */
+  display: flex;
+  justify-content: space-between; /* Razmaknite tekst i strelicu */
+  align-items: center;
+}
+
+.post-comments {
+  margin-top: 10px;
+  padding-left: 10px; /* Uvucite komentare malo */
+  border-left: 2px solid #eee; /* Mala vizuelna indikacija komentara */
+}
+
+.comment {
+  margin-bottom: 8px;
+  padding: 5px;
+  background-color: #f9f9f9; /* Blago drugačija pozadina za pojedinačne komentare */
+  border-radius: 4px;
+}

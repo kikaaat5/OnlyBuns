@@ -2,7 +2,7 @@
 .content {
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10px;
+  margin-top: 60px;
   width: 50%;
   padding: 20px;
   background-color: #f0f8f4; /* Light greenish background */
@@ -39,7 +39,7 @@ button {
 }
 
 button[mat-raised-button] {
-  background-color: #ff7043; /* Orange color for Login button */
+  background-color: #b56267; /* Orange color for Login button */
   color: white;
   font-weight: bold;
 }

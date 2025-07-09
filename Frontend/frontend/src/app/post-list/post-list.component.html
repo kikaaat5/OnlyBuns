@@ -21,7 +21,6 @@
 
     <div class="post-footer">
       <p>Likes: {{ post.likesCount }}</p>
-      <!-- KLJUČNA PROMENA: Tekst dugmeta i disabled status na osnovu post.hasLiked -->
       <button
         (click)="likePost(post.id)"
         *ngIf="isClient()"
@@ -31,13 +30,18 @@
       </button>
     </div>
 
-    <div class="post-comments">
-      <h4>Comments</h4>
+    <div class="comments-toggle-section">
+      <button class="comments-toggle-button" (click)="toggleComments(post)">
+        <h4>Comments ({{ post.comments.length }}) {{ post.showComments ? '▲' : '▼' }}</h4>
+      </button>
+    </div>
+
+    <div class="post-comments" *ngIf="post.showComments">
       <div *ngFor="let comment of post.comments" class="comment">
         <p><strong>User {{ comment.userId }}:</strong> {{ comment.content }}</p>
         <small>{{ comment.createdAt | date: 'short' }}</small>
       </div>
-
+      
     </div>
   </div>
 </div>

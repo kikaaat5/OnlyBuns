@@ -27,13 +27,13 @@
         <input matInput [(ngModel)]="searchCriteria.maxPosts" type="number" placeholder="Max Posts">
       </mat-form-field>
   
-      <button mat-raised-button color="warn" (click)="filterClients()">Search</button>
+      <button mat-raised-button class="search-sort-button" (click)="filterClients()">Search</button>
     </div>
   
     <!-- Sortiranje -->
     <div class="sort-options">
-      <button mat-raised-button color="warn" (click)="sortClients('followingCount')">Sort by number of followers</button>
-      <button mat-raised-button color="warn" (click)="sortClients('email')">Sort by email</button>
+      <button mat-raised-button class="search-sort-button" (click)="sortClients('followingCount')">Sort by number of followers</button>
+      <button mat-raised-button class="search-sort-button" (click)="sortClients('email')">Sort by email</button>
     </div>
     
     <!-- Prikaz klijenata -->
@@ -46,7 +46,7 @@
         <mat-card-content>
           <p><strong>Email:</strong> {{ client.email }}</p>
           <p><strong>Posts:</strong> {{ client.numberOfPosts }}</p>
-          <p><strong>Following:</strong> {{ client.following }}</p>
+          <p><strong>Followers:</strong> {{ client.followers }}</p>
         </mat-card-content>
       </mat-card>
     </div>
@@ -54,7 +54,7 @@
     <mat-paginator
   [length]="totalItems"
   [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 20]"
+  [pageSizeOptions]="[5]"
   (page)="onPageChange($event)">
 </mat-paginator>
 
