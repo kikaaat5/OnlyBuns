@@ -1,48 +1,35 @@
 package com.example.OnlyBuns;
-
-// Importi za JUnit 4
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-// Spring Boot test importi
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.dao.DataIntegrityViolationException; // Dodato za potencijalne greške
-import org.springframework.mail.javamail.JavaMailSender; // Za mockovanje
-
-// Tvoji modeli, repozitorijumi i servisi
-import com.example.OnlyBuns.model.Client;
+import jakarta.persistence.EntityManager;
+import com.example.OnlyBuns.exception.ResourceNotFoundException;
 import com.example.OnlyBuns.model.Address;
+import com.example.OnlyBuns.model.Client;
+import com.example.OnlyBuns.repository.AddressRepository;
 import com.example.OnlyBuns.repository.ClientRepository;
 import com.example.OnlyBuns.repository.FollowRelationRepository;
 import com.example.OnlyBuns.service.FollowRelationService;
-import com.example.OnlyBuns.exception.ResourceNotFoundException;
-import com.example.OnlyBuns.dto.UserRequest; // Dodato, iako se ne koristi direktno u ovom testu,
-// UserServiceTests ga koristi.
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-// Java konkurentnost
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutionException;
+import java.time.LocalDateTime;
+import java.util.concurrent.*;
+import com.example.OnlyBuns.repository.ChatMessageRepository;
+import com.example.OnlyBuns.repository.PostRepository;
+import com.example.OnlyBuns.repository.RoleRepository;
+import com.example.OnlyBuns.repository.CommentRepository;
+import com.example.OnlyBuns.repository.ChatRoomRepository;
+import com.example.OnlyBuns.repository.ChatRoomMemberRepository;
+import com.example.OnlyBuns.repository.AdministratorRepository;
+import com.example.OnlyBuns.model.User;
 
-// JUnit Assertions
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail; // Za fail() metodu
 
-@RunWith(SpringRunner.class) // Koristi SpringRunner za JUnit 4 integracione testove
-@SpringBootTest // Podiže ceo Spring Boot ApplicationContext
-// Bez @ActiveProfiles("test") ili specifičnih properties fajlova u test/resources,
-// oslanjamo se na glavni application.properties (npr. ddl-auto=create-drop)
-// i kako Spring i Hibernate automatski konfigurišu H2 bazu.
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
 public class FollowRelationServiceIntegrationTest {
 
     @Autowired
@@ -52,350 +39,299 @@ public class FollowRelationServiceIntegrationTest {
     private ClientRepository clientRepository;
 
     @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
     private FollowRelationRepository followRelationRepository;
 
-    // VAŽNO: Mock-ujemo JavaMailSender i Address.
-    // Ovo je ključno za podizanje Spring konteksta bez grešaka zavisnosti,
-    // jer tvoja aplikacija verovatno ima autowired EmailService (koji koristi JavaMailSender)
-    // i Address je povezan sa User/Client entitetima.
-    @MockBean
-    private JavaMailSender javaMailSender;
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
-    @MockBean
-    private Address address;
+    @Autowired
+    private PostRepository postRepository;
 
-    @Before
-    public void setUp() {
-        // Ovaj metod je sada PRAZAN, kao u tvom UserServiceTests.
-        // Oslanjamo se na spring.jpa.hibernate.ddl-auto=create-drop
-        // (ili sličnu konfiguraciju iz tvog glavnog application.properties)
-        // da automatski očisti i ponovo kreira šemu baze podataka pre svakog testa.
-        System.out.println("Globalni setUp() je pokrenut (prazan).");
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired(required = false)
+    private ChatRoomRepository chatRoomRepository;
+    @Autowired(required = false)
+    private ChatRoomMemberRepository chatRoomMemberRepository;
+    @Autowired(required = false)
+    private AdministratorRepository administratorRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    private Client clientA;
+    private Client clientB;
+    private Client clientC;
+
+    @BeforeEach
+    @Transactional
+    void setUp() {
+
+        if (commentRepository != null) commentRepository.deleteAllInBatch();
+        if (chatMessageRepository != null) chatMessageRepository.deleteAllInBatch();
+        followRelationRepository.deleteAllInBatch();
+        if (chatRoomMemberRepository != null) chatRoomMemberRepository.deleteAllInBatch();
+        postRepository.deleteAllInBatch();
+
+        if (chatRoomRepository != null) chatRoomRepository.deleteAllInBatch();
+
+        clientRepository.deleteAllInBatch();
+        if (administratorRepository != null) administratorRepository.deleteAllInBatch();
+
+        if (roleRepository != null) roleRepository.deleteAllInBatch();
+        addressRepository.deleteAllInBatch();
+
+        Address addressA = new Address();
+        addressA.setCity("Test Grad A");
+        addressA.setCountry("Test Država A");
+        addressA.setPostalCode(10001);
+        addressA.setStreet("Test Ulica 1");
+
+        clientA = new Client();
+        clientA.setActive(true);
+        clientA.setEnabled(true);
+        clientA.setEmail("clientA@example.com");
+        clientA.setUsername("userA");
+        clientA.setPassword("passwordA");
+        clientA.setFirstName("ImeA");
+        clientA.setLastName("PrezimeA");
+        clientA.setFollowing(0);
+        clientA.setFollowers(0);
+        clientA.setNumberOfPosts(0);
+        clientA.setAddress(addressA);
+        clientA.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
+        clientA = clientRepository.save(clientA);
+
+        Address addressB = new Address();
+        addressB.setCity("Test Grad B");
+        addressB.setCountry("Test Država B");
+        addressB.setPostalCode(10002);
+        addressB.setStreet("Test Ulica 2");
+
+        clientB = new Client();
+        clientB.setActive(true);
+        clientB.setEnabled(true);
+        clientB.setEmail("clientB@example.com");
+        clientB.setUsername("userB");
+        clientB.setPassword("passwordB");
+        clientB.setFirstName("ImeB");
+        clientB.setLastName("PrezimeB");
+        clientB.setFollowing(0);
+        clientB.setFollowers(0);
+        clientB.setNumberOfPosts(0);
+        clientB.setAddress(addressB);
+        clientB.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
+        clientB = clientRepository.save(clientB);
+
+        Address addressC = new Address();
+        addressC.setCity("Test Grad C");
+        addressC.setCountry("Test Država C");
+        addressC.setPostalCode(10003);
+        addressC.setStreet("Test Ulica 3");
+
+        clientC = new Client();
+        clientC.setActive(true);
+        clientC.setEnabled(true);
+        clientC.setEmail("clientC@example.com");
+        clientC.setUsername("userC");
+        clientC.setPassword("passwordC");
+        clientC.setFirstName("ImeC");
+        clientC.setLastName("PrezimeC");
+        clientC.setFollowing(0);
+        clientC.setFollowers(0);
+        clientC.setNumberOfPosts(0);
+        clientC.setAddress(addressC);
+        clientC.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
+        clientC = clientRepository.save(clientC);
+
+        clientRepository.flush();
     }
 
+
     @Test
-    public void testConcurrentFollows_ShouldIncrementFollowersCorrectly() throws InterruptedException {
-        // Uvek obrišemo podatke specifične za ovaj test na početku
-        // kako bismo osigurali čisto stanje i izolaciju testa.
-        // Ovo je ključno jer @SpringBootTest podiže kontekst jednom,
-        // a ddl-auto=create-drop čisti bazu samo prilikom podizanja/gašenja konteksta,
-        // ne između individualnih @Test metoda unutar iste klase.
-        followRelationRepository.deleteAllInBatch();
-        clientRepository.deleteAllInBatch();
-
-        // Podaci se kreiraju OVDE, unutar samog test metoda.
-        // Važno: Koristimo UNIKATNE username-ove i email-ove za svaki test metod
-        // kako bismo izbegli UNIQUE constraint greške ukoliko ddl-auto=create-drop
-        // ne uspe u potpunosti da očisti sekvence ili ako kontekst nije potpuno nov.
-        Client follower1 = new Client(
-                null,                           // id - baza će generisati
-                "f1_concurrent_follows@test.com",       // email (unikatan)
-                "follower1_user_concurrent_follows",    // username (unikatan)
-                "pass123",                      // password
-                "Follower",                     // name
-                "One",                          // surname
-                0,                              // numberOfPosts
-                0,                              // following
-                true                            // active
-        );
-        follower1.setFollowers(0);
-        follower1.setEnabled(true);
-        follower1.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        follower1.setAddress(null);
-        follower1.setRoles(Collections.emptyList());
-        follower1 = clientRepository.save(follower1);
-
-        Client follower2 = new Client(
-                null,
-                "f2_concurrent_follows@test.com",
-                "follower2_user_concurrent_follows",
-                "pass123",
-                "Follower",
-                "Two",
-                0,
-                0,
-                true
-        );
-        follower2.setFollowers(0);
-        follower2.setEnabled(true);
-        follower2.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        follower2.setAddress(null);
-        follower2.setRoles(Collections.emptyList());
-        follower2 = clientRepository.save(follower2);
-
-        Client targetUser = new Client(
-                null,
-                "target_concurrent_follows@test.com",
-                "target_user_concurrent_follows",
-                "pass123",
-                "Target",
-                "User",
-                0,
-                0,
-                true
-        );
-        targetUser.setFollowers(0);
-        targetUser.setEnabled(true);
-        targetUser.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        targetUser.setAddress(null);
-        targetUser.setRoles(Collections.emptyList());
-        targetUser = clientRepository.save(targetUser);
-
-        System.out.println("Setup završen za testConcurrentFollows. ID-jevi: Follower1=" + follower1.getId() + ", Follower2=" + follower2.getId() + ", TargetUser=" + targetUser.getId());
-
-
+    void testConcurrentFollowAttemptsToSameClient() throws InterruptedException, ExecutionException {
         int numberOfThreads = 2;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
 
-        System.out.println("Pokreće se test: Konkurentno praćenje i provera brojača.");
-
-        // ZADATAK 1: follower1 prati targetUser-a.
-        Client finalFollower = follower1;
-        Client finalTargetUser1 = targetUser;
-        executorService.submit(() -> {
+        Callable<Void> clientAFollowsC = () -> {
             try {
-                // Namerno kašnjenje za simulaciju konkurentnosti (samo za testiranje, ne za produkciju!)
-                Thread.sleep(100);
-                // Math.toIntExact() je potreban JER Client.getId() vraća Long (od Usera),
-                // a servis prima Integer.
-                followRelationService.followClient(Math.toIntExact(finalFollower.getId()), Math.toIntExact(finalTargetUser1.getId()));
-            } catch (IllegalStateException e) {
-                System.out.println("Očekivana IllegalStateException u niti 1 (već prati): " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 1: " + e.getMessage());
-                // Rethrow kao RuntimeException da se vidi u test reportu
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
                 latch.countDown();
+                latch.await();
+                followRelationService.followClient(Math.toIntExact(clientA.getId()), Math.toIntExact(clientC.getId()));
+                System.out.println("Client A successfully followed Client C.");
+            } catch (IllegalStateException e) {
+                System.out.println("Client A caught an expected error: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Client A encountered an unexpected error: " + e.getMessage());
+                throw e;
             }
-        });
+            return null;
+        };
 
-        // ZADATAK 2: follower2 prati targetUser-a.
-        Client finalFollower3 = follower2;
-        Client finalTargetUser2 = targetUser;
-        executorService.submit(() -> {
+        Callable<Void> clientBFollowsC = () -> {
             try {
-                // Namerno kašnjenje za simulaciju konkurentnosti (samo za testiranje, ne za produkciju!)
-                Thread.sleep(100);
-                // Math.toIntExact() je potreban JER Client.getId() vraća Long (od Usera),
-                // a servis prima Integer.
-                followRelationService.followClient(Math.toIntExact(finalFollower3.getId()), Math.toIntExact(finalTargetUser2.getId()));
-            } catch (IllegalStateException e) {
-                System.out.println("Očekivana IllegalStateException u niti 2 (već prati): " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 2: " + e.getMessage());
-                // Rethrow kao RuntimeException da se vidi u test reportu
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
                 latch.countDown();
+                latch.await();
+                followRelationService.followClient(Math.toIntExact(clientB.getId()), Math.toIntExact(clientC.getId()));
+                System.out.println("Client B successfully followed Client C.");
+            } catch (IllegalStateException e) {
+                System.out.println("Client B caught an expected error: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Client B encountered an unexpected error: " + e.getMessage());
+                throw e;
             }
-        });
+            return null;
+        };
 
-        assertTrue("Test je istekao, niti nisu završile na vreme.", latch.await(10, TimeUnit.SECONDS));
+        Future<Void> futureA = executorService.submit(clientAFollowsC);
+        Future<Void> futureB = executorService.submit(clientBFollowsC);
+
+        futureA.get();
+        futureB.get();
+
         executorService.shutdown();
-        executorService.awaitTermination(5, TimeUnit.SECONDS);
+        assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS), "Executor did not terminate in time.");
 
-        // Ponovo učitavamo korisnike iz baze da dobijemo najsvežije podatke.
-        Client finalTargetUser = clientRepository.findById(Math.toIntExact(targetUser.getId())).orElseThrow();
-        Client finalFollower1 = clientRepository.findById(Math.toIntExact(follower1.getId())).orElseThrow();
-        Client finalFollower2 = clientRepository.findById(Math.toIntExact(follower2.getId())).orElseThrow();
+        Client updatedClientA = clientRepository.findById(Math.toIntExact(clientA.getId())).orElseThrow();
+        Client updatedClientB = clientRepository.findById(Math.toIntExact(clientB.getId())).orElseThrow();
+        Client updatedClientC = clientRepository.findById(Math.toIntExact(clientC.getId())).orElseThrow();
 
-        assertEquals(2, finalTargetUser.getFollowers());
-        assertEquals(0, finalTargetUser.getFollowing());
-        assertEquals(1, finalFollower1.getFollowing());
-        assertEquals(1, finalFollower2.getFollowing());
+        assertEquals(1, updatedClientA.getFollowing(), "Client A should be following 1 client.");
+        assertEquals(1, updatedClientB.getFollowing(), "Client B should be following 1 client.");
 
-        assertTrue("Follower1 treba da prati TargetUsera.", followRelationService.isFollowing(Math.toIntExact(follower1.getId()), Math.toIntExact(targetUser.getId())));
-        assertTrue("Follower2 treba da prati TargetUsera.", followRelationService.isFollowing(Math.toIntExact(follower2.getId()), Math.toIntExact(targetUser.getId())));
-        assertEquals(2L, followRelationRepository.count());
+        assertEquals(2, updatedClientC.getFollowers(), "Client C should have 2 followers.");
+
+        long followRelationsCount = followRelationRepository.count();
+        assertEquals(2, followRelationsCount, "There should be exactly 2 follow relations created.");
     }
 
-    @Test
-    public void testConcurrentUnfollows_ShouldDecrementFollowersCorrectly() throws InterruptedException {
-        // Uvek obrišemo podatke specifične za ovaj test na početku da osiguramo čisto stanje.
-        followRelationRepository.deleteAllInBatch();
-        clientRepository.deleteAllInBatch();
+    @AfterEach
+    @Transactional
+    void tearDown() {
 
-        // Podaci se kreiraju OVDE, unutar samog test metoda.
-        Client follower1 = new Client(
-                null, "f1_unfollow@test.com", "f1_unfollow_user", "pass123", "Follower", "One", 0, 0, true);
-        follower1.setFollowers(0); follower1.setEnabled(true); follower1.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        follower1.setAddress(null); follower1.setRoles(Collections.emptyList());
-        follower1 = clientRepository.save(follower1);
-
-        Client follower2 = new Client(
-                null, "f2_unfollow@test.com", "f2_unfollow_user", "pass123", "Follower", "Two", 0, 0, true);
-        follower2.setFollowers(0); follower2.setEnabled(true); follower2.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        follower2.setAddress(null); follower2.setRoles(Collections.emptyList());
-        follower2 = clientRepository.save(follower2);
-
-        Client targetUser = new Client(
-                null, "target_unfollow@test.com", "target_unfollow_user", "pass123", "Target", "User", 0, 0, true);
-        targetUser.setFollowers(0); targetUser.setEnabled(true); targetUser.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        targetUser.setAddress(null); targetUser.setRoles(Collections.emptyList());
-        targetUser = clientRepository.save(targetUser);
-
-        // Inicijalno stanje: Podesi da follower1 i follower2 prate targetUsera
-        followRelationService.followClient(Math.toIntExact(follower1.getId()), Math.toIntExact(targetUser.getId()));
-        followRelationService.followClient(Math.toIntExact(follower2.getId()), Math.toIntExact(targetUser.getId()));
-
-        Client initialTargetUser = clientRepository.findById(Math.toIntExact(targetUser.getId())).orElseThrow();
-        assertEquals(2, initialTargetUser.getFollowers());
-        assertEquals(2L, followRelationRepository.count());
-
-        int numberOfThreads = 2;
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        CountDownLatch latch = new CountDownLatch(numberOfThreads);
-
-        System.out.println("Pokreće se test: Konkurentno otpraćivanje i provera brojača.");
-
-        // ZADATAK 1: follower1 otprati targetUser-a.
-        Client finalFollower = follower1;
-        Client finalTargetUser1 = targetUser;
-        executorService.submit(() -> {
-            try {
-                // Namerno kašnjenje za simulaciju konkurentnosti (samo za testiranje, ne za produkciju!)
-                Thread.sleep(100);
-                followRelationService.unfollowClient(Math.toIntExact(finalFollower.getId()), Math.toIntExact(finalTargetUser1.getId()));
-            } catch (ResourceNotFoundException e) {
-                System.out.println("Očekivana ResourceNotFoundException u niti 1 (već otpraćeno): " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 1: " + e.getMessage());
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        // ZADATAK 2: follower2 otprati targetUser-a.
-        Client finalFollower3 = follower2;
-        Client finalTargetUser2 = targetUser;
-        executorService.submit(() -> {
-            try {
-                // Namerno kašnjenje za simulaciju konkurentnosti (samo za testiranje, ne za produkciju!)
-                Thread.sleep(100);
-                followRelationService.unfollowClient(Math.toIntExact(finalFollower3.getId()), Math.toIntExact(finalTargetUser2.getId()));
-            } catch (ResourceNotFoundException e) {
-                System.out.println("Očekivana ResourceNotFoundException u niti 2 (već otpraćeno): " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 2: " + e.getMessage());
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        assertTrue("Test je istekao, niti nisu završile na vreme.", latch.await(10, TimeUnit.SECONDS));
-        executorService.shutdown();
-        executorService.awaitTermination(5, TimeUnit.SECONDS);
-
-        Client finalFollower1 = clientRepository.findById(Math.toIntExact(follower1.getId())).orElseThrow();
-        Client finalFollower2 = clientRepository.findById(Math.toIntExact(follower2.getId())).orElseThrow();
-        Client finalTargetUser = clientRepository.findById(Math.toIntExact(targetUser.getId())).orElseThrow();
-
-        assertEquals(0, finalTargetUser.getFollowers());
-        assertEquals(0, finalTargetUser.getFollowing());
-        assertEquals(0, finalFollower1.getFollowing());
-        assertEquals(0, finalFollower2.getFollowing());
-        assertEquals(0L, followRelationRepository.count());
-    }
-
-    // Test za duple pokušaje praćenja (slično tvojem UserServiceTests)
-    @Test(expected = IllegalStateException.class) // Očekujemo IllegalStateException iz servisa
-    public void testConcurrentFollows_ShouldHandleDuplicateAttempts() throws Throwable {
-        // Uvek obrišemo podatke specifične za ovaj test na početku da osiguramo čisto stanje.
-        followRelationRepository.deleteAllInBatch();
-        clientRepository.deleteAllInBatch();
-
-        // Podaci se kreiraju OVDE, unutar samog test metoda.
-        Client follower1 = new Client(
-                null, "f1_duplicate@test.com", "f1_duplicate_user", "pass123", "Follower", "One", 0, 0, true);
-        follower1.setFollowers(0); follower1.setEnabled(true); follower1.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        follower1.setAddress(null); follower1.setRoles(Collections.emptyList());
-        follower1 = clientRepository.save(follower1);
-
-        Client targetUser = new Client(
-                null, "target_duplicate@test.com", "target_duplicate_user", "pass123", "Target", "User", 0, 0, true);
-        targetUser.setFollowers(0); targetUser.setEnabled(true); targetUser.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
-        targetUser.setAddress(null); targetUser.setRoles(Collections.emptyList());
-        targetUser = clientRepository.save(targetUser);
-
-        // Inicijalno stanje: follower1 već prati targetUsera
-        followRelationService.followClient(Math.toIntExact(follower1.getId()), Math.toIntExact(targetUser.getId()));
-
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        CountDownLatch latch = new CountDownLatch(2);
-
-        System.out.println("Pokreće se test: Konkurentni dupli pokušaji praćenja.");
-
-        // Zadatak 1: follower1 ponovo pokušava da prati targetUsera
-        Client finalTargetUser1 = targetUser;
-        Client finalFollower1 = follower1;
-        Future<?> future1 = executorService.submit(() -> {
-            System.out.println("Nit 1 pokušava drugi put da prati TargetUsera.");
-            try {
-                followRelationService.followClient(Math.toIntExact(finalFollower1.getId()), Math.toIntExact(finalTargetUser1.getId()));
-                // Ako ova linija prođe, znači da test nije bacio očekivani izuzetak
-                return null;
-            } catch (IllegalStateException e) {
-                System.out.println("Nit 1 uhvatila očekivani IllegalStateException: " + e.getMessage());
-                // Rethrow izuzetak da bi ga future.get() uhvatio
-                throw e;
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 1: " + e.getMessage());
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        // Zadatak 2: Drugi nebitan korisnik (ili isti) ponovo pokušava da prati istog
-        Client finalFollower = follower1;
-        Client finalTargetUser = targetUser;
-        Future<?> future2 = executorService.submit(() -> {
-            System.out.println("Nit 2 pokušava drugi put da prati TargetUsera.");
-            try {
-                followRelationService.followClient(Math.toIntExact(finalFollower.getId()), Math.toIntExact(finalTargetUser.getId()));
-                // Ako ova linija prođe, znači da test nije bacio očekivani izuzetak
-                return null;
-            } catch (IllegalStateException e) {
-                System.out.println("Nit 2 uhvatila očekivani IllegalStateException: " + e.getMessage());
-                // Rethrow izuzetak da bi ga future.get() uhvatio
-                throw e;
-            } catch (Exception e) {
-                System.err.println("Neočekivana greška u niti 2: " + e.getMessage());
-                throw new RuntimeException("Test nit je pala sa neočekivanom greškom", e);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        try {
-            // Čekamo da se oba zadatka završe.
-            // Važno je uhvatiti ExecutionException jer ona obavija stvarni izuzetak
-            // koji se desio u niti (u ovom slučaju IllegalStateException).
-            future1.get();
-            future2.get();
-            // Ako obe linije prođu bez izuzetka, to znači da servis nije bacio IllegalStateException
-            fail("Očekivao se IllegalStateException (klijent već prati), ali se nije desio.");
-        } catch (ExecutionException e) {
-            // Uhvatili smo ExecutionException. Sada izvlačimo stvarni uzrok (getCause()).
-            System.out.println("Uhvaćen izuzetak iz niti: " + e.getCause().getClass().getName());
-            // Ako je stvarni uzrok IllegalStateException, prosleđujemo ga dalje.
-            if (e.getCause() instanceof IllegalStateException) {
-                throw e.getCause(); // Ovo će zadovoljiti @Test(expected = IllegalStateException.class)
-            } else {
-                // Ako se desi neki drugi, neočekivani izuzetak, bacamo ga kao RuntimeException.
-                System.err.println("Neočekivan izuzetak tokom konkurentne operacije.");
-                throw new RuntimeException("Neočekivan izuzetak tokom konkurentne operacije.", e.getCause());
-            }
-        } finally {
-            executorService.shutdown(); // Uvek ugasi ExecutorService
-            // Opciono: Čekaj da se ExecutorService potpuno ugasi
-            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
-                System.err.println("ExecutorService nije završio u roku od 5 sekundi.");
-            }
+        if (commentRepository != null) {
+            commentRepository.deleteAllInBatch();
         }
+
+        if (chatMessageRepository != null) {
+            chatMessageRepository.deleteAllInBatch();
+        }
+        if (chatRoomMemberRepository != null) {
+            chatRoomMemberRepository.deleteAllInBatch();
+        }
+
+        followRelationRepository.deleteAllInBatch();
+
+
+        if (postRepository != null) {
+            postRepository.deleteAllInBatch();
+        }
+
+        if (chatRoomRepository != null) {
+            chatRoomRepository.deleteAllInBatch();
+        }
+
+        clientRepository.deleteAllInBatch();
+        if (administratorRepository != null) {
+            administratorRepository.deleteAllInBatch();
+        }
+
+        if (roleRepository != null) {
+            roleRepository.deleteAllInBatch();
+        }
+
+        addressRepository.deleteAllInBatch();
+    }
+
+
+
+    @Test
+    void testConcurrentFollowAndUnfollowOnSameClient() throws InterruptedException, ExecutionException {
+        // Postavi početno stanje: clientA već prati clientC
+        followRelationService.followClient(Math.toIntExact(clientA.getId()), Math.toIntExact(clientC.getId()));
+
+        // Proveri da li je početno stanje ispravno postavljeno
+        Client initialClientA = clientRepository.findById(Math.toIntExact(clientA.getId())).orElseThrow();
+        Client initialClientC = clientRepository.findById(Math.toIntExact(clientC.getId())).orElseThrow();
+        assertEquals(1, initialClientA.getFollowing());
+        assertEquals(1, initialClientC.getFollowers());
+        assertTrue(followRelationService.isFollowing(Math.toIntExact(clientA.getId()), Math.toIntExact(clientC.getId())));
+
+
+        int numberOfThreads = 2;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // Zadatak za clientB da prati clientC
+        Callable<Void> followTask = () -> {
+            try {
+                latch.countDown();
+                latch.await();
+                followRelationService.followClient(Math.toIntExact(clientB.getId()), Math.toIntExact(clientC.getId()));
+                System.out.println("Client B successfully followed Client C in concurrent test.");
+            } catch (IllegalStateException e) {
+                System.out.println("Follow task for Client B caught an expected error: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Follow task for Client B encountered an unexpected error: " + e.getMessage());
+                throw e;
+            }
+            return null;
+        };
+
+        // Zadatak za clientA da otprati clientC
+        Callable<Void> unfollowTask = () -> {
+            try {
+                latch.countDown();
+                latch.await();
+                followRelationService.unfollowClient(Math.toIntExact(clientA.getId()), Math.toIntExact(clientC.getId()));
+                System.out.println("Client A successfully unfollowed Client C in concurrent test.");
+            } catch (ResourceNotFoundException e) {
+                // Ovo se može desiti ako je operacija praćenja već poništena, mada je manje verovatno sa zaključavanjem
+                System.out.println("Unfollow task for Client A caught an expected error: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Unfollow task for Client A encountered an unexpected error: " + e.getMessage());
+                throw e;
+            }
+            return null;
+        };
+
+        Future<Void> futureFollow = executorService.submit(followTask);
+        Future<Void> futureUnfollow = executorService.submit(unfollowTask);
+
+        // Sačekaj da se oba zadatka završe
+        futureFollow.get();
+        futureUnfollow.get();
+
+        executorService.shutdown();
+        assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS), "Executor did not terminate in time.");
+
+        // Provera konačnog stanja
+        Client updatedClientA = clientRepository.findById(Math.toIntExact(clientA.getId())).orElseThrow();
+        Client updatedClientB = clientRepository.findById(Math.toIntExact(clientB.getId())).orElseThrow();
+        Client updatedClientC = clientRepository.findById(Math.toIntExact(clientC.getId())).orElseThrow();
+
+        // clientA je otpratio clientC, pa njegov 'following' brojač treba biti 0
+        assertEquals(0, updatedClientA.getFollowing(), "Client A should no longer be following any client.");
+
+        // clientB je zapratio clientC, pa njegov 'following' brojač treba biti 1
+        assertEquals(1, updatedClientB.getFollowing(), "Client B should be following 1 client.");
+
+        // clientC: Počeo je sa 1 pratiocem (clientA). clientA ga je otpratio (-1), a clientB ga je zapratio (+1).
+        // Stoga, konačan broj pratilaca za clientC treba biti 1.
+        assertEquals(1, updatedClientC.getFollowers(), "Client C should have 1 follower remaining.");
+
+        // Proveri broj FollowRelation entiteta: trebala bi postojati samo veza clientB -> clientC
+        long followRelationsCount = followRelationRepository.count();
+        assertEquals(1, followRelationsCount, "There should be exactly 1 follow relation remaining.");
+        assertTrue(followRelationService.isFollowing(Math.toIntExact(clientB.getId()), Math.toIntExact(clientC.getId())), "Client B should still be following Client C.");
+        assertFalse(followRelationService.isFollowing(Math.toIntExact(clientA.getId()), Math.toIntExact(clientC.getId())), "Client A should no longer be following Client C.");
     }
 }

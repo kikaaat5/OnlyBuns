@@ -9,10 +9,10 @@ INSERT INTO addresses (city, country, postal_code, street) VALUES ('Trebinje', '
 INSERT INTO client (
     active, enabled, following, number_of_posts, id, last_password_reset_date, email, lastname, name, password, username, address_id, followers)
 VALUES
-    (true, true, 0, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1, 0),
+    (true, true, 2, 10, nextval('user_seq'), '2024-11-11 21:53:50.02', 'jana@gmail.com', 'jankovic', 'jana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ivana', 1, 0),
     (true, true, 0, 5, nextval('user_seq'), '2024-11-11 21:53:50.02', 'ana@gmail.com', 'petrovic', 'ana', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'ana', 1, 0),
-    (true, true, 0, 7, nextval('user_seq'), '2024-11-11 21:53:50.02', 'nikola@gmail.com', 'jovanovic', 'nikola', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'nikola', 1, 0),
-    (true, true, 0, 12, nextval('user_seq'), '2024-11-11 21:53:50.02', 'petar@gmail.com', 'milenkovic', 'petar', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'petar', 1, 0),
+    (true, true, 0, 7, nextval('user_seq'), '2024-11-11 21:53:50.02', 'nikola@gmail.com', 'jovanovic', 'nikola', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'nikola', 1, 1),
+    (true, true, 0, 12, nextval('user_seq'), '2024-11-11 21:53:50.02', 'petar@gmail.com', 'milenkovic', 'petar', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'petar', 1, 1),
     (true, true, 0, 8, nextval('user_seq'), '2024-11-11 21:53:50.02', 'mila@gmail.com', 'markovic', 'mila', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'mila', 1, 0),
     (true, true, 0, 11, nextval('user_seq'), '2024-11-11 21:53:50.02', 'milica@gmail.com', 'jovanovic', 'milica', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'milica', 1, 0),
     (true, true, 0, 6, nextval('user_seq'), '2024-11-11 21:53:50.02', 'sanja@gmail.com', 'petrovic', 'sanja', '$2a$10$7kAwpIqahu78ZFuKhVyy4.sLpw5BND1QnohhK9RK/HLulUlvSSW1S', 'sanja', 1, 0),
@@ -95,6 +95,9 @@ INSERT INTO public.comment(user_id, content, created_at, post_id) VALUES
                                                                       (11, 'Super post!', '2025-06-23T10:00:00', 100),
                                                                       (12, 'Slažem se sa ovim.', '2025-06-22T11:00:00', 101);
 
+INSERT INTO follows (follower_id, followed_id, follow_date) VALUES (1, 3, '2025-07-01 10:00:00');
+-- Ivana (ID 1) prati Petra (ID 4)
+INSERT INTO follows (follower_id, followed_id, follow_date) VALUES (1, 4, '2025-07-01 10:05:00');
 
 -- 1. Dodavanje Chat Soba
 

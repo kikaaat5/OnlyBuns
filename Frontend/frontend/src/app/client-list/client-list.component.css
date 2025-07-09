@@ -117,3 +117,8 @@ button.mat-raised-button:hover {
 .mat-paginator {
     margin-top: 250px; /* Postavlja malu udaljenost između klijenata i paginacione trake */
   }
+
+.search-sort-button {
+  background-color: #b56267 !important; /* Boja pozadine */
+  color: white !important;             /* Boja teksta, da bude čitljiva na tamnoj pozadini */
+}

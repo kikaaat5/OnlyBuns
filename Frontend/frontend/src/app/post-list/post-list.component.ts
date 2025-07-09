@@ -67,7 +67,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     return this.hasSignedIn() && this.userService.currentUser?.role === 'ROLE_CLIENT';
   }
 
-  getAuthorsUsername(post: Post): string { // Koristi Post model
+  getAuthorsUsername(post: Post): string { 
     if (post !== undefined && this.clients) {
       const client = this.clients.find(client => client.id === post.userId);
       if (client) {
@@ -75,6 +75,10 @@ export class PostListComponent implements OnInit, OnDestroy {
       }
     }
     return 'Nepoznat autor';
+  }
+
+  toggleComments(post: Post) {
+    post.showComments = !post.showComments; 
   }
 
   goToUserProfile(userId?: number): void {

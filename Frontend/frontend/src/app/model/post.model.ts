@@ -10,6 +10,7 @@ export interface Post {
     likesCount: number;
     comments: Comment[];  
     hasLiked?: boolean; 
+    showComments?: boolean;
   }
   
   export interface Comment {
