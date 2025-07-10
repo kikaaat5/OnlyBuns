@@ -28,21 +28,24 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSeqGen")
     protected Long id;
 
-    @Column(name = "email", unique = false, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     protected String email;
 
-    @Column(name = "username", unique = false, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     protected String username;
 
-    @JsonIgnore
-    @Column(name = "password", unique = false, nullable = false)
-    protected String password;
+    //@Version
+    //private Integer version = 0;
 
     @Column(name = "name", unique = false, nullable = false)
     protected String firstname;
 
     @Column(name = "lastname", unique = false, nullable = false)
     protected String lastname;
+
+    @JsonIgnore
+    @Column(name = "password", unique = false, nullable = false)
+    protected String password;
 
     //@Column(name = "address", unique = false, nullable = false)
     //private String address;
@@ -53,7 +56,6 @@ public class User implements UserDetails {
     @Column(name = "last_password_reset_date")
     protected Timestamp lastPasswordResetDate;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     protected Address address;
@@ -148,6 +150,14 @@ public class User implements UserDetails {
     public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
+
+    //public Integer getVersion() {
+        //return version;
+    //}
+
+    //public void setVersion(Integer version) {
+        //this.version = version;
+    //}
 
     @JsonIgnore
     @Override

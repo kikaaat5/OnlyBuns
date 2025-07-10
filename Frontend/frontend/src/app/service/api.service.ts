@@ -31,7 +31,7 @@ export class ApiService {
     };
 
     if (args) {
-     // options['params'] = this.serialize(args);
+     //options['params'] = this.serialize(args);
     }
 
     return this.http.get(path, options)

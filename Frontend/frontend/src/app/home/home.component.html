@@ -1,39 +1,53 @@
 <div class="social-network-nav">
   <div class="menu-container">
     <ul>
-      <li>
+      <li *ngIf="!isAdmin()">
         <a routerLink="following" routerLinkActive="active">
           <i class="fas fa-user-friends"></i> Following
         </a>
+      </li>
+       <li *ngIf="!isAdmin()">
+        <a routerLink="explore-clients" routerLinkActive="active">
+          <i class="fas fa-search"></i> Explore</a>
       </li>
       <li>
         <a routerLink="trends" routerLinkActive="active">
           <i class="fas fa-chart-line"></i> Trending
         </a>
       </li>
-      <li>
+      <li *ngIf="!isAdmin()">
         <a routerLink="nearby" routerLinkActive="active">
           <i class="fas fa-map-marker-alt"></i> Nearby
         </a>
       </li>
-      <li>
+      <li *ngIf="!isAdmin()">
         <a routerLink="chat" routerLinkActive="active">
           <i class="fas fa-comments"></i> Chat
         </a>
       </li>
-      <li>
+      <li *ngIf="!isAdmin()">
         <a routerLink="profile" routerLinkActive="active">
           <i class="fas fa-user"></i> Profile
         </a>
       </li>
-      <li>
+      <li *ngIf="!isAdmin()"> 
         <a routerLink="post" routerLinkActive="active">
-          <i class=" fas fa-post"></i> New Post
+          <i class=" fas fa-plus"></i> New Post
         </a>
       </li>
-      <li>
+      <li *ngIf="isAdmin()">
         <a routerLink="posts" routerLinkActive="active">
-          <i class=" fas fa-posts"></i> PostList
+          <i class=" fas fa-clipboard-list"></i> Posts
+        </a>
+      </li>
+       <li *ngIf="isAdmin()">
+        <a routerLink="all-users" routerLinkActive="active">
+          <i class="fas fa-users"></i> Users
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="analytics" routerLinkActive="active">
+          <i class="fas fa-chart-bar"></i> Analytics
         </a>
       </li>
     </ul>

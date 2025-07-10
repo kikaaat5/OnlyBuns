@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Post } from '../model/post.model';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { Like } from '../model/like.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { throwError } from 'rxjs';
 export class PostService {
   
   private apiUrl = 'http://localhost:8080/api/posts'; 
+  private likeApiUrl = 'http://localhost:8080/api/likes';
 
   constructor(private http: HttpClient) {}
 
@@ -41,8 +43,52 @@ export class PostService {
     return this.http.put(`${this.apiUrl}/${postId}?userId=${userId}`, updatedPost);
   }
 
-  createPost(post: Post): Observable<Post> {
-    console.log('create metoda servis',post)
-    return this.http.post<Post>(this.apiUrl, post);
+  createPost(formData: FormData): Observable<any> {
+    console.log('create metoda servis',formData)
+    return this.http.post('http://localhost:8080/api/posts/create', formData);
+  }
+
+  getPostsByUserId(userId: number): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/${userId}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching posts for user:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  likePost(postId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${postId}/like`, {}).pipe(
+      catchError((error) => {
+        console.error('Error occurred while liking the post:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  createLike(like: Like): Observable<Like> {
+    console.log('Sending POST request to create like:', like);
+    console.log(this.likeApiUrl);
+    return this.http.post<Like>(this.likeApiUrl, like).pipe(
+      catchError((error) => {
+        console.error('Error occurred while creating like:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getTenMostLikedPosts(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/tenMostLikedEver`);
+  }
+
+  getFiveLastWeeksMostLikedPosts(): Observable<Post[]>{
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/fiveLastWeeksMostLiked`);
+  }
+   dislikePost(postId: number, userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.likeApiUrl}/${postId}/${userId}`, { responseType: 'text' as 'json' }); // Backend vraća string
+  }
+
+  getLikesByUserId(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.likeApiUrl}/user/${userId}`);
   }
 }

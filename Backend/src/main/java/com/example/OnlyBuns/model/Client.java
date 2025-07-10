@@ -5,6 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.util.List;
+
 @Entity
 @Table(name="client")
 public class Client extends User {
@@ -14,6 +16,8 @@ public class Client extends User {
     private int following;
     @Column(name="active", unique=false, nullable=true)
     private boolean active;
+    @Column(name="followers", unique=false, nullable=true)
+    private int followers;
     //public List<User> followers;
     //public List<Post> posts;
 
@@ -42,6 +46,13 @@ public class Client extends User {
 
     public void setFollowing(int following) {
         this.following = following;
+    }
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
     }
 
     public boolean isActive() {

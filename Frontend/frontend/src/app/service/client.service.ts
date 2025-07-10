@@ -35,4 +35,11 @@ export class ClientService {
     return this.http.get<Client[]>(`${this.baseUrl}/sort/email`);
   }
 
+  getClientById(id: number): Observable<Client> {
+    return this.http.get<Client>(`${this.baseUrl}/${id}`);
+  }
+
+  getTopTenActiveClients(): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.baseUrl}/mostActiveClients`);
+  }
 }

@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
 import {ConfigService} from './config.service';
 import {map} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +14,16 @@ export class UserService {
 
   constructor(
     private apiService: ApiService,
-    private config: ConfigService
+    private config: ConfigService,
   ) {
   }
 
   getMyInfo() {
-    console.log('usaoooaoaoaoaoaoao');
-    console.log(localStorage.getItem("jwt")); 
     return this.apiService.get(this.config.whoami_url)
       .pipe(map(user => {
+        //console.log('trenuti user jeeeeeeeeeee', user);
         this.currentUser = user;
+        //console.log(this.currentUser);
         return user;
       }));
   }
@@ -31,7 +33,13 @@ export class UserService {
   }
 
   getUserId(): number | null {
+    this.getMyInfo();
     return this.currentUser ? this.currentUser.id : null;
   }
 
+  updateUser(id: number, user: any): Observable<any> {
+    return this.apiService.post(`${this.config.user_url}/${id}`, user);
+  }
+
+ 
 }

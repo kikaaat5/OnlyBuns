@@ -5,6 +5,7 @@
     padding: 20px;
     background-color: #F5D0A9;
     border-radius: 8px;
+    margin-bottom: 120px;
 }
 
 /* Pretraga i sortiranje */
@@ -111,4 +112,13 @@ button.mat-raised-button:hover {
 .mat-card-content strong {
     font-weight: bold;
     color: #3e4e67;
+}
+
+.mat-paginator {
+    margin-top: 250px; /* Postavlja malu udaljenost između klijenata i paginacione trake */
+  }
+
+.search-sort-button {
+  background-color: #b56267 !important; /* Boja pozadine */
+  color: white !important;             /* Boja teksta, da bude čitljiva na tamnoj pozadini */
 }

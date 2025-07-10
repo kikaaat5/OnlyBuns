@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit {
   }
 
   isAdmin() {
-    return this.userService.currentUser?.roles?.some((role: any) => role.name === 'ROLE_ADMIN');
+    return this.userService.currentUser?.role === 'ROLE_ADMIN';
   }
 
   userName() {

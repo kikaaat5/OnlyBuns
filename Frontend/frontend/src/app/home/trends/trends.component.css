@@ -1,0 +1,169 @@
+/* General layout and background */
+.trends-page {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f9;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Stats Section */
+.stats-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 45%;
+  text-align: center;
+}
+
+.stat-card h3 {
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.stat-card p {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Trends Section */
+.trends-section {
+  margin-bottom: 40px;
+}
+
+.trending-posts {
+  margin-bottom: 30px;
+}
+
+.trending-posts h2 {
+  font-size: 1.6em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-card h4 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.noImage {
+  color: #888;
+  font-size: 1em;
+  margin-bottom: 15px;
+}
+
+.likes {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #ff6b6b;
+  margin-bottom: 10px;
+}
+
+.comments {
+  font-size: 1em;
+  margin-top: 15px;
+}
+
+.comments h5 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.comments p {
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.comments strong {
+  color: #007bff;
+}
+
+/* Top Users Section */
+.top-users-section {
+  margin-top: 40px;
+}
+
+.top-users-section h2 {
+  font-size: 1.6em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.user-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-card mat-card-header {
+  margin-bottom: 15px;
+}
+
+.user-card mat-card-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #333;
+}
+
+.user-card mat-card-subtitle {
+  font-size: 1.1em;
+  color: #777;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-card {
+    width: 80%;
+    margin-bottom: 20px;
+  }
+
+  .posts-grid,
+  .user-cards {
+    grid-template-columns: 1fr;
+  }
+}

@@ -8,7 +8,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  background-color: #1f6153; 
+  background-color: #5A726C; 
   padding: 10px;
 }
 
@@ -17,6 +17,10 @@ button[color="accent"] {
   color: black;
 }
 
+.all-posts-button {
+  background-color: #b56267 !important; /* Boja pozadine */
+  color: white !important;             /* Boja teksta, da bude čitljiva na tamnoj pozadini */
+}
 
 .app-navbar span {
   text-transform: uppercase !important;

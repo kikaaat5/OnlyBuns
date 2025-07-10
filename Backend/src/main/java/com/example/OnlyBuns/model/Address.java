@@ -1,5 +1,6 @@
 package com.example.OnlyBuns.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.persistence.metamodel.EntityType;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class Address {
     private Integer id;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private Set<User> users = new HashSet<User>();
+    private Set<User> users = new HashSet<>();
 
     @Column(name = "street", nullable = false)
     private String street;

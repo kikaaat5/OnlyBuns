@@ -20,10 +20,12 @@ export class ActivateAccountComponent implements OnInit {
   ngOnInit(): void {
     const token = this.route.snapshot.paramMap.get('token');
     console.log('usao ovdjeeeeeeeeeee');
+    console.log('token', token);
     // Dohvati token iz URL-a
 
     if (token) {
-      console.log(token)
+      console.log(token);
+      console.log('Calling backend to activate account...');
       this.authService.activateAccount(token).subscribe(
         response => {
           this.message = 'Your account has been successfully activated!';

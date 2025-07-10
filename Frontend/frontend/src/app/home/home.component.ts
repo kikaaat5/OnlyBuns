@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FooService} from '../service/foo.service';
 import {UserService} from '../service/user.service';
 import {ConfigService} from '../service/config.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -13,16 +14,23 @@ export class HomeComponent implements OnInit {
   fooResponse = {};
   whoamIResponse = {};
   allUserResponse = {};
-  selectedComponent: string ='following';
-
+  selectedComponent: string = '';
   constructor(
     private config: ConfigService,
     private fooService: FooService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
+    this.userService.getMyInfo().subscribe(user => {
+      if (user && user.role === 'ROLE_ADMIN') {
+        this.router.navigate(['/home/posts']);
+      } else {
+        this.router.navigate(['/home/following']);
+      }
+    });
   }
 
   setComponent(component: string) {
@@ -52,6 +60,10 @@ export class HomeComponent implements OnInit {
           this.forgeResonseObj(this.allUserResponse, err, path);
         });
     }
+  }
+
+  isAdmin() {
+    return this.userService.currentUser?.role === 'ROLE_ADMIN';
   }
 
   forgeResonseObj(obj:any, res:any, path:any) {

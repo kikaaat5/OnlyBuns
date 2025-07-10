@@ -5,16 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.List;import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     private int id;
 
-    @Getter
+    @Getter @Setter
     private int userId;
 
     @Getter @Setter
@@ -29,13 +33,18 @@ public class Post {
     private String imagePath;
 
     @Getter @Setter
+    @Column(name = "compressed_image_path", length = 1024)
+    private String compressedImagePath;
+
+
+    @Getter @Setter
     private double longitude;
 
     @Getter @Setter
     private double latitude;
 
     @Getter @Setter
-    private int likesCount;
+    private int likesCount=0;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
