@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Aspect za primenu ograničavanja brzine (rate limiting) na specifične metode.
- * U ovom slučaju, primenjuje se na 'followClient' metodu u FollowRelationService.
+ * Aspect za primjenu ograničavanja brzine (rate limiting) na specifične metode.
+ * U ovom slučaju, primjenjuje se na 'followClient' metodu u FollowRelationService.
  */
-@Aspect // Označava klasu kao Aspect
-@Component // Označava da je Spring komponenta i da treba da bude skenirana
+@Aspect
+@Component
 public class RateLimitAspect {
 
     private final InMemoryRateLimitingService rateLimitingService;
@@ -25,21 +25,10 @@ public class RateLimitAspect {
         this.rateLimitingService = rateLimitingService;
     }
 
-    /**
-     * Definira "pointcut" i "advice" za ograničavanje brzine.
-     *
-     * @Before: Ovaj "advice" se izvršava pre izvršenja ciljne metode.
-     * "execution(* com.example.OnlyBuns.service.FollowRelationService.followClient(..))":
-     * - *: bilo koja povratna vrednost.
-     * - com.example.OnlyBuns.service.FollowRelationService: klasa servisa.
-     * - followClient: metoda na koju se primenjuje ograničenje.
-     * - (..): bilo koji broj i tip argumenata.
-     *
-     * JoinPoint: Daje pristup informacijama o metodi koja se presreće.
-     */
+
     @Before("execution(* com.example.OnlyBuns.service.FollowRelationService.followClient(Integer, Integer)) && args(followerClientId, ..)")
     public void rateLimitFollowClient(JoinPoint joinPoint, Integer followerClientId) {
-        int limit = 50;
+        int limit = 5; //samo za test, po specifikaciji je 50
         long timePeriod = 1; // 1 min
         TimeUnit timeUnit = TimeUnit.MINUTES;
 

@@ -15,6 +15,7 @@ import { PostComponent } from './home/post/post.component';
 import { MapComponent } from './map/map.component';
 import { PublicClientListComponent } from './home/public-client-list/public-client-list.component';
 import { AnalyticsComponent } from './home/analytics/analytics.component';
+import { AuthGuard } from './service/auth-guard.guard';
 
 
 const routes: Routes = [
@@ -29,7 +30,7 @@ const routes: Routes = [
       { path: 'following', component: FollowingComponent },
       { path: 'trends', component: TrendsComponent },
       { path: 'nearby', component: NearbyComponent },
-      { path: 'chat', component: ChatComponent }, 
+      { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] }, 
       { path: 'all-users', component: ClientListComponent },
        { path: 'analytics', component: AnalyticsComponent },
 

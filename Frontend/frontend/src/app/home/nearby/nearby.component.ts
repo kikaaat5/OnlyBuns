@@ -26,6 +26,7 @@ export class NearbyComponent implements OnInit {
   };
 
   private map!: L.Map;
+  imageBaseUrl = 'http://localhost:8080/api/images';
 
   constructor(
     private userService: UserService,
@@ -143,12 +144,16 @@ export class NearbyComponent implements OnInit {
         next: (geoResponse) => {
           const address = geoResponse.display_name || 'Adresa nije dostupna';
 
-          const popupContent = `
-            <div style="text-align: center;">
-              <img src="${post.imagePath}" alt="Post image" style="width: 100px; height: auto; border-radius: 5px; margin-bottom: 5px;" />
-              <p style="margin: 0; font-size: 14px;">${address}</p>
-            </div>
-          `;
+          const imageSource = post.compressedImagePath ?
+                    `${this.imageBaseUrl}${post.compressedImagePath}` :
+                    `${this.imageBaseUrl}${post.imagePath}`;
+
+const popupContent = `
+    <div style="text-align: center;">
+      <img src="${imageSource}" alt="Post image" style="width: 100px; height: auto; border-radius: 5px; margin-bottom: 5px;" />
+      <p style="margin: 0; font-size: 14px;">${address}</p>
+    </div>
+  `;
 
           L.marker(postCoordinates, { icon: postIcon }).addTo(this.map)
             .bindPopup(popupContent);

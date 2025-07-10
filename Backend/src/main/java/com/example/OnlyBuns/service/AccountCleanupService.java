@@ -27,6 +27,7 @@ public class AccountCleanupService {
      * Zadatak briše neaktivirane naloge.
      */
     @Scheduled(cron = "0 0 2 L * ?")
+    //@Scheduled(cron = "0 7 11 10 7 ?")
     @Transactional
     public void purgeUnactivatedAccounts() {
         log.info("--- Pokretanje zakazanog zadatka: Brisanje neaktiviranih naloga ---");
