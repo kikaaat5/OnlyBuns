@@ -3,6 +3,7 @@ package com.example.OnlyBuns.config;
 import com.example.OnlyBuns.security.auth.LoginRateLimitingFilter;
 import com.example.OnlyBuns.security.auth.RestAuthenticationEntryPoint;
 import com.example.OnlyBuns.security.auth.TokenAuthenticationFilter;
+import com.example.OnlyBuns.security.auth.WebSocketJwtFilter;
 import com.example.OnlyBuns.service.impl.UserServiceImpl;
 import com.example.OnlyBuns.util.TokenUtils;
 import io.github.resilience4j.ratelimiter.RateLimiter;
@@ -99,6 +100,7 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/ws/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/follows/{followedClientId}/follow").authenticated()
 						.requestMatchers(HttpMethod.DELETE, "/api/follows/{followedClientId}/unfollow").authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/follows/{otherClientId}/isFollowing").authenticated()
@@ -125,6 +127,7 @@ public class WebSecurityConfig {
 				.httpBasic(Customizer.withDefaults())  // Omogućava osnovnu autentifikaciju
 				.formLogin(Customizer.withDefaults())  // Omogućava formu za prijavu
 
+				.addFilterBefore(webSocketJwtFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new LoginRateLimitingFilter(loginRateLimiter()), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userService()), BasicAuthenticationFilter.class)
 				.logout(logout -> logout
@@ -146,5 +149,9 @@ public class WebSecurityConfig {
 						"/*/*.html", "/*/*.css", "/*/*.js");
 
 	}
-
+	@Bean
+	public WebSocketJwtFilter webSocketJwtFilter() {
+		// Prosledi postojeće bean-ove tokenUtils i userServiceImpl (koji je tvoj UserDetailsService)
+		return new WebSocketJwtFilter(tokenUtils, userService()); // Koristi userService() bean
+	}
 }

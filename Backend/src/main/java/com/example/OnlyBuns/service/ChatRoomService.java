@@ -23,21 +23,25 @@ import java.util.stream.Collectors;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 
 public class ChatRoomService {
     private static final Logger logger = LoggerFactory.getLogger(ChatRoomService.class);
+    private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ClientRepository clientRepository;
 
     public ChatRoomService(ChatRoomRepository chatRoomRepository,
                            ChatRoomMemberRepository chatRoomMemberRepository,
-                           ClientRepository clientRepository) {
+                           ClientRepository clientRepository,
+                           SimpMessagingTemplate messagingTemplate) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatRoomMemberRepository = chatRoomMemberRepository;
         this.clientRepository = clientRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -74,6 +78,34 @@ public class ChatRoomService {
         member2.setRole(MemberRole.MEMBER);
         chatRoomMemberRepository.save(member2);
 
+        if (newRoom.getMembers() == null) {
+            newRoom.setMembers(new ArrayList<>());
+        }
+        newRoom.getMembers().add(member1);
+        newRoom.getMembers().add(member2);
+        ChatRoomDto chatRoomDto = mapChatRoomToDTO(newRoom);
+
+        if (client1.getUsername() != null) {
+            messagingTemplate.convertAndSendToUser(
+                    client1.getUsername(),
+                    "/queue/chat-rooms",
+                    chatRoomDto
+            );
+            logger.info("Sent private chat update to {}: Room ID={}", client1.getUsername(), newRoom.getId());
+        } else {
+            logger.warn("Client 1 (ID: {}) has no username, cannot send WebSocket update.", client1.getId());
+        }
+
+        if (client2.getUsername() != null) {
+            messagingTemplate.convertAndSendToUser(
+                    client2.getUsername(), // Username primaoca
+                    "/queue/chat-rooms",
+                    chatRoomDto
+            );
+            logger.info("Sent private chat update to {}: Room ID={}", client2.getUsername(), newRoom.getId());
+        } else {
+            logger.warn("Client 2 (ID: {}) has no username, cannot send WebSocket update.", client2.getId());
+        }
         return newRoom.getId();
     }
 
@@ -109,6 +141,19 @@ public class ChatRoomService {
             }
         }
 
+        ChatRoomDto chatRoomDto = mapChatRoomToDTO(chatRoom);
+        for (ChatRoomMember member : chatRoom.getMembers()) {
+            if (member.getClient() != null && member.getClient().getUsername() != null) {
+                messagingTemplate.convertAndSendToUser(
+                        member.getClient().getUsername(),
+                        "/queue/chat-rooms",
+                        chatRoomDto
+                );
+                logger.info("Sent group chat creation update to {}: Room ID={}", member.getClient().getUsername(), chatRoom.getId());
+            } else {
+                logger.warn("Member (ID: {}) in chat room (ID: {}) has no client or username, cannot send WebSocket update.", member.getId(), chatRoom.getId());
+            }
+        }
         return mapChatRoomToDTO(chatRoom);
     }
 

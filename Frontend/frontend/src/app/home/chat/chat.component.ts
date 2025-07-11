@@ -48,6 +48,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private userPollingSubscription: Subscription | undefined;
   private searchSubscription: Subscription | undefined;
   private stompSubscription: any | undefined;
+  private chatRoomUpdateWebSocketSubscription: Subscription | undefined;
+  private chatRoomRemovedWebSocketSubscription: Subscription | undefined;
 
 
   @ViewChild('messagesDisplay') private messagesDisplayRef!: ElementRef;
@@ -107,6 +109,50 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
               console.log('ChatComponent: Primljena poruka za drugu sobu ili je null. Ignorisano. ID sobe:', message?.chatRoomId, 'ID selektovane sobe:', this.selectedChatRoomId);
             }
           });
+
+          this.chatRoomUpdateWebSocketSubscription = this.chatService.chatRoomUpdates$.subscribe(
+            (updatedChatRoom: ChatRoomDTO) => {
+              console.log('ChatComponent: Primljeno ažuriranje chat sobe putem WebSocket-a (chatRoomUpdates$):', updatedChatRoom);
+              const existingRoomIndex = this.myChatRooms.findIndex(room => room.id === updatedChatRoom.id);
+
+              if (existingRoomIndex > -1) {
+                // Ažuriraj postojeću sobu
+                this.myChatRooms[existingRoomIndex] = updatedChatRoom;
+                console.log('ChatComponent: Ažurirana postojeća chat soba:', updatedChatRoom.name || updatedChatRoom.id);
+              } else {
+                // Dodaj novu sobu
+                this.myChatRooms.unshift(updatedChatRoom); 
+                console.log('ChatComponent: Dodata nova chat soba:', updatedChatRoom.name || updatedChatRoom.id);
+              }
+             
+              if (this.selectedChatRoomId === updatedChatRoom.id) {
+                  this.selectedChatRoom = updatedChatRoom;
+                  this.checkAdminStatus();
+                  this.membersToManage = [...updatedChatRoom.members];
+              }
+           },
+            error => {
+              console.error('ChatComponent: Greška pri prijemu ažuriranja chat soba putem WebSocket-a:', error);
+            }
+          );
+
+           this.chatRoomRemovedWebSocketSubscription = this.chatService.chatRoomRemoved$.subscribe(
+            (removedRoomId: number) => {
+              console.log('ChatComponent: Primljeno obaveštenje o uklanjanju chat sobe ID putem WebSocket-a (chatRoomRemoved$):', removedRoomId);
+              this.myChatRooms = this.myChatRooms.filter(room => room.id !== removedRoomId);
+              console.log('ChatComponent: Chat soba uklonjena iz liste.');
+              // Ako je uklonjena soba bila trenutno odabrana, resetuj izbor
+              if (this.selectedChatRoom && this.selectedChatRoom.id === removedRoomId) {
+                this.selectedChatRoom = null;
+                this.selectedChatRoomId = null;
+                this.chatMessages = [];
+                this.router.navigate(['/chat']); // Preusmeri na opšti chat ili prazan prikaz
+              }
+            },
+            error => {
+              console.error('ChatComponent: Greška pri prijemu obaveštenja o uklanjanju chat soba putem WebSocket-a:', error);
+            }
+          );
 
           this.chatRoomSubscription = this.route.paramMap.subscribe(params => {
             const roomId = params.get('id');
@@ -179,6 +225,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.stompSubscription) {
       this.stompSubscription.unsubscribe();
       console.log('ChatComponent: Odjavljena STOMP pretplata u ngOnDestroy.');
+    }
+    if (this.chatRoomUpdateWebSocketSubscription) {
+      this.chatRoomUpdateWebSocketSubscription.unsubscribe();
+      console.log('ChatComponent: Odjavljena chatRoomUpdateWebSocketSubscription.');
+    }
+    if (this.chatRoomRemovedWebSocketSubscription) {
+      this.chatRoomRemovedWebSocketSubscription.unsubscribe();
+      console.log('ChatComponent: Odjavljena chatRoomRemovedWebSocketSubscription.');
     }
     this.chatService.disconnect();
   }

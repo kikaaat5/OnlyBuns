@@ -1,7 +1,5 @@
 package com.example.OnlyBuns.config;
 
-import com.example.OnlyBuns.service.impl.UserServiceImpl;
-import com.example.OnlyBuns.util.TokenUtils;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -9,49 +7,54 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.security.Principal; 
 
 @Component
 public class AuthChannelInterceptor implements ChannelInterceptor {
-
-    private final TokenUtils tokenUtils;
-    private final UserServiceImpl userService;
-
-    public AuthChannelInterceptor(TokenUtils tokenUtils, UserServiceImpl userService) {
-        this.tokenUtils = tokenUtils;
-        this.userService = userService;
-    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            List<String> authorization = accessor.getNativeHeader("Authorization");
-            String authToken = null;
+        if (accessor != null) {
+            StompCommand command = accessor.getCommand();
+            System.out.println("AuthChannelInterceptor: Processing STOMP command: " + command);
 
-            if (authorization != null && !authorization.isEmpty()) {
-                String bearerToken = authorization.get(0);
-                if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-                    authToken = bearerToken.substring(7);
+            if (StompCommand.CONNECT.equals(command)) {
+
+                Principal principal = accessor.getUser();
+
+                if (principal != null && principal.getName() != null) {
+                    System.out.println("AuthChannelInterceptor: User authenticated for STOMP session: " + principal.getName());
+
+                    if (SecurityContextHolder.getContext().getAuthentication() == null ||
+                            !SecurityContextHolder.getContext().getAuthentication().getName().equals(principal.getName())) {
+
+
+                        System.out.println("AuthChannelInterceptor: Setting SecurityContextHolder for " + principal.getName());
+                        SecurityContextHolder.getContext().setAuthentication((Authentication) principal); // Cast, assuming Principal is an Authentication
+                    }
+
+                } else {
+                    System.out.println("AuthChannelInterceptor: No authenticated user (Principal) found in STOMP session for CONNECT command.");
+
                 }
-            }
+            } else if (StompCommand.SUBSCRIBE.equals(command) || StompCommand.SEND.equals(command)) {
+                Principal principal = accessor.getUser();
+                if (principal == null || principal.getName() == null) {
+                    System.err.println("AuthChannelInterceptor: Unauthorized STOMP command " + command + ": No authenticated user.");
 
-            if (authToken != null) {
-                String username = tokenUtils.getUsernameFromToken(authToken);
+                } else {
+                    System.out.println("AuthChannelInterceptor: STOMP command " + command + " from authenticated user: " + principal.getName());
 
-                if (username != null) {
-                    UserDetails userDetails = userService.loadUserByUsername(username);
-                    if (tokenUtils.validateToken(authToken, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-
-                        accessor.setUser(authentication);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    if (SecurityContextHolder.getContext().getAuthentication() == null ||
+                            !SecurityContextHolder.getContext().getAuthentication().getName().equals(principal.getName())) {
+                        SecurityContextHolder.getContext().setAuthentication((Authentication) principal);
                     }
                 }
             }
