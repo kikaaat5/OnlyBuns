@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,4 +44,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     @Query("SELECT COUNT(DISTINCT comm.userId) FROM Comment comm " +
             "WHERE comm.userId NOT IN (SELECT DISTINCT p.userId FROM Post p)")
     long countClientsWithOnlyComments();
+
+    List<Client> findByLastLoginBefore(Timestamp time);
+
 }

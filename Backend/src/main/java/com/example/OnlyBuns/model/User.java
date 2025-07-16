@@ -56,6 +56,9 @@ public class User implements UserDetails {
     @Column(name = "last_password_reset_date")
     protected Timestamp lastPasswordResetDate;
 
+    @Column(name = "last_login")
+    protected Timestamp lastLogin;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     protected Address address;

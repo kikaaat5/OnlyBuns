@@ -48,4 +48,32 @@ public class EmailService {
         // Logovanje uspešnog slanja
         System.out.println("Email sent successfully");
     }
+
+    public void sendWeeklyStatsEmail(Client client, int newFollowers, int newLikes, int newPosts) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mail = new MimeMessageHelper(mimeMessage, true);
+
+        mail.setTo(client.getEmail());
+        mail.setSubject("OnlyBuns App - Vaša nedeljna aktivnost");
+        mail.setText("<html><body>"
+                + "<div style='margin-top: 10px;'>"
+                + "<div style='margin: 25px;'>"
+                + "Dear " + client.getFirstName() + ",<br/><br/>"
+                + "Here is a summary of your activity in the last 7 days:<br/><br/>"
+                + "<ul>"
+                + "<li>New followers: <b>" + newFollowers + "</b></li>"
+                + "<li>New likes: <b>" + newLikes + "</b></li>"
+                + "<li>New posts: <b>" + newPosts + "</b></li>"
+                + "</ul><br/>"
+                + "We miss you! Come back and see what's new :)<br/><br/>"
+                + "Best regards,<br/>"
+                + "<span>OnlyBuns app team</span>"
+                + "</div>"
+                + "</div>"
+                + "</body></html>", true);
+
+        javaMailSender.send(mimeMessage);
+
+        System.out.println("Weekly summary email sent to " + client.getEmail());
+    }
 }
