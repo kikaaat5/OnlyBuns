@@ -21,6 +21,13 @@
 
     <div class="post-footer">
       <p>Likes: {{ post.likesCount }}</p>
+       <button
+        (click)="likePost(post.id)"
+        *ngIf="isClient()"
+        [disabled]="!hasSignedIn() && !follows" 
+        class="like-button">
+        {{ 'Comment 💬' }}
+      </button>
       <button
         (click)="likePost(post.id)"
         *ngIf="isClient()"

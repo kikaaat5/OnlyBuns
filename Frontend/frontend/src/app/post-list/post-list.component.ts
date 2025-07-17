@@ -9,6 +9,7 @@ import { FollowService } from '../service/follow.service';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Post } from '../model/post.model'; // <-- KLJUČNA PROMENA: Importuj tvoj Post model
+import { CommentService } from '../service/comment.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private postService: PostService,
     private clientService: ClientService,
+    private commentService: CommentService,
     private followService: FollowService,
     private route: ActivatedRoute,
     private router: Router,
@@ -221,4 +223,45 @@ export class PostListComponent implements OnInit, OnDestroy {
       );
     }
   }
+
+  commentPost(postId: number, content:string): void {
+    if (!this.isClient()) {
+      alert('Samo klijenti mogu komentarisati objave. Prijavite se kao klijent.');
+      return;
+    }
+
+    if (this.loggedUserId === null) {
+      console.error('User ID is null. Cannot comment post.');
+      alert('Vaša korisnička sesija nije aktivna. Prijavite se ponovo.');
+      return;
+    }
+
+    const postToUpdate = this.posts.find(p => p.id === postId);
+
+    if (!postToUpdate) {
+      console.error('Post not found in local array:', postId);
+      return;
+    }
+
+    const newComment = {
+      postId: postId,
+      userId: this.loggedUserId,
+      content: content
+    };
+    this.commentService.addComment(newComment).subscribe({
+      next:() =>{
+        console.log("🍔KOMENTAR JE USPESNO DODAT");
+        //this.loadCommentsForPosts(postId);
+      },
+      error: err =>{
+        console.error("greska prilikom slanja komentara");
+
+        
+      }
+      
+    })
+
+  }
+    
 }
+  
