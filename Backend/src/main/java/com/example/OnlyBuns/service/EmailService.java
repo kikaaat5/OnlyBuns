@@ -1,5 +1,6 @@
 package com.example.OnlyBuns.service;
 
+import com.example.OnlyBuns.dto.WeeklyStatsDto;
 import com.example.OnlyBuns.model.Client;
 import com.example.OnlyBuns.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class EmailService {
 
     @Autowired
     private TokenUtils tokenUtils;
+
+    @Autowired
+    private StatsService statsService;
 
     public void sendRegistrationActivation(Client client) throws MessagingException {
         // Priprema linka za aktivaciju
@@ -49,31 +53,36 @@ public class EmailService {
         System.out.println("Email sent successfully");
     }
 
-    public void sendWeeklyStatsEmail(Client client, int newFollowers, int newLikes, int newPosts) throws MessagingException {
+    public void sendWeeklyStatsEmail(Client client) throws MessagingException {
+        WeeklyStatsDto stats = statsService.getStatsForClientLast7Days(client);
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mail = new MimeMessageHelper(mimeMessage, true);
 
         mail.setTo(client.getEmail());
         mail.setSubject("OnlyBuns App - Vaša nedeljna aktivnost");
-        mail.setText("<html><body>"
+
+        String body = "<html><body>"
                 + "<div style='margin-top: 10px;'>"
                 + "<div style='margin: 25px;'>"
-                + "Dear " + client.getFirstName() + ",<br/><br/>"
-                + "Here is a summary of your activity in the last 7 days:<br/><br/>"
+                + "Zdravo " + client.getFirstName() + ",<br/><br/>"
+                + "Evo pregleda vaše mreže u poslednjih 7 dana:<br/><br/>"
                 + "<ul>"
-                + "<li>New followers: <b>" + newFollowers + "</b></li>"
-                + "<li>New likes: <b>" + newLikes + "</b></li>"
-                + "<li>New posts: <b>" + newPosts + "</b></li>"
+                + "<li>📸 Novi postovi korisnika koje pratite: <b>" + stats.getNewPostsFromFollowed() + "</b></li>"
+                + "<li>👥 Novi pratioci: <b>" + stats.getNewFollowers() + "</b></li>"
+                + "<li>💬 Vaši novi komentari: <b>" + stats.getNewComments() + "</b></li>"
                 + "</ul><br/>"
-                + "We miss you! Come back and see what's new :)<br/><br/>"
-                + "Best regards,<br/>"
-                + "<span>OnlyBuns app team</span>"
+                + "Dođite i pogledajte šta je novo na OnlyBuns! 🐰<br/><br/>"
+                + "Pozdrav,<br/>"
+                + "<span>OnlyBuns tim</span>"
                 + "</div>"
                 + "</div>"
-                + "</body></html>", true);
+                + "</body></html>";
 
+        mail.setText(body, true);
         javaMailSender.send(mimeMessage);
 
-        System.out.println("Weekly summary email sent to " + client.getEmail());
+        System.out.println("📧 Nedeljni izveštaj poslat korisniku(emailService): " + client.getEmail());
+        System.out.println("📧 poslao sam novi postovi,pratioci,komentari : " + stats.getNewPostsFromFollowed() + stats.getNewFollowers() + stats.getNewComments() );
     }
 }

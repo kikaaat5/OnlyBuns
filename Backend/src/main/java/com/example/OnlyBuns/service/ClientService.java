@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jakarta.annotation.PostConstruct;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -164,7 +165,11 @@ public class ClientService {
         return clientRepository.findByEmail(email);
     }
 
-    public List<Client> findClientsByLastLoginBefore(Timestamp time){return clientRepository.findByLastLoginBefore(time);}
+
+    public List<Client> findClientsNotLoggedInSince(LocalDateTime date) {
+        return clientRepository.findByLastLoginBefore(date);
+    }
+
 
     public Client findByUsername(String username) {
         return clientRepository.findByName(username);

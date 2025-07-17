@@ -45,6 +45,8 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
             "WHERE comm.userId NOT IN (SELECT DISTINCT p.userId FROM Post p)")
     long countClientsWithOnlyComments();
 
-    List<Client> findByLastLoginBefore(Timestamp time);
+    List<Client> findByLastLoginBefore(LocalDateTime date);
+
+
 
 }
