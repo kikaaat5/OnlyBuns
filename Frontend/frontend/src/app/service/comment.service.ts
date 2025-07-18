@@ -1,24 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PostComment } from '../model/post.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
-
-  private apiUrl = '/api/comments'; // backend endpoint
+  private apiUrl = 'http://localhost:8080/api/comments'; // prilagodi ako treba
 
   constructor(private http: HttpClient) {}
 
-  // ➕ Dodavanje komentara
-  addComment(comment: Comment): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, comment);
+  addComment(commentDto: PostComment): Observable<string> {
+    return this.http.post(this.apiUrl, commentDto, { responseType: 'text' });
   }
 
   // 📥 Učitavanje komentara za post
-  getCommentsForPost(postId: number): Observable<Comment[]> {
-    return this.http.get<Comment[]>(`${this.apiUrl}/post/${postId}`);
+  getCommentsForPost(postId: number): Observable<PostComment[]> {
+    return this.http.get<PostComment[]>(`${this.apiUrl}/post/${postId}`);
   }
 
   // (opciono) ❌ Brisanje komentara
@@ -27,7 +26,7 @@ export class CommentService {
   }
 
   // (opciono) 📥 Učitavanje svih komentara (za admina npr.)
-  getAllComments(): Observable<Comment[]> {
-    return this.http.get<Comment[]>(this.apiUrl);
+  getAllComments(): Observable<PostComment[]> {
+    return this.http.get<PostComment[]>(this.apiUrl);
   }
 }

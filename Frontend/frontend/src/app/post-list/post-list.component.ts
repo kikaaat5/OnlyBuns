@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FollowService } from '../service/follow.service';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { Post } from '../model/post.model'; // <-- KLJUČNA PROMENA: Importuj tvoj Post model
+import { Post, PostComment } from '../model/post.model'; 
 import { CommentService } from '../service/comment.service';
 
 
@@ -26,6 +26,17 @@ export class PostListComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   followedClientIds: number[] = [];
   imageBaseUrl: string = 'http://localhost:8080/api/images';
+  newComment: PostComment = {
+    postId:1,
+    userId: 0,
+    username:"",
+    content: "",
+    createdAt:null
+  }
+  commentInputs: { [postId: number]: string } = {};
+  showCommentInput: boolean = false ;
+  activeCommentPostId: number | null = null;
+
 
   private userSubscription: Subscription | undefined;
 
@@ -155,6 +166,7 @@ export class PostListComponent implements OnInit, OnDestroy {
           hasLiked: likedPostIds.has(post.id) // Postavi hasLiked na osnovu dohvaćenih lajkova
         })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
+        
         console.log("Učitani postovi sa statusom lajkova:", this.posts.length, "postova.");
       },
       error: (error) => {
@@ -243,25 +255,42 @@ export class PostListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const newComment = {
+     this.newComment  = {      
       postId: postId,
       userId: this.loggedUserId,
-      content: content
+      username:"",
+      content: content,
+      createdAt: new Date()
     };
-    this.commentService.addComment(newComment).subscribe({
+    this.commentService.addComment(this.newComment).subscribe({
       next:() =>{
         console.log("🍔KOMENTAR JE USPESNO DODAT");
         //this.loadCommentsForPosts(postId);
       },
       error: err =>{
-        console.error("greska prilikom slanja komentara");
-
-        
-      }
-      
+        console.error("greska prilikom slanja komentara");     
+      }      
     })
-
   }
+ submitComment(postId: number): void {
+      const content = this.commentInputs[postId]?.trim();
+      if (!content) return;
+
+      this.commentPost(postId, content);
+
+      this.commentInputs[postId] = '';
+      this.activeCommentPostId = null;
+    }
+
+
+  toggleCommentInput(postId: number): void {
+      if (this.activeCommentPostId === postId) {
+        this.activeCommentPostId = null;
+      } else {
+        this.activeCommentPostId = postId;
+      }
+}
+
     
 }
   

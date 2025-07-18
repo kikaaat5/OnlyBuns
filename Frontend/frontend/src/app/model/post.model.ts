@@ -26,3 +26,11 @@ export interface Post {
     postId:  number;
     createdAt: string;
   }
+
+   export interface PostComment {
+    postId:number,
+    userId: number;
+    username: string,
+    content: string;
+    createdAt: Date |null;
+  }
