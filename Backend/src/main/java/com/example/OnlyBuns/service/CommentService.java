@@ -28,6 +28,10 @@ public class CommentService {
 
     @Autowired
     private FollowRelationRepository followRelationRepository;
+
+    @Autowired
+    private CommentRateLimiterService rateLimiter;
+
     @Autowired
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -47,9 +51,13 @@ public class CommentService {
 
 
     public void addComment(CommentDto dto) {
+
         Optional<Client> authorOpt = clientRepository.findById( dto.getUserId());
         Optional<Post> postOpt = postRepository.findById(dto.getPostId());
 
+        if (!rateLimiter.canComment(dto.getUserId())) {
+            throw new RuntimeException("Prekoračen limit: Maksimalno 60 komentara po satu.");
+        }
         if (authorOpt.isEmpty() || postOpt.isEmpty()) {
             throw new RuntimeException("Nevalidan korisnik ili post.");
         }

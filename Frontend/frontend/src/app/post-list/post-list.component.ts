@@ -298,13 +298,17 @@ export class PostListComponent implements OnInit, OnDestroy {
       createdAt: new Date()
     };
     this.commentService.addComment(this.newComment).subscribe({
-      next:() =>{
-        this.loadData();
+      next: () => {
+        this.loadData(); // refresuj komentare
       },
-      error: err =>{
-        console.error("greska prilikom slanja komentara");     
-      }      
-    })
+      error: (err) => {
+        if (err.status === 429) {
+          alert('Prekoračen broj komentara (60 po satu). Pokušajte kasnije.');
+        } else {
+          alert('Greška pri slanju komentara.');
+        }
+      }
+    });
   }
  submitComment(postId: number): void {
       const content = this.commentInputs[postId]?.trim();
