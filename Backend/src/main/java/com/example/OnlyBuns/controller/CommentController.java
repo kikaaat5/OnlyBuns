@@ -31,5 +31,7 @@ public class CommentController {
     public void deleteComment(@PathVariable int id) {
         commentService.deleteById(id); // Ova metoda je ok ako je koristiš za admina
     }
+
+
 }
 

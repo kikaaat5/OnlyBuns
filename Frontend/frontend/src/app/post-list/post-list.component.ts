@@ -6,7 +6,7 @@ import { Client } from '../model/client.model';
 import { ClientService } from '../service/client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FollowService } from '../service/follow.service';
-import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { firstValueFrom, forkJoin, Observable, of, Subscription } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { Post, PostComment } from '../model/post.model'; 
 import { CommentService } from '../service/comment.service';
@@ -110,6 +110,15 @@ export class PostListComponent implements OnInit, OnDestroy {
       { id: 3, userId: 4, content: 'Slika je prelepa!', createdAt: '2024-11-10T14:00:00' }
     ];
   }
+  async getComments(postId: number): Promise<PostComment[]> {
+  try {
+    return await firstValueFrom(this.commentService.getCommentsForPost(postId));
+  } catch (error) {
+    console.error(`Greška pri dohvatanju komentara za post ${postId}:`, error);
+    return [];
+  }
+}
+
 
   loadData(): void {
     console.log('loadData() pozvana. showFollowingPostsOnly:', this.showFollowingPostsOnly, 'loggedUserId:', this.loggedUserId);
@@ -148,27 +157,53 @@ export class PostListComponent implements OnInit, OnDestroy {
       postsToFetchObservable,
       this.loggedUserId !== null ? this.postService.getLikesByUserId(this.loggedUserId) : of([])
     ]).subscribe({
-      next: ([allClients, fetchedPosts, userLikes]) => {
+      next: async ([allClients, fetchedPosts, userLikes]) => {
         this.clients = allClients;
 
         const likedPostIds = new Set(userLikes.map(like => like.postId));
+        const mappedPosts = await Promise.all(
+      fetchedPosts.map(async post => ({
+        ...post,
+        createdAt: new Date(
+          Number(post.createdAt[0]),
+          Number(post.createdAt[1]) - 1,
+          Number(post.createdAt[2]),
+          Number(post.createdAt[3]),
+          Number(post.createdAt[4])
+        ),
+        
+        comments: await this.getComments(post.id).then(comments => {
+          return comments.map(c => {
+            let createdAt = c.createdAt;
 
-        this.posts = fetchedPosts.map(post => ({
-          ...post,
-          createdAt: new Date(
-            Number(post.createdAt[0]),
-            Number(post.createdAt[1]) - 1,
-            Number(post.createdAt[2]),
-            Number(post.createdAt[3]),
-            Number(post.createdAt[4])
-          ),
-          comments: this.getStaticComments(),
-          hasLiked: likedPostIds.has(post.id) // Postavi hasLiked na osnovu dohvaćenih lajkova
-        })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            // Ako je niz (npr. [2024, 7, 19, 13, 45]), konvertuj ga u Date
+            if (Array.isArray(createdAt)) {
+              createdAt = new Date(
+                createdAt[0],
+                createdAt[1] - 1,
+                createdAt[2],
+                createdAt[3],
+                createdAt[4]
+              );
+            }
+
+            return {
+              ...c,
+              createdAt
+            };
+          });
+        }),
 
         
-        console.log("Učitani postovi sa statusom lajkova:", this.posts.length, "postova.");
-      },
+        hasLiked: likedPostIds.has(post.id)
+      }))
+    );
+
+    this.posts = mappedPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    console.log("Učitani postovi sa komentarima i lajkovima:", this.posts.length);
+  },
+
       error: (error) => {
         console.error('Greška pri učitavanju podataka:', error);
         this.posts = [];
@@ -264,8 +299,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     };
     this.commentService.addComment(this.newComment).subscribe({
       next:() =>{
-        console.log("🍔KOMENTAR JE USPESNO DODAT");
-        //this.loadCommentsForPosts(postId);
+        this.loadData();
       },
       error: err =>{
         console.error("greska prilikom slanja komentara");     
@@ -280,15 +314,16 @@ export class PostListComponent implements OnInit, OnDestroy {
 
       this.commentInputs[postId] = '';
       this.activeCommentPostId = null;
+      
     }
 
 
   toggleCommentInput(postId: number): void {
-      if (this.activeCommentPostId === postId) {
-        this.activeCommentPostId = null;
-      } else {
-        this.activeCommentPostId = postId;
-      }
+    if (this.activeCommentPostId === postId) {
+      this.activeCommentPostId = null;
+    } else {
+      this.activeCommentPostId = postId;
+    }
 }
 
     

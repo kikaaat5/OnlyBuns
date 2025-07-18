@@ -1,5 +1,6 @@
 package com.example.OnlyBuns.controller;
 
+import com.example.OnlyBuns.dto.PostResponseDto;
 import com.example.OnlyBuns.model.Like;
 import com.example.OnlyBuns.dto.PostDto;
 import com.example.OnlyBuns.model.Post;
@@ -28,8 +29,6 @@ public class PostController {
     private final PostService postService;
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-
-
     @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
@@ -40,6 +39,11 @@ public class PostController {
         return postService.findAll();
     }
 
+//    @GetMapping("/comments")
+//    public ResponseEntity<List<PostResponseDto>> getAllPostsWithComments() {
+//        return ResponseEntity.ok(postService.getAllPostsWithComments());
+//    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@ModelAttribute PostDto dto) {
         try {
@@ -49,14 +53,6 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Greška pri snimanju posta");
         }
     }
-
-
-    /*@PostMapping
-    public Post createPost(@RequestBody Post post) {
-        logger.debug("create metoda na serveru");
-
-        return postService.save(post);
-    }*/
 
     @DeleteMapping("/{postId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")

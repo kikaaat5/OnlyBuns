@@ -17,6 +17,15 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public Comment() {
         this.createdAt = LocalDateTime.now();
     }

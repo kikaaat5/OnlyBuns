@@ -1,6 +1,10 @@
 package com.example.OnlyBuns.service;
 
+import com.example.OnlyBuns.dto.ClientDto;
+import com.example.OnlyBuns.dto.CommentDto;
 import com.example.OnlyBuns.dto.PostDto;
+import com.example.OnlyBuns.dto.PostResponseDto;
+import com.example.OnlyBuns.model.Client;
 import com.example.OnlyBuns.model.Like;
 import com.example.OnlyBuns.model.Post;
 import com.example.OnlyBuns.repository.PostRepository;
@@ -33,6 +37,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final LikeService likeService;
     private final String uploadDir = "uploads";
+    @Autowired
+    private ClientService clientService;
 
 
     @Autowired
@@ -173,4 +179,41 @@ public class PostService {
         System.out.println(">>> Učitavam sliku sa diska (i keširam u L2): " + filePath.toAbsolutePath());
         return Files.readAllBytes(filePath);
     }
+
+  /*  public List<PostResponseDto> getAllPostsWithComments() {
+        List<Post> posts = postRepository.findAll();
+
+        return posts.stream().map(post -> {
+            PostResponseDto dto = new PostResponseDto();
+
+            dto.setId(post.getId());
+            dto.setUserId(post.getUserId());
+            dto.setDescription(post.getDescription());
+            dto.setLongitude(post.getLongitude());
+            dto.setLatitude(post.getLatitude());
+            dto.setImagePath(post.getImagePath());
+            dto.setLikesCount(post.getLikesCount());
+            dto.setCreatedAt(post.getCreatedAt());
+
+            // Mapiranje komentara
+            List<CommentDto> commentDtos = post.getComments().stream().map(comment -> {
+                CommentDto commentDto = new CommentDto();
+                commentDto.setPostId(post.getId());
+                commentDto.setUserId(comment.getUserId());
+                commentDto.setContent(comment.getContent());
+                commentDto.setCreatedAt(comment.getCreatedAt());
+
+                ClientDto client = clientService.getById(comment.getUserId());
+                commentDto.setUsername(client != null ? client.getUsername() : "Nepoznat");
+
+                return commentDto;
+            }).collect(Collectors.toList());
+
+            dto.setComments(commentDtos);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }*/
+
+
 }
