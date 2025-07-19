@@ -6,9 +6,10 @@ import { Client } from '../model/client.model';
 import { ClientService } from '../service/client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FollowService } from '../service/follow.service';
-import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { firstValueFrom, forkJoin, Observable, of, Subscription } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { Post } from '../model/post.model'; // <-- KLJUČNA PROMENA: Importuj tvoj Post model
+import { Post, PostComment } from '../model/post.model'; 
+import { CommentService } from '../service/comment.service';
 
 
 @Component({
@@ -25,6 +26,17 @@ export class PostListComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   followedClientIds: number[] = [];
   imageBaseUrl: string = 'http://localhost:8080/api/images';
+  newComment: PostComment = {
+    postId:1,
+    userId: 0,
+    username:"",
+    content: "",
+    createdAt:null
+  }
+  commentInputs: { [postId: number]: string } = {};
+  showCommentInput: boolean = false ;
+  activeCommentPostId: number | null = null;
+
 
   private userSubscription: Subscription | undefined;
 
@@ -32,6 +44,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private postService: PostService,
     private clientService: ClientService,
+    private commentService: CommentService,
     private followService: FollowService,
     private route: ActivatedRoute,
     private router: Router,
@@ -97,6 +110,15 @@ export class PostListComponent implements OnInit, OnDestroy {
       { id: 3, userId: 4, content: 'Slika je prelepa!', createdAt: '2024-11-10T14:00:00' }
     ];
   }
+  async getComments(postId: number): Promise<PostComment[]> {
+  try {
+    return await firstValueFrom(this.commentService.getCommentsForPost(postId));
+  } catch (error) {
+    console.error(`Greška pri dohvatanju komentara za post ${postId}:`, error);
+    return [];
+  }
+}
+
 
   loadData(): void {
     console.log('loadData() pozvana. showFollowingPostsOnly:', this.showFollowingPostsOnly, 'loggedUserId:', this.loggedUserId);
@@ -135,26 +157,53 @@ export class PostListComponent implements OnInit, OnDestroy {
       postsToFetchObservable,
       this.loggedUserId !== null ? this.postService.getLikesByUserId(this.loggedUserId) : of([])
     ]).subscribe({
-      next: ([allClients, fetchedPosts, userLikes]) => {
+      next: async ([allClients, fetchedPosts, userLikes]) => {
         this.clients = allClients;
 
         const likedPostIds = new Set(userLikes.map(like => like.postId));
+        const mappedPosts = await Promise.all(
+      fetchedPosts.map(async post => ({
+        ...post,
+        createdAt: new Date(
+          Number(post.createdAt[0]),
+          Number(post.createdAt[1]) - 1,
+          Number(post.createdAt[2]),
+          Number(post.createdAt[3]),
+          Number(post.createdAt[4])
+        ),
+        
+        comments: await this.getComments(post.id).then(comments => {
+          return comments.map(c => {
+            let createdAt = c.createdAt;
 
-        this.posts = fetchedPosts.map(post => ({
-          ...post,
-          createdAt: new Date(
-            Number(post.createdAt[0]),
-            Number(post.createdAt[1]) - 1,
-            Number(post.createdAt[2]),
-            Number(post.createdAt[3]),
-            Number(post.createdAt[4])
-          ),
-          comments: this.getStaticComments(),
-          hasLiked: likedPostIds.has(post.id) // Postavi hasLiked na osnovu dohvaćenih lajkova
-        })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            // Ako je niz (npr. [2024, 7, 19, 13, 45]), konvertuj ga u Date
+            if (Array.isArray(createdAt)) {
+              createdAt = new Date(
+                createdAt[0],
+                createdAt[1] - 1,
+                createdAt[2],
+                createdAt[3],
+                createdAt[4]
+              );
+            }
 
-        console.log("Učitani postovi sa statusom lajkova:", this.posts.length, "postova.");
-      },
+            return {
+              ...c,
+              createdAt
+            };
+          });
+        }),
+
+        
+        hasLiked: likedPostIds.has(post.id)
+      }))
+    );
+
+    this.posts = mappedPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    console.log("Učitani postovi sa komentarima i lajkovima:", this.posts.length);
+  },
+
       error: (error) => {
         console.error('Greška pri učitavanju podataka:', error);
         this.posts = [];
@@ -221,4 +270,66 @@ export class PostListComponent implements OnInit, OnDestroy {
       );
     }
   }
+
+  commentPost(postId: number, content:string): void {
+    if (!this.isClient()) {
+      alert('Samo klijenti mogu komentarisati objave. Prijavite se kao klijent.');
+      return;
+    }
+
+    if (this.loggedUserId === null) {
+      console.error('User ID is null. Cannot comment post.');
+      alert('Vaša korisnička sesija nije aktivna. Prijavite se ponovo.');
+      return;
+    }
+
+    const postToUpdate = this.posts.find(p => p.id === postId);
+
+    if (!postToUpdate) {
+      console.error('Post not found in local array:', postId);
+      return;
+    }
+
+     this.newComment  = {      
+      postId: postId,
+      userId: this.loggedUserId,
+      username:"",
+      content: content,
+      createdAt: new Date()
+    };
+    this.commentService.addComment(this.newComment).subscribe({
+      next: () => {
+        this.loadData(); // refresuj komentare
+      },
+      error: (err) => {
+        if (err.status === 429) {
+          alert('Prekoračen broj komentara (60 po satu). Pokušajte kasnije.');
+        } else {
+          alert('Greška pri slanju komentara.');
+        }
+      }
+    });
+  }
+ submitComment(postId: number): void {
+      const content = this.commentInputs[postId]?.trim();
+      if (!content) return;
+
+      this.commentPost(postId, content);
+
+      this.commentInputs[postId] = '';
+      this.activeCommentPostId = null;
+      
+    }
+
+
+  toggleCommentInput(postId: number): void {
+    if (this.activeCommentPostId === postId) {
+      this.activeCommentPostId = null;
+    } else {
+      this.activeCommentPostId = postId;
+    }
 }
+
+    
+}
+  

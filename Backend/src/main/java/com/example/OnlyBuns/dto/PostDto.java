@@ -2,12 +2,15 @@ package com.example.OnlyBuns.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public class PostDto {
     private int userId;
     private String description;
     private double longitude;
     private double latitude;
     private MultipartFile image;
+
 
     public int getUserId() {
         return userId;
