@@ -26,3 +26,23 @@ export interface Post {
     postId:  number;
     createdAt: string;
   }
+
+   export interface PostComment {
+    postId:number,
+    userId: number;
+    username: string,
+    content: string;
+    createdAt: Date |null;
+  }
+
+  export interface PostResponseDto {
+  id: number;
+  userId: number;
+  description: string;
+  longitude: number;
+  latitude: number;
+  imagePath: string;
+  likesCount: number;
+  createdAt: string;
+  comments: PostComment[];
+}

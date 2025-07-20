@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Post } from '../model/post.model';
+import { Post, PostResponseDto } from '../model/post.model';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Like } from '../model/like.model';
@@ -90,5 +90,9 @@ export class PostService {
 
   getLikesByUserId(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.likeApiUrl}/user/${userId}`);
+  }
+
+  getAllPosts(): Observable<PostResponseDto[]> {
+    return this.http.get<PostResponseDto[]>(`${this.apiUrl}/comments`);
   }
 }

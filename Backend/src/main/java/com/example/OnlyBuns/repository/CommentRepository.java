@@ -7,11 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     long countByCreatedAtAfter(LocalDateTime createdAt);
+    List<Comment> findByPostIdOrderByCreatedAtDesc(int postId);
     int countByUserIdAndCreatedAtAfter(long userId, LocalDateTime date);
 
 }

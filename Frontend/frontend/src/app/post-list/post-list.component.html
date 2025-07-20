@@ -21,13 +21,30 @@
 
     <div class="post-footer">
       <p>Likes: {{ post.likesCount }}</p>
-      <button
-        (click)="likePost(post.id)"
-        *ngIf="isClient()"
-        [disabled]="!hasSignedIn()" 
-        class="like-button">
-        {{ post.hasLiked ? 'Dislike' : 'Like ❤️' }}
-      </button>
+      <div class="button-group">
+        <button
+          *ngIf="isClient()"
+          [disabled]="!hasSignedIn() " 
+          class="like-button"
+          (click)="toggleCommentInput(post.id)">
+        {{ activeCommentPostId === post.id ? 'Close 💬' : 'Comment 💬' }}
+          
+        </button>
+        <button
+          (click)="likePost(post.id)"
+          *ngIf="isClient()"
+          [disabled]="!hasSignedIn()" 
+          class="like-button">
+          {{ post.hasLiked ? 'Dislike' : 'Like ❤️' }}
+        </button>
+      </div>
+    </div>
+
+      
+    <div *ngIf="activeCommentPostId === post.id" class="comment-input-container">
+      <textarea [(ngModel)]="commentInputs[post.id]" placeholder="Unesite komentar..." rows="3" class="comment-textarea"></textarea>
+      <button class="comment-submit-btn" (click)="submitComment(post.id)">Done</button>
+      <button class="comment-cancel-btn" (click)="activeCommentPostId = null">Close</button>
     </div>
 
     <div class="comments-toggle-section">
