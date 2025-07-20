@@ -30,6 +30,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 //Kontroler zaduzen za autentifikaciju korisnika
@@ -74,6 +76,12 @@ public class AuthenticationController {
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
 		Role role = user.getRoles().get(0);
+
+		if (user instanceof Client) {
+			Client client = (Client) user;
+			client.setLastLogin(Timestamp.valueOf(LocalDateTime.now()));
+			clientService.save(client);
+		}
 		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn, role.getName()));
 	}
 
